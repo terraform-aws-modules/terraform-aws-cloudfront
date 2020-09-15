@@ -119,10 +119,10 @@ module "cdn" {
 | geo\_restriction | The restriction configuration for this distribution (geo\_restrictions) | `any` | `{}` | no |
 | http\_version | The maximum HTTP version to support on the distribution. Allowed values are http1.1 and http2. The default is http2. | `string` | `"http2"` | no |
 | is\_ipv6\_enabled | Whether the IPv6 is enabled for the distribution. | `bool` | `null` | no |
-| logging\_config | The logging configuration that controls how logs are written to your distribution (maximum one). | `any` | `null` | no |
+| logging\_config | The logging configuration that controls how logs are written to your distribution (maximum one). | `any` | `{}` | no |
 | origin | One or more origins for this distribution (multiples allowed). | `any` | `null` | no |
 | origin\_access\_identities | Map of CloudFront origin access identities (value as a comment) | `map(string)` | `{}` | no |
-| origin\_group | One or more origin\_group for this distribution (multiples allowed). | `any` | `null` | no |
+| origin\_group | One or more origin\_group for this distribution (multiples allowed). | `any` | `{}` | no |
 | price\_class | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | no |
 | retain\_on\_delete | Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards. | `bool` | `false` | no |
 | tags | A map of tags to assign to the resource. | `map(string)` | `null` | no |

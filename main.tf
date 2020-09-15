@@ -198,7 +198,7 @@ resource "aws_cloudfront_distribution" "this" {
       for_each = length(keys(var.geo_restriction)) == 0 ? [{
         restriction_type = "none"
         locations        = []
-      }] : [var.geo_restriction]
+      }] : [tomap(var.geo_restriction)]
 
       content {
         restriction_type = geo_restriction.value.restriction_type

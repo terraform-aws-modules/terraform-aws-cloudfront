@@ -91,7 +91,7 @@ variable "origin" {
 variable "origin_group" {
   description = "One or more origin_group for this distribution (multiples allowed)."
   type        = any
-  default     = null
+  default     = {}
 }
 
 variable "viewer_certificate" {
@@ -109,7 +109,7 @@ variable "geo_restriction" {
 variable "logging_config" {
   description = "The logging configuration that controls how logs are written to your distribution (maximum one)."
   type        = any
-  default     = null
+  default     = {}
 }
 
 variable "custom_error_response" {
