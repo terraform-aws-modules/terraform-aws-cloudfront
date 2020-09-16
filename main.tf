@@ -195,14 +195,11 @@ resource "aws_cloudfront_distribution" "this" {
 
   restrictions {
     dynamic "geo_restriction" {
-      for_each = length(keys(var.geo_restriction)) == 0 ? [{
-        restriction_type = "none"
-        locations        = []
-      }] : [tomap(var.geo_restriction)]
+      for_each = [var.geo_restriction]
 
       content {
-        restriction_type = geo_restriction.value.restriction_type
-        locations        = geo_restriction.value.locations
+        restriction_type = lookup(geo_restriction.value, "restriction_type", "none")
+        locations        = lookup(geo_restriction.value, "locations", [])
       }
     }
   }
