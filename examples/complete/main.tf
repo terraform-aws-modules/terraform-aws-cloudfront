@@ -56,6 +56,18 @@ module "cloudfront" {
         # cloudfront_access_identity_path = "origin-access-identity/cloudfront/E5IGQAA1QO48Z" # external OAI resource
       }
     }
+
+    custom_header = [
+      {
+        name  = "X-Forwarded-Scheme"
+        value = "https"
+      },
+      {
+        name  = "X-Frame-Options"
+        value = "SAMEORIGIN"
+      }
+
+    ]
   }
 
   origin_group = {
