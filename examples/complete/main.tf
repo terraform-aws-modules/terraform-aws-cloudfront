@@ -47,6 +47,17 @@ module "cloudfront" {
         origin_protocol_policy = "match-viewer"
         origin_ssl_protocols   = ["TLSv1"]
       }
+
+      custom_header = [
+        {
+          name  = "X-Forwarded-Scheme"
+          value = "https"
+        },
+        {
+          name  = "X-Frame-Options"
+          value = "SAMEORIGIN"
+        }
+      ]
     }
 
     s3_one = {
@@ -145,7 +156,7 @@ module "s3_one" {
 module "log_bucket" {
   source        = "terraform-aws-modules/s3-bucket/aws"
   bucket        = "logs-${random_pet.this.id}"
-  acl           = "log-delivery-write" // @todo: Which ACL for CloudFront?
+  acl           = "log-delivery-write" # @todo: Which ACL for CloudFront?
   force_destroy = true
 }
 
@@ -192,12 +203,12 @@ module "lambda_function" {
 
   # @todo: Missing CloudFront as allowed_triggers?
 
-  //  allowed_triggers = {
-  //    AllowExecutionFromAPIGateway = {
-  //      service = "apigateway"
-  //      arn     = module.api_gateway.this_apigatewayv2_api_execution_arn
-  //    }
-  //  }
+  #    allowed_triggers = {
+  #      AllowExecutionFromAPIGateway = {
+  #        service = "apigateway"
+  #        arn     = module.api_gateway.this_apigatewayv2_api_execution_arn
+  #      }
+  #    }
 }
 
 ##########

@@ -55,6 +55,14 @@ resource "aws_cloudfront_distribution" "this" {
           origin_read_timeout      = lookup(custom_origin_config.value, "origin_read_timeout", null)
         }
       }
+
+      dynamic "custom_header" {
+        for_each = lookup(origin.value, "custom_header", [])
+        content {
+          name  = custom_header.value.name
+          value = custom_header.value.value
+        }
+      }
     }
   }
 
