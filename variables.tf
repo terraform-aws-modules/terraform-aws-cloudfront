@@ -124,8 +124,3 @@ variable "cache_behavior" {
   default     = null
 }
 
-variable "custom_header" {
-  description = "Parameters that specify header data that will be sent to the origin."
-  type        = list(map(string))
-  default     = []
-}

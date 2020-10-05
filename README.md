@@ -114,7 +114,6 @@ module "cdn" {
 | create\_distribution | Controls if CloudFront distribution should be created | `bool` | `true` | no |
 | create\_origin\_access\_identity | Controls if CloudFront origin access identity should be created | `bool` | `false` | no |
 | custom\_error\_response | One or more custom error response elements | `any` | `{}` | no |
-| custom\_header | Parameters that specify header data that will be sent to the origin. | `list(map(string))` | `[]` | no |
 | default\_root\_object | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL. | `string` | `null` | no |
 | enabled | Whether the distribution is enabled to accept end user requests for content. | `bool` | `true` | no |
 | geo\_restriction | The restriction configuration for this distribution (geo\_restrictions) | `any` | `{}` | no |

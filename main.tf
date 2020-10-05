@@ -57,7 +57,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "custom_header" {
-        for_each = var.custom_header
+        for_each = length(lookup(origin.value, "custom_header", "")) == 0 ? [] : [lookup(origin.value, "custom_header", "")]
         content {
           name  = custom_header.value.name
           value = custom_header.value.value
