@@ -4,6 +4,7 @@ Configuration in this directory creates CloudFront distribution which demos such
 - access logging
 - origins and origin groups
 - caching behaviours
+- Origin Access Identities (with S3 bucket policy)
 - Lambda@Edge
 - ACM certificate
 - Route53 record
@@ -25,8 +26,8 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.6, < 0.14 |
-| aws | >= 2.67, < 4.0 |
+| terraform | >= 0.12.6 |
+| aws | >= 3.0 |
 | null | ~> 2 |
 | random | ~> 2 |
 
@@ -34,7 +35,7 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.67, < 4.0 |
+| aws | >= 3.0 |
 | null | ~> 2 |
 | random | ~> 2 |
 
