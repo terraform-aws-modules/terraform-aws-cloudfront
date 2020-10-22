@@ -3,9 +3,16 @@
 
 
 
+<a name="v1.2.0"></a>
+## [v1.2.0] - 2020-10-22
+
+- feat: Adds outputs for origin access identities ([#5](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/5))
+
+
 <a name="v1.1.0"></a>
 ## [v1.1.0] - 2020-10-12
 
+- Updated CHANGELOG
 - fix: Updates aws provider to at least 3.0.0 ([#4](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/4))
 - Updated example for logs delivery
 
@@ -38,7 +45,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v0.3.0...v1.0.0
 [v0.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v0.2.0...v0.3.0
