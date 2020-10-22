@@ -246,6 +246,26 @@ module "records" {
   ]
 }
 
+###########################
+# Origin Access Identities
+###########################
+data "aws_iam_policy_document" "s3_policy" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${module.s3_one.this_s3_bucket_arn}/uploads/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [for k, v in module.cloudfront.this_cloudfront_origin_access_identity_iam_arns : v]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = module.s3_one.this_s3_bucket_id
+  policy = data.aws_iam_policy_document.s3_policy.json
+}
+
 ########
 # Extra
 ########
