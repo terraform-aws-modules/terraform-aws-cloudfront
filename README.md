@@ -144,8 +144,9 @@ module "cdn" {
 | this\_cloudfront\_distribution\_last\_modified\_time | The date and time the distribution was last modified. |
 | this\_cloudfront\_distribution\_status | The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system. |
 | this\_cloudfront\_distribution\_trusted\_signers | List of nested attributes for active trusted signers, if the distribution is set up to serve private content with signed URLs |
-| this\_cloudfront\_origin\_access\_identity\_iam\_arns | The IAM arns of the origin access identities created |
-| this\_cloudfront\_origin\_access\_identity\_ids | The IDS of the origin access identities created |
+| this\_cloudfront\_origin\_access\_identities | Map of origin access identities created |
+| this\_cloudfront\_origin\_access\_identity\_iam\_arns | List of IAM arns of the origin access identities created |
+| this\_cloudfront\_origin\_access\_identity\_ids | List of IDS of the origin access identities created |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
