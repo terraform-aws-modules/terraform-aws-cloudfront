@@ -256,7 +256,7 @@ data "aws_iam_policy_document" "s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = [for k, v in module.cloudfront.this_cloudfront_origin_access_identity_iam_arns : v]
+      identifiers = module.cloudfront.this_cloudfront_origin_access_identity_iam_arns
     }
   }
 }
