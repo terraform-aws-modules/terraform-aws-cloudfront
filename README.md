@@ -108,27 +108,27 @@ module "cdn" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| aliases | Extra CNAMEs (alternate domain names), if any, for this distribution. | `list(string)` | `null` | no |
-| cache\_behavior | The map of cache behaviors for this distribution. Key `default` will be used as the default cache behavior, all other keys will be used as ordered list of cache behaviors. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0. | `any` | `null` | no |
-| comment | Any comments you want to include about the distribution. | `string` | `null` | no |
+| aliases | Extra CNAMEs (alternate domain names), if any, for this distribution. | `list(string)` | `null` | yes |
+| cache\_behavior | The map of cache behaviors for this distribution. Key `default` will be used as the default cache behavior, all other keys will be used as ordered list of cache behaviors. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0. | `any` | `null` | yes |
+| comment | Any comments you want to include about the distribution. | `string` | `null` | yes |
 | create\_distribution | Controls if CloudFront distribution should be created | `bool` | `true` | no |
 | create\_origin\_access\_identity | Controls if CloudFront origin access identity should be created | `bool` | `false` | no |
 | custom\_error\_response | One or more custom error response elements | `any` | `{}` | no |
-| default\_root\_object | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL. | `string` | `null` | no |
+| default\_root\_object | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL. | `string` | `null` | yes |
 | enabled | Whether the distribution is enabled to accept end user requests for content. | `bool` | `true` | no |
 | geo\_restriction | The restriction configuration for this distribution (geo\_restrictions) | `any` | `{}` | no |
 | http\_version | The maximum HTTP version to support on the distribution. Allowed values are http1.1 and http2. The default is http2. | `string` | `"http2"` | no |
-| is\_ipv6\_enabled | Whether the IPv6 is enabled for the distribution. | `bool` | `null` | no |
+| is\_ipv6\_enabled | Whether the IPv6 is enabled for the distribution. | `bool` | `null` | yes |
 | logging\_config | The logging configuration that controls how logs are written to your distribution (maximum one). | `any` | `{}` | no |
-| origin | One or more origins for this distribution (multiples allowed). | `any` | `null` | no |
+| origin | One or more origins for this distribution (multiples allowed). | `any` | `null` | yes |
 | origin\_access\_identities | Map of CloudFront origin access identities (value as a comment) | `map(string)` | `{}` | no |
 | origin\_group | One or more origin\_group for this distribution (multiples allowed). | `any` | `{}` | no |
-| price\_class | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | no |
+| price\_class | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | yes |
 | retain\_on\_delete | Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards. | `bool` | `false` | no |
-| tags | A map of tags to assign to the resource. | `map(string)` | `null` | no |
-| viewer\_certificate | The SSL configuration for this distribution | `any` | `null` | no |
+| tags | A map of tags to assign to the resource. | `map(string)` | `null` | yes |
+| viewer\_certificate | The SSL configuration for this distribution | `any` | `null` | yes |
 | wait\_for\_deployment | If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this tofalse will skip the process. | `bool` | `true` | no |
-| web\_acl\_id | If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL. | `string` | `null` | no |
+| web\_acl\_id | If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL. | `string` | `null` | yes |
 
 ## Outputs
 
