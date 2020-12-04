@@ -3,9 +3,16 @@
 
 
 
+<a name="v1.3.0"></a>
+## [v1.3.0] - 2020-12-04
+
+- refactor: change origin access identity output types ([#6](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/6))
+
+
 <a name="v1.2.0"></a>
 ## [v1.2.0] - 2020-10-22
 
+- Updated CHANGELOG
 - feat: Adds outputs for origin access identities ([#5](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/5))
 
 
@@ -45,7 +52,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.3.0...HEAD
+[v1.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v0.3.0...v1.0.0
