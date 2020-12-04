@@ -47,3 +47,18 @@ output "this_cloudfront_distribution_hosted_zone_id" {
   description = "The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to."
   value       = module.cloudfront.this_cloudfront_distribution_hosted_zone_id
 }
+
+output "this_cloudfront_origin_access_identities" {
+  description = "The origin access identities created"
+  value       = module.cloudfront.this_cloudfront_origin_access_identities
+}
+
+output "this_cloudfront_origin_access_identity_ids" {
+  description = "The IDS of the origin access identities created"
+  value       = module.cloudfront.this_cloudfront_origin_access_identity_ids
+}
+
+output "this_cloudfront_origin_access_identity_iam_arns" {
+  description = "The IAM arns of the origin access identities created"
+  value       = module.cloudfront.this_cloudfront_origin_access_identity_iam_arns
+}
