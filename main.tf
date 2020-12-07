@@ -177,20 +177,13 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  dynamic "viewer_certificate" {
-    for_each = var.viewer_certificate == null ? [{
-      cloudfront_default_certificate = true
-      minimum_protocol_version       = "TLSv1"
-    }] : [var.viewer_certificate]
+  viewer_certificate {
+    acm_certificate_arn            = lookup(var.viewer_certificate, "acm_certificate_arn", null)
+    cloudfront_default_certificate = lookup(var.viewer_certificate, "cloudfront_default_certificate", null)
+    iam_certificate_id             = lookup(var.viewer_certificate, "iam_certificate_id", null)
 
-    content {
-      acm_certificate_arn            = lookup(var.viewer_certificate, "acm_certificate_arn", null)
-      cloudfront_default_certificate = lookup(var.viewer_certificate, "cloudfront_default_certificate", null)
-      iam_certificate_id             = lookup(var.viewer_certificate, "iam_certificate_id", null)
-
-      minimum_protocol_version = lookup(var.viewer_certificate, "minimum_protocol_version", "TLSv1")
-      ssl_support_method       = lookup(var.viewer_certificate, "ssl_support_method", null)
-    }
+    minimum_protocol_version = lookup(var.viewer_certificate, "minimum_protocol_version", "TLSv1")
+    ssl_support_method       = lookup(var.viewer_certificate, "ssl_support_method", null)
   }
 
   dynamic "custom_error_response" {
