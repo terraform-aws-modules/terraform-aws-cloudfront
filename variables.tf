@@ -97,7 +97,10 @@ variable "origin_group" {
 variable "viewer_certificate" {
   description = "The SSL configuration for this distribution"
   type        = any
-  default     = null
+  default = {
+    cloudfront_default_certificate = true
+    minimum_protocol_version       = "TLSv1"
+  }
 }
 
 variable "geo_restriction" {
