@@ -126,7 +126,7 @@ module "cdn" {
 | price\_class | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | no |
 | retain\_on\_delete | Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards. | `bool` | `false` | no |
 | tags | A map of tags to assign to the resource. | `map(string)` | `null` | no |
-| viewer\_certificate | The SSL configuration for this distribution | `any` | `null` | no |
+| viewer\_certificate | The SSL configuration for this distribution | `any` | <pre>{<br>  "cloudfront_default_certificate": true,<br>  "minimum_protocol_version": "TLSv1"<br>}</pre> | no |
 | wait\_for\_deployment | If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this tofalse will skip the process. | `bool` | `true` | no |
 | web\_acl\_id | If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL. | `string` | `null` | no |
 
@@ -144,9 +144,9 @@ module "cdn" {
 | this\_cloudfront\_distribution\_last\_modified\_time | The date and time the distribution was last modified. |
 | this\_cloudfront\_distribution\_status | The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system. |
 | this\_cloudfront\_distribution\_trusted\_signers | List of nested attributes for active trusted signers, if the distribution is set up to serve private content with signed URLs |
-| this\_cloudfront\_origin\_access\_identities | Map of origin access identities created |
-| this\_cloudfront\_origin\_access\_identity\_iam\_arns | List of IAM arns of the origin access identities created |
-| this\_cloudfront\_origin\_access\_identity\_ids | List of IDS of the origin access identities created |
+| this\_cloudfront\_origin\_access\_identities | The origin access identities created |
+| this\_cloudfront\_origin\_access\_identity\_iam\_arns | The IAM arns of the origin access identities created |
+| this\_cloudfront\_origin\_access\_identity\_ids | The IDS of the origin access identities created |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
