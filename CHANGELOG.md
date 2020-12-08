@@ -3,9 +3,16 @@
 
 
 
+<a name="v1.4.0"></a>
+## [v1.4.0] - 2020-12-08
+
+- fix: Fixed viewer_certificate variable ([#9](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/9))
+
+
 <a name="v1.3.0"></a>
 ## [v1.3.0] - 2020-12-04
 
+- Updated CHANGELOG
 - refactor: change origin access identity output types ([#6](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/6))
 
 
@@ -52,7 +59,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.4.0...HEAD
+[v1.4.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.1.0...v1.2.0
 [v1.1.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.0.0...v1.1.0
