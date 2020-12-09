@@ -182,7 +182,7 @@ resource "aws_cloudfront_distribution" "this" {
     cloudfront_default_certificate = lookup(var.viewer_certificate, "cloudfront_default_certificate", null)
     iam_certificate_id             = lookup(var.viewer_certificate, "iam_certificate_id", null)
 
-    minimum_protocol_version = lookup(var.viewer_certificate, "minimum_protocol_version", "TLSv1")
+    minimum_protocol_version = lookup(var.viewer_certificate, "minimum_protocol_version", "TLSv1.2_2019")
     ssl_support_method       = lookup(var.viewer_certificate, "ssl_support_method", null)
   }
 
