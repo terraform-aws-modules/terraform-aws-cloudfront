@@ -91,7 +91,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "default_cache_behavior" {
-    for_each = [for k, v in var.cache_behavior : v if k == "default"]
+    for_each = [var.default_cache_behavior]
     iterator = i
 
     content {
@@ -134,7 +134,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = [for k, v in var.cache_behavior : v if k != "default"]
+    for_each = var.ordered_cache_behavior
     iterator = i
 
     content {
