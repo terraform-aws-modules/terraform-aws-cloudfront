@@ -130,5 +130,5 @@ variable "default_cache_behavior" {
 variable "ordered_cache_behavior" {
   description = "An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0."
   type        = list(any)
-  default     = null
+  default     = []
 }
