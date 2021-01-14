@@ -3,9 +3,17 @@
 
 
 
+<a name="v1.5.0"></a>
+## [v1.5.0] - 2021-01-14
+
+- Updated README (after [#12](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/12))
+- fix: preserve ordering of cache behaviors ([#12](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/12))
+
+
 <a name="v1.4.0"></a>
 ## [v1.4.0] - 2020-12-08
 
+- Updated CHANGELOG
 - fix: Fixed viewer_certificate variable ([#9](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/9))
 
 
@@ -59,7 +67,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.5.0...HEAD
+[v1.5.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.1.0...v1.2.0
