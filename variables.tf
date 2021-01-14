@@ -121,9 +121,14 @@ variable "custom_error_response" {
   default     = {}
 }
 
-variable "cache_behavior" {
-  description = "The map of cache behaviors for this distribution. Key `default` will be used as the default cache behavior, all other keys will be used as ordered list of cache behaviors. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0."
+variable "default_cache_behavior" {
+  description = "The default cache behavior for this distribution"
   type        = any
   default     = null
 }
 
+variable "ordered_cache_behavior" {
+  description = "An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0."
+  type        = list(any)
+  default     = []
+}

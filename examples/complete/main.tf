@@ -77,31 +77,31 @@ module "cloudfront" {
     }
   }
 
-  cache_behavior = {
-    default = {
-      target_origin_id       = "appsync"
-      viewer_protocol_policy = "allow-all"
+  default_cache_behavior = {
+    target_origin_id       = "appsync"
+    viewer_protocol_policy = "allow-all"
 
-      allowed_methods = ["GET", "HEAD", "OPTIONS"]
-      cached_methods  = ["GET", "HEAD"]
-      compress        = true
-      query_string    = true
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+    compress        = true
+    query_string    = true
 
-      lambda_function_association = {
+    lambda_function_association = {
 
-        # Valid keys: viewer-request, origin-request, viewer-response, origin-response
-        viewer-request = {
-          lambda_arn   = module.lambda_function.this_lambda_function_qualified_arn
-          include_body = true
-        }
+      # Valid keys: viewer-request, origin-request, viewer-response, origin-response
+      viewer-request = {
+        lambda_arn   = module.lambda_function.this_lambda_function_qualified_arn
+        include_body = true
+      }
 
-        origin-request = {
-          lambda_arn = module.lambda_function.this_lambda_function_qualified_arn
-        }
+      origin-request = {
+        lambda_arn = module.lambda_function.this_lambda_function_qualified_arn
       }
     }
+  }
 
-    s3 = {
+  ordered_cache_behavior = [
+    {
       path_pattern           = "/static/*"
       target_origin_id       = "s3_one"
       viewer_protocol_policy = "redirect-to-https"
@@ -111,7 +111,7 @@ module "cloudfront" {
       compress        = true
       query_string    = true
     }
-  }
+  ]
 
   viewer_certificate = {
     acm_certificate_arn = module.acm.this_acm_certificate_arn
