@@ -27,7 +27,7 @@ Note that this example may create resources which cost money. Run `terraform des
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6 |
-| aws | >= 3.0 |
+| aws | >= 3.28.0 |
 | null | ~> 2 |
 | random | ~> 2 |
 
@@ -35,9 +35,32 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.0 |
+| aws | >= 3.28.0 |
 | null | ~> 2 |
 | random | ~> 2 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| acm | terraform-aws-modules/acm/aws | ~> 2.0 |
+| cloudfront | ../../ |  |
+| lambda_function | terraform-aws-modules/lambda/aws | ~> 1.0 |
+| log_bucket | terraform-aws-modules/s3-bucket/aws |  |
+| records | terraform-aws-modules/route53/aws//modules/records |  |
+| s3_one | terraform-aws-modules/s3-bucket/aws |  |
+
+## Resources
+
+| Name |
+|------|
+| [aws_canonical_user_id](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/data-sources/canonical_user_id) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/data-sources/iam_policy_document) |
+| [aws_route53_zone](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/data-sources/route53_zone) |
+| [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/resources/s3_bucket_policy) |
+| [null_data_source](https://registry.terraform.io/providers/hashicorp/null/2/docs/data-sources/data_source) |
+| [null_resource](https://registry.terraform.io/providers/hashicorp/null/2/docs/resources/resource) |
+| [random_pet](https://registry.terraform.io/providers/hashicorp/random/2/docs/resources/pet) |
 
 ## Inputs
 
@@ -60,5 +83,4 @@ No input.
 | this\_cloudfront\_origin\_access\_identities | The origin access identities created |
 | this\_cloudfront\_origin\_access\_identity\_iam\_arns | The IAM arns of the origin access identities created |
 | this\_cloudfront\_origin\_access\_identity\_ids | The IDS of the origin access identities created |
-
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
