@@ -96,13 +96,13 @@ module "cdn" {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6 |
-| aws | >= 3.0 |
+| aws | >= 3.28.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.0 |
+| aws | >= 3.28.0 |
 
 ## Inputs
 
