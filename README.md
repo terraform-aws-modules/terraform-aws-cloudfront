@@ -96,13 +96,24 @@ module "cdn" {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12.6 |
-| aws | >= 3.0 |
+| aws | >= 3.28.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.0 |
+| aws | >= 3.28.0 |
+
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/resources/cloudfront_distribution) |
+| [aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/resources/cloudfront_origin_access_identity) |
 
 ## Inputs
 
@@ -148,7 +159,6 @@ module "cdn" {
 | this\_cloudfront\_origin\_access\_identities | The origin access identities created |
 | this\_cloudfront\_origin\_access\_identity\_iam\_arns | The IAM arns of the origin access identities created |
 | this\_cloudfront\_origin\_access\_identity\_ids | The IDS of the origin access identities created |
-
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Authors
