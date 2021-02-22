@@ -3,9 +3,16 @@
 
 
 
+<a name="v1.6.0"></a>
+## [v1.6.0] - 2021-02-22
+
+- feat: add origin_request_policy_id & cache_policy_id to caching ([#17](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/17))
+
+
 <a name="v1.5.0"></a>
 ## [v1.5.0] - 2021-01-14
 
+- Updated CHANGELOG
 - Updated README (after [#12](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/12))
 - fix: preserve ordering of cache behaviors ([#12](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/12))
 
@@ -67,7 +74,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.6.0...HEAD
+[v1.6.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.2.0...v1.3.0
