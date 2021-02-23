@@ -9,7 +9,7 @@ These types of resources supported:
 
 ## Terraform versions
 
-Only Terraform 0.12 is supported.
+Only Terraform 0.13 or newer is supported.
 
 ## Usage
 
@@ -95,7 +95,7 @@ module "cdn" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.6 |
+| terraform | >= 0.13.0 |
 | aws | >= 3.28.0 |
 
 ## Providers
