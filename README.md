@@ -112,8 +112,8 @@ No Modules.
 
 | Name |
 |------|
-| [aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/resources/cloudfront_distribution) |
-| [aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/resources/cloudfront_origin_access_identity) |
+| [aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) |
+| [aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity) |
 
 ## Inputs
 
