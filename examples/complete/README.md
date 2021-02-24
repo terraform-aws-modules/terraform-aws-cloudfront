@@ -26,7 +26,7 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12.6 |
+| terraform | >= 0.13.0 |
 | aws | >= 3.28.0 |
 | null | ~> 2 |
 | random | ~> 2 |
@@ -54,13 +54,13 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name |
 |------|
-| [aws_canonical_user_id](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/data-sources/canonical_user_id) |
-| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/data-sources/iam_policy_document) |
-| [aws_route53_zone](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/data-sources/route53_zone) |
-| [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/3.28.0/docs/resources/s3_bucket_policy) |
-| [null_data_source](https://registry.terraform.io/providers/hashicorp/null/2/docs/data-sources/data_source) |
-| [null_resource](https://registry.terraform.io/providers/hashicorp/null/2/docs/resources/resource) |
-| [random_pet](https://registry.terraform.io/providers/hashicorp/random/2/docs/resources/pet) |
+| [aws_canonical_user_id](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/canonical_user_id) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
+| [aws_route53_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) |
+| [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) |
+| [null_data_source](https://registry.terraform.io/providers/hashicorp/null/latest/docs/data-sources/data_source) |
+| [null_resource](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) |
+| [random_pet](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) |
 
 ## Inputs
 
