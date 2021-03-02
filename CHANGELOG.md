@@ -3,9 +3,16 @@
 
 
 
+<a name="v1.8.0"></a>
+## [v1.8.0] - 2021-03-02
+
+- fix: Removing forwarded_values if cache_policy_id exists ([#21](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/21))
+
+
 <a name="v1.7.0"></a>
 ## [v1.7.0] - 2021-03-01
 
+- Updated CHANGELOG
 - fix: Update syntax for Terraform 0.15 ([#23](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/23))
 - feat: Updated minimum required version of Terraform to 0.13 ([#19](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/19))
 - chore: add ci-cd workflow for pre-commit checks ([#18](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/18))
@@ -83,7 +90,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.8.0...HEAD
+[v1.8.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.7.0...v1.8.0
 [v1.7.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.6.0...v1.7.0
 [v1.6.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.4.0...v1.5.0
