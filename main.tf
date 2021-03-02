@@ -112,14 +112,18 @@ resource "aws_cloudfront_distribution" "this" {
       default_ttl = lookup(i.value, "default_ttl", null)
       max_ttl     = lookup(i.value, "max_ttl", null)
 
-      forwarded_values {
-        query_string            = lookup(i.value, "query_string", false)
-        query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-        headers                 = lookup(i.value, "headers", null)
+      dynamic "forwarded_values" {
+        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
 
-        cookies {
-          forward           = lookup(i.value, "cookies_forward", "none")
-          whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
+        content {
+          query_string            = lookup(i.value, "query_string", false)
+          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
+          headers                 = lookup(i.value, "headers", null)
+
+          cookies {
+            forward           = lookup(i.value, "cookies_forward", "none")
+            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
+          }
         }
       }
 
@@ -159,14 +163,18 @@ resource "aws_cloudfront_distribution" "this" {
       default_ttl = lookup(i.value, "default_ttl", null)
       max_ttl     = lookup(i.value, "max_ttl", null)
 
-      forwarded_values {
-        query_string            = lookup(i.value, "query_string", false)
-        query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-        headers                 = lookup(i.value, "headers", null)
+      dynamic "forwarded_values" {
+        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
 
-        cookies {
-          forward           = lookup(i.value, "cookies_forward", "none")
-          whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
+        content {
+          query_string            = lookup(i.value, "query_string", false)
+          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
+          headers                 = lookup(i.value, "headers", null)
+
+          cookies {
+            forward           = lookup(i.value, "cookies_forward", "none")
+            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
+          }
         }
       }
 
