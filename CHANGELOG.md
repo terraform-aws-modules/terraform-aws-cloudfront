@@ -3,9 +3,17 @@
 
 
 
+<a name="v1.9.0"></a>
+## [v1.9.0] - 2021-03-22
+
+- fix: Fixed type of ordered_cache_behavior ([#26](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/26))
+- chore: align ci-cd static checks to use individual minimum Terraform versions ([#24](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/24))
+
+
 <a name="v1.8.0"></a>
 ## [v1.8.0] - 2021-03-02
 
+- Updated CHANGELOG
 - fix: Removing forwarded_values if cache_policy_id exists ([#21](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/21))
 
 
@@ -90,7 +98,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.9.0...HEAD
+[v1.9.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.8.0...v1.9.0
 [v1.8.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.7.0...v1.8.0
 [v1.7.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.6.0...v1.7.0
 [v1.6.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.5.0...v1.6.0
