@@ -131,7 +131,7 @@ No Modules.
 | http\_version | The maximum HTTP version to support on the distribution. Allowed values are http1.1 and http2. The default is http2. | `string` | `"http2"` | no |
 | is\_ipv6\_enabled | Whether the IPv6 is enabled for the distribution. | `bool` | `null` | no |
 | logging\_config | The logging configuration that controls how logs are written to your distribution (maximum one). | `any` | `{}` | no |
-| ordered\_cache\_behavior | An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0. | `list(any)` | `[]` | no |
+| ordered\_cache\_behavior | An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0. | `any` | `[]` | no |
 | origin | One or more origins for this distribution (multiples allowed). | `any` | `null` | no |
 | origin\_access\_identities | Map of CloudFront origin access identities (value as a comment) | `map(string)` | `{}` | no |
 | origin\_group | One or more origin\_group for this distribution (multiples allowed). | `any` | `{}` | no |
