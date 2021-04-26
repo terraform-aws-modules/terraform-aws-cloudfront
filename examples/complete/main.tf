@@ -193,13 +193,6 @@ resource "null_resource" "download_package" {
   }
 }
 
-data "null_data_source" "downloaded_package" {
-  inputs = {
-    id       = null_resource.download_package.id
-    filename = local.downloaded
-  }
-}
-
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "~> 1.0"
@@ -213,7 +206,7 @@ module "lambda_function" {
   lambda_at_edge = true
 
   create_package         = false
-  local_existing_package = data.null_data_source.downloaded_package.outputs["filename"]
+  local_existing_package = local.downloaded
 
   # @todo: Missing CloudFront as allowed_triggers?
 
@@ -239,8 +232,8 @@ module "records" {
       name = local.subdomain
       type = "A"
       alias = {
-        name    = module.cloudfront.this_cloudfront_distribution_domain_name
-        zone_id = module.cloudfront.this_cloudfront_distribution_hosted_zone_id
+        name    = module.cloudfront.cloudfront_distribution_domain_name
+        zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
       }
     },
   ]
@@ -256,7 +249,7 @@ data "aws_iam_policy_document" "s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = module.cloudfront.this_cloudfront_origin_access_identity_iam_arns
+      identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
     }
   }
 }
