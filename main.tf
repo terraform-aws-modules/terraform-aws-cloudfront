@@ -104,7 +104,7 @@ resource "aws_cloudfront_distribution" "this" {
       field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
       smooth_streaming          = lookup(i.value, "smooth_streaming", null)
       trusted_signers           = lookup(i.value, "trusted_signers", null)
-      trusted_key_groups        = [lookup(i.value, "trusted_key_groups", "")]
+      trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
       cache_policy_id          = lookup(i.value, "cache_policy_id", null)
       origin_request_policy_id = lookup(i.value, "origin_request_policy_id", null)
