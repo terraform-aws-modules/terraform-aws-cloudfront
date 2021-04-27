@@ -3,9 +3,16 @@
 
 
 
+<a name="v2.1.0"></a>
+## [v2.1.0] - 2021-04-27
+
+- feat: added support of trusted_key_groups ([#33](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/33))
+
+
 <a name="v2.0.0"></a>
 ## [v2.0.0] - 2021-04-26
 
+- Updated CHANGELOG
 - feat: Shorten outputs (removing this_) ([#34](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/34))
 - chore: update CI/CD workflow for terraform_docs workflow ([#32](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/32))
 - chore: update documentation and pin `terraform_docs` version to avoid future changes ([#27](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/27))
@@ -107,7 +114,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.1.0...HEAD
+[v2.1.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.9.0...v2.0.0
 [v1.9.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.8.0...v1.9.0
 [v1.8.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.7.0...v1.8.0
