@@ -3,9 +3,18 @@
 
 
 
+<a name="v2.0.0"></a>
+## [v2.0.0] - 2021-04-26
+
+- feat: Shorten outputs (removing this_) ([#34](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/34))
+- chore: update CI/CD workflow for terraform_docs workflow ([#32](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/32))
+- chore: update documentation and pin `terraform_docs` version to avoid future changes ([#27](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/27))
+
+
 <a name="v1.9.0"></a>
 ## [v1.9.0] - 2021-03-22
 
+- Updated CHANGELOG
 - fix: Fixed type of ordered_cache_behavior ([#26](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/26))
 - chore: align ci-cd static checks to use individual minimum Terraform versions ([#24](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/24))
 
@@ -98,7 +107,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.0.0...HEAD
+[v2.0.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.9.0...v2.0.0
 [v1.9.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.8.0...v1.9.0
 [v1.8.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.7.0...v1.8.0
 [v1.7.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.6.0...v1.7.0
