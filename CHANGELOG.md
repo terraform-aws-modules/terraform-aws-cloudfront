@@ -3,9 +3,16 @@
 
 
 
+<a name="v2.2.0"></a>
+## [v2.2.0] - 2021-04-30
+
+- feat: Adding support for trusted_key_groups in ordered_cache_behavior ([#35](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/35))
+
+
 <a name="v2.1.0"></a>
 ## [v2.1.0] - 2021-04-27
 
+- Updated CHANGELOG
 - feat: added support of trusted_key_groups ([#33](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/33))
 
 
@@ -114,7 +121,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.2.0...HEAD
+[v2.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.9.0...v2.0.0
 [v1.9.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.8.0...v1.9.0
