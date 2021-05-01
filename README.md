@@ -2,10 +2,6 @@
 
 Terraform module which creates AWS CloudFront resources with all (or almost all) features provided by Terraform AWS provider.
 
-## Terraform versions
-
-Only Terraform 0.13 or newer is supported.
-
 ## Usage
 
 ### CloudFront distribution with versioning enabled
@@ -50,7 +46,7 @@ module "cdn" {
       }
     }
   }
-  
+
   default_cache_behavior = {
     target_origin_id       = "something"
     viewer_protocol_policy = "allow-all"
@@ -60,7 +56,7 @@ module "cdn" {
     compress        = true
     query_string    = true
   }
-  
+
   ordered_cache_behavior = [
     {
       path_pattern           = "/static/*"
@@ -83,7 +79,7 @@ module "cdn" {
 
 ## Examples:
 
-* [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, ACM Certificate, Route53 Records.
+- [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, ACM Certificate, Route53 Records.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -158,10 +154,8 @@ No modules.
 
 ## Authors
 
-Module managed by [Anton Babenko](https://github.com/antonbabenko).
-
-Please reach out to [Betajob](https://www.betajob.com/) if you are looking for commercial support for your Terraform, AWS, or serverless project.
+Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/graphs/contributors).
 
 ## License
 
-Apache 2 Licensed. See LICENSE for full details.
+Apache 2 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/LICENSE) for full details.
