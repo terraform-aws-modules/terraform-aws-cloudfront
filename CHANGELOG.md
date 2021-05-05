@@ -3,9 +3,17 @@
 
 
 
+<a name="v2.3.0"></a>
+## [v2.3.0] - 2021-05-05
+
+- fix: Use empty origin_path by default ([#38](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/38))
+- chore: update CI/CD to use stable `terraform-docs` release artifact and discoverable Apache2.0 license ([#36](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/36))
+
+
 <a name="v2.2.0"></a>
 ## [v2.2.0] - 2021-04-30
 
+- Updated CHANGELOG
 - feat: Adding support for trusted_key_groups in ordered_cache_behavior ([#35](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/35))
 
 
@@ -121,7 +129,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.3.0...HEAD
+[v2.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.2.0...v2.3.0
 [v2.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v1.9.0...v2.0.0
