@@ -39,7 +39,7 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       domain_name = origin.value.domain_name
       origin_id   = lookup(origin.value, "origin_id", origin.key)
-      origin_path = lookup(origin.value, "origin_path", null)
+      origin_path = lookup(origin.value, "origin_path", "")
 
       dynamic "s3_origin_config" {
         for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
