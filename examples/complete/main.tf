@@ -110,6 +110,17 @@ module "cloudfront" {
       cached_methods  = ["GET", "HEAD"]
       compress        = true
       query_string    = true
+
+      function_association = {
+        # Valid keys: viewer-request, viewer-response
+        viewer-request = {
+          function_arn = aws_cloudfront_function.example.arn
+        }
+
+        viewer-response = {
+          function_arn = aws_cloudfront_function.example.arn
+        }
+      }
     }
   ]
 
@@ -270,3 +281,8 @@ resource "random_pet" "this" {
   length = 2
 }
 
+resource "aws_cloudfront_function" "example" {
+  name    = "example-${random_pet.this.id}"
+  runtime = "cloudfront-js-1.0"
+  code    = file("example-function.js")
+}
