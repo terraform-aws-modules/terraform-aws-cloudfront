@@ -101,7 +101,7 @@ module "cloudfront" {
 
     function_association = {
       # Valid keys: viewer-request, viewer-response
-      viewer-response = {
+      viewer-request = {
         function_arn = aws_cloudfront_function.example.arn
       }
     }
