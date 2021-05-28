@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 locals {
-  domain_name = "beautypie-sandbox.com" # trimsuffix(data.aws_route53_zone.this.name, ".")
+  domain_name = "terraform-aws-modules.modules.tf" # trimsuffix(data.aws_route53_zone.this.name, ".")
   subdomain   = "cdn"
 }
 
