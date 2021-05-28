@@ -138,6 +138,16 @@ resource "aws_cloudfront_distribution" "this" {
           include_body = lookup(l.value, "include_body", null)
         }
       }
+
+      dynamic "function_association" {
+        for_each = lookup(i.value, "function_association", [])
+        iterator = f
+
+        content {
+          event_type   = f.key
+          function_arn = f.value.lambda_arn
+        }
+      }
     }
   }
 
@@ -188,6 +198,16 @@ resource "aws_cloudfront_distribution" "this" {
           event_type   = l.key
           lambda_arn   = l.value.lambda_arn
           include_body = lookup(l.value, "include_body", null)
+        }
+      }
+
+      dynamic "function_association" {
+        for_each = lookup(i.value, "function_association", [])
+        iterator = f
+
+        content {
+          event_type   = f.key
+          function_arn = f.value.lambda_arn
         }
       }
     }

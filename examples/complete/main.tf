@@ -98,6 +98,13 @@ module "cloudfront" {
         lambda_arn = module.lambda_function.lambda_function_qualified_arn
       }
     }
+
+    function_association = {
+      # Valid keys: viewer-request, viewer-response
+      viewer-response = {
+        function_arn = aws_cloudfront_function.example.arn
+      }
+    }
   }
 
   ordered_cache_behavior = [
@@ -270,3 +277,8 @@ resource "random_pet" "this" {
   length = 2
 }
 
+resource "aws_cloudfront_function" "example" {
+  name    = "example"
+  runtime = "cloudfront-js-1.0"
+  code    = file("example-function.js")
+}
