@@ -3,9 +3,16 @@
 
 
 
+<a name="v2.5.0"></a>
+## [v2.5.0] - 2021-05-28
+
+- feat: Support for CloudFront Functions ([#41](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/41))
+
+
 <a name="v2.4.0"></a>
 ## [v2.4.0] - 2021-05-07
 
+- Updated CHANGELOG
 - fix: Use empty list for headers by default instead of null ([#39](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/39))
 
 
@@ -136,7 +143,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.5.0...HEAD
+[v2.5.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.4.0...v2.5.0
 [v2.4.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.3.0...v2.4.0
 [v2.3.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.2.0...v2.3.0
 [v2.2.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.1.0...v2.2.0
