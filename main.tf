@@ -129,7 +129,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
+        for_each = lookup(i.value, "lambda_function_association", {})
         iterator = l
 
         content {
@@ -181,7 +181,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
+        for_each = lookup(i.value, "lambda_function_association", {})
         iterator = l
 
         content {
