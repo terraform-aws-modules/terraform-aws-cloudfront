@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 locals {
-  domain_name = "terraform-aws-modules.modules.tf" # trimsuffix(data.aws_route53_zone.this.name, ".")
+  domain_name = "beautypie-sandbox.com" # trimsuffix(data.aws_route53_zone.this.name, ".")
   subdomain   = "cdn"
 }
 
@@ -96,17 +96,6 @@ module "cloudfront" {
 
       origin-request = {
         lambda_arn = module.lambda_function.lambda_function_qualified_arn
-      }
-    }
-
-    function_association = {
-      # Valid keys: viewer-request, viewer-response
-      viewer-request = {
-        function_arn = aws_cloudfront_function.example.arn
-      }
-
-      viewer-response = {
-        function_arn = aws_cloudfront_function.example.arn
       }
     }
   }
