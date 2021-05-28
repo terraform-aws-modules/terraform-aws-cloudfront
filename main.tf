@@ -145,7 +145,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = f.value.lambda_arn
+          function_arn = f.value.function_arn
         }
       }
     }
@@ -207,7 +207,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = f.value.lambda_arn
+          function_arn = f.value.function_arn
         }
       }
     }
