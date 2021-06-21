@@ -67,6 +67,15 @@ resource "aws_cloudfront_distribution" "this" {
           value = custom_header.value.value
         }
       }
+
+      dynamic "origin_shield" {
+        for_each = length(lookup(origin.value, "origin_shield", "")) == 0 ? [] : [lookup(origin.value, "origin_shield", "")]
+
+        content {
+          enabled = origin_shield.value.enabled
+          origin_shield_region = origin_shield.value.origin_shield_region
+        }
+      }
     }
   }
 
