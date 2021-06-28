@@ -2,15 +2,6 @@
 
 Terraform module which creates AWS CloudFront resources with all (or almost all) features provided by Terraform AWS provider.
 
-These types of resources supported:
-
-* [CloudFront distribution](https://www.terraform.io/docs/providers/aws/r/cloudfront_distribution.html)
-* [CloudFront origin access itentify](https://www.terraform.io/docs/providers/aws/r/cloudfront_origin_access_identity.html)
-
-## Terraform versions
-
-Only Terraform 0.13 or newer is supported.
-
 ## Usage
 
 ### CloudFront distribution with versioning enabled
@@ -55,7 +46,7 @@ module "cdn" {
       }
     }
   }
-  
+
   default_cache_behavior = {
     target_origin_id       = "something"
     viewer_protocol_policy = "allow-all"
@@ -65,7 +56,7 @@ module "cdn" {
     compress        = true
     query_string    = true
   }
-  
+
   ordered_cache_behavior = [
     {
       path_pattern           = "/static/*"
@@ -88,7 +79,7 @@ module "cdn" {
 
 ## Examples:
 
-* [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, ACM Certificate, Route53 Records.
+- [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, ACM Certificate, Route53 Records.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -96,13 +87,13 @@ module "cdn" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.28.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.41.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.28.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.41.0 |
 
 ## Modules
 
@@ -146,27 +137,25 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_this_cloudfront_distribution_arn"></a> [this\_cloudfront\_distribution\_arn](#output\_this\_cloudfront\_distribution\_arn) | The ARN (Amazon Resource Name) for the distribution. |
-| <a name="output_this_cloudfront_distribution_caller_reference"></a> [this\_cloudfront\_distribution\_caller\_reference](#output\_this\_cloudfront\_distribution\_caller\_reference) | Internal value used by CloudFront to allow future updates to the distribution configuration. |
-| <a name="output_this_cloudfront_distribution_domain_name"></a> [this\_cloudfront\_distribution\_domain\_name](#output\_this\_cloudfront\_distribution\_domain\_name) | The domain name corresponding to the distribution. |
-| <a name="output_this_cloudfront_distribution_etag"></a> [this\_cloudfront\_distribution\_etag](#output\_this\_cloudfront\_distribution\_etag) | The current version of the distribution's information. |
-| <a name="output_this_cloudfront_distribution_hosted_zone_id"></a> [this\_cloudfront\_distribution\_hosted\_zone\_id](#output\_this\_cloudfront\_distribution\_hosted\_zone\_id) | The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. |
-| <a name="output_this_cloudfront_distribution_id"></a> [this\_cloudfront\_distribution\_id](#output\_this\_cloudfront\_distribution\_id) | The identifier for the distribution. |
-| <a name="output_this_cloudfront_distribution_in_progress_validation_batches"></a> [this\_cloudfront\_distribution\_in\_progress\_validation\_batches](#output\_this\_cloudfront\_distribution\_in\_progress\_validation\_batches) | The number of invalidation batches currently in progress. |
-| <a name="output_this_cloudfront_distribution_last_modified_time"></a> [this\_cloudfront\_distribution\_last\_modified\_time](#output\_this\_cloudfront\_distribution\_last\_modified\_time) | The date and time the distribution was last modified. |
-| <a name="output_this_cloudfront_distribution_status"></a> [this\_cloudfront\_distribution\_status](#output\_this\_cloudfront\_distribution\_status) | The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system. |
-| <a name="output_this_cloudfront_distribution_trusted_signers"></a> [this\_cloudfront\_distribution\_trusted\_signers](#output\_this\_cloudfront\_distribution\_trusted\_signers) | List of nested attributes for active trusted signers, if the distribution is set up to serve private content with signed URLs |
-| <a name="output_this_cloudfront_origin_access_identities"></a> [this\_cloudfront\_origin\_access\_identities](#output\_this\_cloudfront\_origin\_access\_identities) | The origin access identities created |
-| <a name="output_this_cloudfront_origin_access_identity_iam_arns"></a> [this\_cloudfront\_origin\_access\_identity\_iam\_arns](#output\_this\_cloudfront\_origin\_access\_identity\_iam\_arns) | The IAM arns of the origin access identities created |
-| <a name="output_this_cloudfront_origin_access_identity_ids"></a> [this\_cloudfront\_origin\_access\_identity\_ids](#output\_this\_cloudfront\_origin\_access\_identity\_ids) | The IDS of the origin access identities created |
+| <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | The ARN (Amazon Resource Name) for the distribution. |
+| <a name="output_cloudfront_distribution_caller_reference"></a> [cloudfront\_distribution\_caller\_reference](#output\_cloudfront\_distribution\_caller\_reference) | Internal value used by CloudFront to allow future updates to the distribution configuration. |
+| <a name="output_cloudfront_distribution_domain_name"></a> [cloudfront\_distribution\_domain\_name](#output\_cloudfront\_distribution\_domain\_name) | The domain name corresponding to the distribution. |
+| <a name="output_cloudfront_distribution_etag"></a> [cloudfront\_distribution\_etag](#output\_cloudfront\_distribution\_etag) | The current version of the distribution's information. |
+| <a name="output_cloudfront_distribution_hosted_zone_id"></a> [cloudfront\_distribution\_hosted\_zone\_id](#output\_cloudfront\_distribution\_hosted\_zone\_id) | The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. |
+| <a name="output_cloudfront_distribution_id"></a> [cloudfront\_distribution\_id](#output\_cloudfront\_distribution\_id) | The identifier for the distribution. |
+| <a name="output_cloudfront_distribution_in_progress_validation_batches"></a> [cloudfront\_distribution\_in\_progress\_validation\_batches](#output\_cloudfront\_distribution\_in\_progress\_validation\_batches) | The number of invalidation batches currently in progress. |
+| <a name="output_cloudfront_distribution_last_modified_time"></a> [cloudfront\_distribution\_last\_modified\_time](#output\_cloudfront\_distribution\_last\_modified\_time) | The date and time the distribution was last modified. |
+| <a name="output_cloudfront_distribution_status"></a> [cloudfront\_distribution\_status](#output\_cloudfront\_distribution\_status) | The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system. |
+| <a name="output_cloudfront_distribution_trusted_signers"></a> [cloudfront\_distribution\_trusted\_signers](#output\_cloudfront\_distribution\_trusted\_signers) | List of nested attributes for active trusted signers, if the distribution is set up to serve private content with signed URLs |
+| <a name="output_cloudfront_origin_access_identities"></a> [cloudfront\_origin\_access\_identities](#output\_cloudfront\_origin\_access\_identities) | The origin access identities created |
+| <a name="output_cloudfront_origin_access_identity_iam_arns"></a> [cloudfront\_origin\_access\_identity\_iam\_arns](#output\_cloudfront\_origin\_access\_identity\_iam\_arns) | The IAM arns of the origin access identities created |
+| <a name="output_cloudfront_origin_access_identity_ids"></a> [cloudfront\_origin\_access\_identity\_ids](#output\_cloudfront\_origin\_access\_identity\_ids) | The IDS of the origin access identities created |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Authors
 
-Module managed by [Anton Babenko](https://github.com/antonbabenko).
-
-Please reach out to [Betajob](https://www.betajob.com/) if you are looking for commercial support for your Terraform, AWS, or serverless project.
+Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/graphs/contributors).
 
 ## License
 
-Apache 2 Licensed. See LICENSE for full details.
+Apache 2 Licensed. See [LICENSE](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/LICENSE) for full details.

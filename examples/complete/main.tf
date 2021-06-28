@@ -34,7 +34,7 @@ module "cloudfront" {
   }
 
   logging_config = {
-    bucket = module.log_bucket.this_s3_bucket_bucket_domain_name
+    bucket = module.log_bucket.s3_bucket_bucket_domain_name
     prefix = "cloudfront"
   }
 
@@ -61,7 +61,7 @@ module "cloudfront" {
     }
 
     s3_one = {
-      domain_name = module.s3_one.this_s3_bucket_bucket_regional_domain_name
+      domain_name = module.s3_one.s3_bucket_bucket_regional_domain_name
       s3_origin_config = {
         origin_access_identity = "s3_bucket_one" # key in `origin_access_identities`
         # cloudfront_access_identity_path = "origin-access-identity/cloudfront/E5IGQAA1QO48Z" # external OAI resource
@@ -90,12 +90,12 @@ module "cloudfront" {
 
       # Valid keys: viewer-request, origin-request, viewer-response, origin-response
       viewer-request = {
-        lambda_arn   = module.lambda_function.this_lambda_function_qualified_arn
+        lambda_arn   = module.lambda_function.lambda_function_qualified_arn
         include_body = true
       }
 
       origin-request = {
-        lambda_arn = module.lambda_function.this_lambda_function_qualified_arn
+        lambda_arn = module.lambda_function.lambda_function_qualified_arn
       }
     }
   }
@@ -110,11 +110,22 @@ module "cloudfront" {
       cached_methods  = ["GET", "HEAD"]
       compress        = true
       query_string    = true
+
+      function_association = {
+        # Valid keys: viewer-request, viewer-response
+        viewer-request = {
+          function_arn = aws_cloudfront_function.example.arn
+        }
+
+        viewer-response = {
+          function_arn = aws_cloudfront_function.example.arn
+        }
+      }
     }
   ]
 
   viewer_certificate = {
-    acm_certificate_arn = module.acm.this_acm_certificate_arn
+    acm_certificate_arn = module.acm.acm_certificate_arn
     ssl_support_method  = "sni-only"
   }
 
@@ -135,7 +146,7 @@ data "aws_route53_zone" "this" {
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   domain_name               = local.domain_name
   zone_id                   = data.aws_route53_zone.this.id
@@ -149,14 +160,16 @@ module "acm" {
 data "aws_canonical_user_id" "current" {}
 
 module "s3_one" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 2.0"
 
   bucket        = "s3-one-${random_pet.this.id}"
   force_destroy = true
 }
 
 module "log_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 2.0"
 
   bucket = "logs-${random_pet.this.id}"
   acl    = null
@@ -193,16 +206,9 @@ resource "null_resource" "download_package" {
   }
 }
 
-data "null_data_source" "downloaded_package" {
-  inputs = {
-    id       = null_resource.download_package.id
-    filename = local.downloaded
-  }
-}
-
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
   function_name = "${random_pet.this.id}-lambda"
   description   = "My awesome lambda function"
@@ -213,14 +219,14 @@ module "lambda_function" {
   lambda_at_edge = true
 
   create_package         = false
-  local_existing_package = data.null_data_source.downloaded_package.outputs["filename"]
+  local_existing_package = local.downloaded
 
   # @todo: Missing CloudFront as allowed_triggers?
 
   #    allowed_triggers = {
   #      AllowExecutionFromAPIGateway = {
   #        service = "apigateway"
-  #        arn     = module.api_gateway.this_apigatewayv2_api_execution_arn
+  #        arn     = module.api_gateway.apigatewayv2_api_execution_arn
   #      }
   #    }
 }
@@ -230,7 +236,8 @@ module "lambda_function" {
 ##########
 
 module "records" {
-  source = "terraform-aws-modules/route53/aws//modules/records"
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 2.0"
 
   zone_id = data.aws_route53_zone.this.zone_id
 
@@ -239,8 +246,8 @@ module "records" {
       name = local.subdomain
       type = "A"
       alias = {
-        name    = module.cloudfront.this_cloudfront_distribution_domain_name
-        zone_id = module.cloudfront.this_cloudfront_distribution_hosted_zone_id
+        name    = module.cloudfront.cloudfront_distribution_domain_name
+        zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
       }
     },
   ]
@@ -252,17 +259,17 @@ module "records" {
 data "aws_iam_policy_document" "s3_policy" {
   statement {
     actions   = ["s3:GetObject"]
-    resources = ["${module.s3_one.this_s3_bucket_arn}/static/*"]
+    resources = ["${module.s3_one.s3_bucket_arn}/static/*"]
 
     principals {
       type        = "AWS"
-      identifiers = module.cloudfront.this_cloudfront_origin_access_identity_iam_arns
+      identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
     }
   }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = module.s3_one.this_s3_bucket_id
+  bucket = module.s3_one.s3_bucket_id
   policy = data.aws_iam_policy_document.s3_policy.json
 }
 
@@ -274,3 +281,8 @@ resource "random_pet" "this" {
   length = 2
 }
 
+resource "aws_cloudfront_function" "example" {
+  name    = "example-${random_pet.this.id}"
+  runtime = "cloudfront-js-1.0"
+  code    = file("example-function.js")
+}
