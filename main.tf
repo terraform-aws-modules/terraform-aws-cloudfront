@@ -37,8 +37,8 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.origin
 
     content {
-      domain_name              = origin.value.domain_name
-      origin_id                = lookup(origin.value, "origin_id", origin.key)
+      domain_name         = origin.value.domain_name
+      origin_id           = lookup(origin.value, "origin_id", origin.key)
       origin_path         = lookup(origin.value, "origin_path", "")
       connection_attempts = lookup(origin.value, "connection_attempts", null)
       connection_timeout  = lookup(origin.value, "connection_timeout", null)
