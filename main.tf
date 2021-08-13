@@ -45,6 +45,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       dynamic "s3_origin_config" {
         for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
+
         content {
           origin_access_identity = lookup(s3_origin_config.value, "cloudfront_access_identity_path", lookup(lookup(aws_cloudfront_origin_access_identity.this, lookup(s3_origin_config.value, "origin_access_identity", ""), {}), "cloudfront_access_identity_path", null))
         }
@@ -52,6 +53,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       dynamic "custom_origin_config" {
         for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
+
         content {
           http_port                = custom_origin_config.value.http_port
           https_port               = custom_origin_config.value.https_port
@@ -64,9 +66,19 @@ resource "aws_cloudfront_distribution" "this" {
 
       dynamic "custom_header" {
         for_each = lookup(origin.value, "custom_header", [])
+
         content {
           name  = custom_header.value.name
           value = custom_header.value.value
+        }
+      }
+
+      dynamic "origin_shield" {
+        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [lookup(origin.value, "origin_shield", {})]
+
+        content {
+          enabled              = origin_shield.value.enabled
+          origin_shield_region = origin_shield.value.origin_shield_region
         }
       }
     }
