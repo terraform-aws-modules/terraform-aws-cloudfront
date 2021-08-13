@@ -3,9 +3,16 @@
 
 
 
+<a name="v2.7.0"></a>
+## [v2.7.0] - 2021-08-13
+
+- feat: Added support for connection_attempts, connection_timeout, and origin_shield ([#47](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/47))
+
+
 <a name="v2.6.0"></a>
 ## [v2.6.0] - 2021-06-28
 
+- Updated CHANGELOG
 - feat: Add support of realtime_log_config_arn (no creation) ([#31](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/31))
 
 
@@ -150,7 +157,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.7.0...HEAD
+[v2.7.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.6.0...v2.7.0
 [v2.6.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.5.0...v2.6.0
 [v2.5.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.4.0...v2.5.0
 [v2.4.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.3.0...v2.4.0
