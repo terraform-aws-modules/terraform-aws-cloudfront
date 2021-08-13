@@ -26,8 +26,8 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.28.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.28 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | ~> 2 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 2 |
 
@@ -35,7 +35,7 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.28.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.28 |
 | <a name="provider_null"></a> [null](#provider\_null) | ~> 2 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 2 |
 
@@ -47,7 +47,7 @@ Note that this example may create resources which cost money. Run `terraform des
 | <a name="module_cloudfront"></a> [cloudfront](#module\_cloudfront) | ../../ |  |
 | <a name="module_lambda_function"></a> [lambda\_function](#module\_lambda\_function) | terraform-aws-modules/lambda/aws | ~> 2.0 |
 | <a name="module_log_bucket"></a> [log\_bucket](#module\_log\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 2.0 |
-| <a name="module_records"></a> [records](#module\_records) | terraform-aws-modules/route53/aws//modules/records | ~> 2.0 |
+| <a name="module_records"></a> [records](#module\_records) | terraform-aws-modules/route53/aws//modules/records | 2.0.0 |
 | <a name="module_s3_one"></a> [s3\_one](#module\_s3\_one) | terraform-aws-modules/s3-bucket/aws | ~> 2.0 |
 
 ## Resources
