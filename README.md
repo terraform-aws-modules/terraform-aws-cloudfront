@@ -35,7 +35,7 @@ module "cdn" {
         http_port              = 80
         https_port             = 443
         origin_protocol_policy = "match-viewer"
-        origin_ssl_protocols   = ["TLSv1"]
+        origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
       }
     }
 
