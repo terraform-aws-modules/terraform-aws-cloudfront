@@ -264,7 +264,7 @@ resource "aws_cloudfront_distribution" "this" {
 
 resource "aws_cloudfront_monitoring_subscription" "this" {
   count           = var.create_distribution && var.create_monitoring_subscription ? 1 : 0
-  distribution_id = aws_cloudfront_distribution.this.id
+  distribution_id = aws_cloudfront_distribution.this[0].id
 
   monitoring_subscription {
     realtime_metrics_subscription_config {
