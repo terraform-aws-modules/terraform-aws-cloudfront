@@ -28,6 +28,10 @@ module "cloudfront" {
   retain_on_delete    = false
   wait_for_deployment = false
 
+  # When you enable additional metrics for a distribution, CloudFront sends up to 8 metrics to CloudWatch in the US East (N. Virginia) Region.
+  # This rate is charged only once per month, per metric (up to 8 metrics per distribution). 
+  create_monitoring_subscription = true
+
   create_origin_access_identity = true
   origin_access_identities = {
     s3_bucket_one = "My awesome CloudFront can access"
