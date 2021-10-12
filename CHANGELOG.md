@@ -3,9 +3,17 @@
 
 
 
+<a name="v2.8.0"></a>
+## [v2.8.0] - 2021-10-12
+
+- feat: Add support for additional CloudFront metrics ([#54](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/54))
+- docs: Add TLSv1.1 and TLSv1.2 for origin_ssl_protocols in examples ([#51](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/51))
+
+
 <a name="v2.7.0"></a>
 ## [v2.7.0] - 2021-08-13
 
+- Updated CHANGELOG
 - feat: Added support for connection_attempts, connection_timeout, and origin_shield ([#47](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/47))
 
 
@@ -157,7 +165,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.7.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.8.0...HEAD
+[v2.8.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.7.0...v2.8.0
 [v2.7.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.6.0...v2.7.0
 [v2.6.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.5.0...v2.6.0
 [v2.5.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.4.0...v2.5.0
