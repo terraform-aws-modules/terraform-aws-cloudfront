@@ -62,3 +62,8 @@ output "cloudfront_origin_access_identity_iam_arns" {
   description = "The IAM arns of the origin access identities created"
   value       = local.create_origin_access_identity ? [for v in aws_cloudfront_origin_access_identity.this : v.iam_arn] : []
 }
+
+output "cloudfront_monitoring_subscription_id" {
+  description = " The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`."
+  value       = element(concat(aws_cloudfront_monitoring_subscription.this.*.id, [""]), 0)
+}
