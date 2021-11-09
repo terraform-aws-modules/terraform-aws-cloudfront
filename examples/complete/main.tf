@@ -29,7 +29,7 @@ module "cloudfront" {
   wait_for_deployment = false
 
   # When you enable additional metrics for a distribution, CloudFront sends up to 8 metrics to CloudWatch in the US East (N. Virginia) Region.
-  # This rate is charged only once per month, per metric (up to 8 metrics per distribution). 
+  # This rate is charged only once per month, per metric (up to 8 metrics per distribution).
   create_monitoring_subscription = true
 
   create_origin_access_identity = true
@@ -89,7 +89,7 @@ module "cloudfront" {
   default_cache_behavior = {
     target_origin_id       = "appsync"
     viewer_protocol_policy = "allow-all"
-
+    response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods  = ["GET", "HEAD"]
     compress        = true
