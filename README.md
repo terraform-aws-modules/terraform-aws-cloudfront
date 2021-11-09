@@ -48,8 +48,8 @@ module "cdn" {
   }
 
   default_cache_behavior = {
-    target_origin_id       = "something"
-    viewer_protocol_policy = "allow-all"
+    target_origin_id           = "something"
+    viewer_protocol_policy     = "allow-all"
 
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods  = ["GET", "HEAD"]
@@ -86,14 +86,14 @@ module "cdn" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.43 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.64 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.43 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.64 |
 
 ## Modules
 
