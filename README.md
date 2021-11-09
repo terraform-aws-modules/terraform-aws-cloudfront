@@ -50,7 +50,7 @@ module "cdn" {
   default_cache_behavior = {
     target_origin_id       = "something"
     viewer_protocol_policy = "allow-all"
-    origin_request_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
+    response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods  = ["GET", "HEAD"]
     compress        = true
