@@ -120,9 +120,10 @@ resource "aws_cloudfront_distribution" "this" {
       trusted_signers           = lookup(i.value, "trusted_signers", null)
       trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
-      cache_policy_id          = lookup(i.value, "cache_policy_id", null)
-      origin_request_policy_id = lookup(i.value, "origin_request_policy_id", null)
-      realtime_log_config_arn  = lookup(i.value, "realtime_log_config_arn", null)
+      cache_policy_id            = lookup(i.value, "cache_policy_id", null)
+      origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
+      response_headers_policy_id = lookup(i.value,"response_headers_policy_id", null)
+      realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
 
       min_ttl     = lookup(i.value, "min_ttl", null)
       default_ttl = lookup(i.value, "default_ttl", null)
@@ -183,9 +184,10 @@ resource "aws_cloudfront_distribution" "this" {
       trusted_signers           = lookup(i.value, "trusted_signers", null)
       trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
-      cache_policy_id          = lookup(i.value, "cache_policy_id", null)
-      origin_request_policy_id = lookup(i.value, "origin_request_policy_id", null)
-      realtime_log_config_arn  = lookup(i.value, "realtime_log_config_arn", null)
+      cache_policy_id            = lookup(i.value, "cache_policy_id", null)
+      origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
+      response_headers_policy_id = lookup(i.value,"response_headers_policy_id", null)
+      realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
 
       min_ttl     = lookup(i.value, "min_ttl", null)
       default_ttl = lookup(i.value, "default_ttl", null)
