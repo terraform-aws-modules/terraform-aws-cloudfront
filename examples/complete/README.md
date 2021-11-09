@@ -35,16 +35,16 @@ Note that this example may create resources which cost money. Run `terraform des
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.28 |
-| <a name="provider_null"></a> [null](#provider\_null) | ~> 2 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.64.2 |
+| <a name="provider_null"></a> [null](#provider\_null) | 2.1.2 |
+| <a name="provider_random"></a> [random](#provider\_random) | 2.3.1 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_acm"></a> [acm](#module\_acm) | terraform-aws-modules/acm/aws | ~> 3.0 |
-| <a name="module_cloudfront"></a> [cloudfront](#module\_cloudfront) | ../../ |  |
+| <a name="module_cloudfront"></a> [cloudfront](#module\_cloudfront) | ../../ | n/a |
 | <a name="module_lambda_function"></a> [lambda\_function](#module\_lambda\_function) | terraform-aws-modules/lambda/aws | ~> 2.0 |
 | <a name="module_log_bucket"></a> [log\_bucket](#module\_log\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 2.0 |
 | <a name="module_records"></a> [records](#module\_records) | terraform-aws-modules/route53/aws//modules/records | 2.0.0 |

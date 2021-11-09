@@ -122,7 +122,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       cache_policy_id            = lookup(i.value, "cache_policy_id", null)
       origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
-      response_headers_policy_id = lookup(i.value,"response_headers_policy_id", null)
+      response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
       realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
 
       min_ttl     = lookup(i.value, "min_ttl", null)
@@ -186,7 +186,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       cache_policy_id            = lookup(i.value, "cache_policy_id", null)
       origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
-      response_headers_policy_id = lookup(i.value,"response_headers_policy_id", null)
+      response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
       realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
 
       min_ttl     = lookup(i.value, "min_ttl", null)
