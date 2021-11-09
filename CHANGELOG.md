@@ -3,9 +3,16 @@
 
 
 
+<a name="v2.9.0"></a>
+## [v2.9.0] - 2021-11-09
+
+- feat: Added support for response headers policy ([#57](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/57))
+
+
 <a name="v2.8.0"></a>
 ## [v2.8.0] - 2021-10-12
 
+- Updated CHANGELOG
 - feat: Add support for additional CloudFront metrics ([#54](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/54))
 - docs: Add TLSv1.1 and TLSv1.2 for origin_ssl_protocols in examples ([#51](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/51))
 
@@ -165,7 +172,8 @@
 - Add most of the code
 
 
-[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.8.0...HEAD
+[Unreleased]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.0...HEAD
+[v2.9.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.8.0...v2.9.0
 [v2.8.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.7.0...v2.8.0
 [v2.7.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.6.0...v2.7.0
 [v2.6.0]: https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.5.0...v2.6.0
