@@ -23,7 +23,7 @@ module "cloudfront" {
 
   comment             = "My awesome CloudFront"
   enabled             = true
-  is_ipv6_enabled     = true
+  is_ipv6_enabled     = var.enable_ipv6
   price_class         = "PriceClass_All"
   retain_on_delete    = false
   wait_for_deployment = false
@@ -248,7 +248,7 @@ module "lambda_function" {
 
 module "records" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "2.0.0" # @todo: revert to "~> 2.0" once 2.1.0 is fixed properly
+  version = "~> 2.3.0"
 
   zone_id = data.aws_route53_zone.this.zone_id
 
@@ -256,6 +256,26 @@ module "records" {
     {
       name = local.subdomain
       type = "A"
+      alias = {
+        name    = module.cloudfront.cloudfront_distribution_domain_name
+        zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
+      }
+    },
+  ]
+}
+
+module "records_ipv6" {
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 2.3.0"
+
+  zone_id = data.aws_route53_zone.this.zone_id
+
+  count = var.enable_ipv6 ? 1 : 0
+
+  records = [
+    {
+      name = local.subdomain
+      type = "AAAA"
       alias = {
         name    = module.cloudfront.cloudfront_distribution_domain_name
         zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
