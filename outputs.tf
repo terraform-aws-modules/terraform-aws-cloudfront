@@ -8,6 +8,11 @@ output "cloudfront_distribution_arn" {
   value       = element(concat(aws_cloudfront_distribution.this.*.arn, [""]), 0)
 }
 
+output "cloudfront_distribution_aliases" {
+  description = "The aliases for the distribution."
+  value       = element(concat(aws_cloudfront_distribution.this.*.aliases, [""]), 0)
+}
+
 output "cloudfront_distribution_caller_reference" {
   description = "Internal value used by CloudFront to allow future updates to the distribution configuration."
   value       = element(concat(aws_cloudfront_distribution.this.*.caller_reference, [""]), 0)
