@@ -1,8 +1,3 @@
-<a name="unreleased"></a>
-## [Unreleased]
-
-
-
 <a name="v2.9.0"></a>
 ## [v2.9.0] - 2021-11-09
 
