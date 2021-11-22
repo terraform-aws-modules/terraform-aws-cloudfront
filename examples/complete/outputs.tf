@@ -8,6 +8,11 @@ output "cloudfront_distribution_arn" {
   value       = module.cloudfront.cloudfront_distribution_arn
 }
 
+output "cloudfront_distribution_aliases" {
+  description = "The ARN (Amazon Resource Name) for the distribution."
+  value       = module.cloudfront.cloudfront_distribution_aliases
+}
+
 output "cloudfront_distribution_caller_reference" {
   description = "Internal value used by CloudFront to allow future updates to the distribution configuration."
   value       = module.cloudfront.cloudfront_distribution_caller_reference
