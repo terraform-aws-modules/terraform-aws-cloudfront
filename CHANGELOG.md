@@ -1,3 +1,14 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [2.9.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.0...v2.9.1) (2021-11-22)
+
+
+### Bug Fixes
+
+* update CI/CD process to enable auto-release workflow ([#59](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/59)) ([507c1ba](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/507c1ba4cc40420b765cc0110651242f68514821))
+
 <a name="v2.9.0"></a>
 ## [v2.9.0] - 2021-11-09
 
