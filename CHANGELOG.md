@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.9.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.1...v2.9.2) (2022-01-14)
+
+
+### Bug Fixes
+
+* Add lifecycle clause for aws_cloudfront_origin_access_identity ([#65](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/65)) ([d31306d](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/d31306d96caf66ae88f651425921175132f0322f))
+
 ## [2.9.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.0...v2.9.1) (2021-11-22)
 
 
