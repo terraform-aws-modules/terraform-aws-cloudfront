@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.9.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.2...v2.9.3) (2022-03-18)
+
+
+### Bug Fixes
+
+* Added outputs of tags of distribution ([#70](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/70)) ([bc945b4](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/bc945b492078c4bb6776fb3afcde5fa1c09a53fd))
+
 ### [2.9.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.1...v2.9.2) (2022-01-14)
 
 
