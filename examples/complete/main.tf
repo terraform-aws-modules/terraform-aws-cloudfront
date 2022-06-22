@@ -185,13 +185,13 @@ module "log_bucket" {
   bucket = "logs-${random_pet.this.id}"
   acl    = null
   grant = [{
-    type        = "CanonicalUser"
-    permissions = ["FULL_CONTROL"]
-    id          = data.aws_canonical_user_id.current.id
+    type       = "CanonicalUser"
+    permission = "FULL_CONTROL"
+    id         = data.aws_canonical_user_id.current.id
     }, {
-    type        = "CanonicalUser"
-    permissions = ["FULL_CONTROL"]
-    id          = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
+    type       = "CanonicalUser"
+    permission = "FULL_CONTROL"
+    id         = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
     # Ref. https://github.com/terraform-providers/terraform-provider-aws/issues/12512
     # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
   }]
