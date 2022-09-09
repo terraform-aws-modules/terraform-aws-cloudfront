@@ -41,11 +41,12 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.origin
 
     content {
-      domain_name         = origin.value.domain_name
-      origin_id           = lookup(origin.value, "origin_id", origin.key)
-      origin_path         = lookup(origin.value, "origin_path", "")
-      connection_attempts = lookup(origin.value, "connection_attempts", null)
-      connection_timeout  = lookup(origin.value, "connection_timeout", null)
+      domain_name              = origin.value.domain_name
+      origin_id                = lookup(origin.value, "origin_id", origin.key)
+      origin_path              = lookup(origin.value, "origin_path", "")
+      connection_attempts      = lookup(origin.value, "connection_attempts", null)
+      connection_timeout       = lookup(origin.value, "connection_timeout", null)
+      origin_access_control_id = lookup(origin.value, "origin_access_control_id", null)
 
       dynamic "s3_origin_config" {
         for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
