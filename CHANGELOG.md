@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.3...v3.0.0) (2022-09-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Added support for origin_access_control_id, bumped AWS provider version (#79)
+
+### Features
+
+* Added support for origin_access_control_id, bumped AWS provider version ([#79](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/79)) ([403ca24](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/403ca2446e2711307268d62bdac24f8691be3faa))
+
 ### [2.9.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.2...v2.9.3) (2022-03-18)
 
 
