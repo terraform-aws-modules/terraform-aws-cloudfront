@@ -157,7 +157,7 @@ data "aws_route53_zone" "this" {
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   domain_name               = local.domain_name
   zone_id                   = data.aws_route53_zone.this.id
@@ -172,7 +172,7 @@ data "aws_canonical_user_id" "current" {}
 
 module "s3_one" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   bucket        = "s3-one-${random_pet.this.id}"
   force_destroy = true
@@ -180,7 +180,7 @@ module "s3_one" {
 
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   bucket = "logs-${random_pet.this.id}"
   acl    = null
@@ -219,7 +219,7 @@ resource "null_resource" "download_package" {
 
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "~> 2.0"
+  version = "~> 4.0"
 
   function_name = "${random_pet.this.id}-lambda"
   description   = "My awesome lambda function"
@@ -248,7 +248,7 @@ module "lambda_function" {
 
 module "records" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "2.0.0" # @todo: revert to "~> 2.0" once 2.1.0 is fixed properly
+  version = "~> 2.0"
 
   zone_id = data.aws_route53_zone.this.zone_id
 
