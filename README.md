@@ -87,13 +87,13 @@ module "cdn" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.64 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.29 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.64 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.29 |
 
 ## Modules
 
@@ -159,7 +159,13 @@ No modules.
 
 ## Authors
 
-Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/graphs/contributors).
+Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from these awesome contributors:
+
+<!-- markdownlint-disable no-inline-html -->
+<a href="https://github.com/terraform-aws-modules/terraform-aws-cloudfront/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=terraform-aws-modules/terraform-aws-cloudfront" />
+</a>
+<!-- markdownlint-enable no-inline-html -->
 
 ## License
 
