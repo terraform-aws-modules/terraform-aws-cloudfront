@@ -159,7 +159,13 @@ No modules.
 
 ## Authors
 
-Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from [these awesome contributors](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/graphs/contributors).
+Module is maintained by [Anton Babenko](https://github.com/antonbabenko) with help from these awesome contributors:
+
+<!-- markdownlint-disable no-inline-html -->
+<a href="https://github.com/terraform-aws-modules/terraform-aws-cloudfront/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=terraform-aws-modules/terraform-aws-cloudfront" />
+</a>
+<!-- markdownlint-enable no-inline-html -->
 
 ## License
 
