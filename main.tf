@@ -57,7 +57,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "custom_origin_config" {
-        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
+        for_each = alltrue([contains(keys(origin.value), "custom_origin_config"), origin.value.custom_origin_config != null]) ? [lookup(origin.value, "custom_origin_config", "")] : []
 
         content {
           http_port                = custom_origin_config.value.http_port
