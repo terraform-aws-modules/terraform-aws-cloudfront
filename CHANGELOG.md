@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.0...v3.0.1) (2022-10-27)
+
+
+### Bug Fixes
+
+* Update CI configuration files to use latest version ([#84](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/84)) ([035ea6c](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/035ea6c5817b70bf2e544664ca500d0a2210cf39))
+
 ## [3.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.3...v3.0.0) (2022-09-12)
 
 
