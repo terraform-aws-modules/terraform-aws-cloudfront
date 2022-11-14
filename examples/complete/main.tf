@@ -140,6 +140,11 @@ module "cloudfront" {
     ssl_support_method  = "sni-only"
   }
 
+  custom_error_response = {
+    error_code         = 404
+    response_page_path = "/errors/404.html"
+  }
+
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]

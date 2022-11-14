@@ -246,7 +246,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "custom_error_response" {
-    for_each = var.custom_error_response
+    for_each = flatten([var.custom_error_response])
 
     content {
       error_code = custom_error_response.value["error_code"]
