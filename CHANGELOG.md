@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.0.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.2...v3.0.3) (2022-11-14)
+
+
+### Bug Fixes
+
+* Fixed bug when custom_error_response is empty ([#91](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/91)) ([ce35c50](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/ce35c50d47b1f491c10661bd140318b7b5a6e134))
+
 ### [3.0.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.1...v3.0.2) (2022-11-14)
 
 
