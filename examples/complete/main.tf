@@ -32,11 +32,10 @@ module "cloudfront" {
   # This rate is charged only once per month, per metric (up to 8 metrics per distribution).
   create_monitoring_subscription = true
 
-  create_origin_access_identity = true
-  origin_access_identities = {
+  create_origin_access_control = true
+  origin_access_controls = {
     s3_bucket_one = "My awesome CloudFront can access"
   }
-
   logging_config = {
     bucket = module.log_bucket.s3_bucket_bucket_domain_name
     prefix = "cloudfront"
@@ -70,11 +69,8 @@ module "cloudfront" {
     }
 
     s3_one = {
-      domain_name = module.s3_one.s3_bucket_bucket_regional_domain_name
-      s3_origin_config = {
-        origin_access_identity = "s3_bucket_one" # key in `origin_access_identities`
-        # cloudfront_access_identity_path = "origin-access-identity/cloudfront/E5IGQAA1QO48Z" # external OAI resource
-      }
+      domain_name           = module.s3_one.s3_bucket_bucket_regional_domain_name
+      origin_access_control = "s3_bucket_one" # key in `origin_access_controls`
     }
   }
 
@@ -272,17 +268,21 @@ module "records" {
   ]
 }
 
-###########################
-# Origin Access Identities
-###########################
+########################
+# Origin Access Controls
+########################
 data "aws_iam_policy_document" "s3_policy" {
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${module.s3_one.s3_bucket_arn}/static/*"]
-
     principals {
-      type        = "AWS"
-      identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [module.cloudfront.cloudfront_distribution_arn]
     }
   }
 }

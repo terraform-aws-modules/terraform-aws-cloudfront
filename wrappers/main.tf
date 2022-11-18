@@ -6,6 +6,8 @@ module "wrapper" {
   create_distribution           = try(each.value.create_distribution, var.defaults.create_distribution, true)
   create_origin_access_identity = try(each.value.create_origin_access_identity, var.defaults.create_origin_access_identity, false)
   origin_access_identities      = try(each.value.origin_access_identities, var.defaults.origin_access_identities, {})
+  create_origin_access_control  = try(each.value.create_origin_access_control, var.defaults.create_origin_access_control, false)
+  origin_access_controls        = try(each.value.origin_access_controls, var.defaults.origin_access_controls, {})
   aliases                       = try(each.value.aliases, var.defaults.aliases, null)
   comment                       = try(each.value.comment, var.defaults.comment, null)
   default_root_object           = try(each.value.default_root_object, var.defaults.default_root_object, null)

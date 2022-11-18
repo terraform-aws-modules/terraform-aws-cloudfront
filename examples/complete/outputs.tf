@@ -62,3 +62,13 @@ output "cloudfront_origin_access_identity_iam_arns" {
   description = "The IAM arns of the origin access identities created"
   value       = module.cloudfront.cloudfront_origin_access_identity_iam_arns
 }
+
+output "cloudfront_origin_access_controls" {
+  description = "The origin access controls created"
+  value       = module.cloudfront.cloudfront_origin_access_controls
+}
+
+output "cloudfront_origin_access_control_ids" {
+  description = "The IDS of the origin access controls created"
+  value       = module.cloudfront.cloudfront_origin_access_control_ids
+}

@@ -63,6 +63,16 @@ output "cloudfront_origin_access_identity_iam_arns" {
   value       = [for v in aws_cloudfront_origin_access_identity.this : v.iam_arn if local.create_origin_access_identity]
 }
 
+output "cloudfront_origin_access_controls" {
+  description = "The origin access controls created"
+  value       = { for k, v in aws_cloudfront_origin_access_control.this : k => v if local.create_origin_access_control }
+}
+
+output "cloudfront_origin_access_control_ids" {
+  description = "The IDS of the origin access controls created"
+  value       = [for v in aws_cloudfront_origin_access_control.this : v.id if local.create_origin_access_control]
+}
+
 output "cloudfront_monitoring_subscription_id" {
   description = " The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`."
   value       = try(aws_cloudfront_monitoring_subscription.this[0].id, "")

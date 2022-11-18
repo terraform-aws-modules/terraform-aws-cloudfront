@@ -1,11 +1,26 @@
 locals {
   create_origin_access_identity = var.create_origin_access_identity && length(keys(var.origin_access_identities)) > 0
+  create_origin_access_control  = var.create_origin_access_control && length(keys(var.origin_access_controls)) > 0
 }
 
 resource "aws_cloudfront_origin_access_identity" "this" {
   for_each = local.create_origin_access_identity ? var.origin_access_identities : {}
 
   comment = each.value
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_cloudfront_origin_access_control" "this" {
+  for_each = local.create_origin_access_control ? var.origin_access_controls : {}
+
+  name                              = each.key
+  description                       = each.value
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 
   lifecycle {
     create_before_destroy = true
@@ -46,7 +61,7 @@ resource "aws_cloudfront_distribution" "this" {
       origin_path              = lookup(origin.value, "origin_path", "")
       connection_attempts      = lookup(origin.value, "connection_attempts", null)
       connection_timeout       = lookup(origin.value, "connection_timeout", null)
-      origin_access_control_id = lookup(origin.value, "origin_access_control_id", null)
+      origin_access_control_id = try(aws_cloudfront_origin_access_control.this[origin.value.origin_access_control].id, lookup(origin.value, "origin_access_control_id", null))
 
       dynamic "s3_origin_config" {
         for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
