@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.3...v3.1.0) (2022-11-26)
+
+
+### Features
+
+* Replace hardcoded cloudfront canonical user ID in example ([#96](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/96)) ([2b22eb5](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/2b22eb5cd6c00ca9551392d7cbf79a62d3b06b5a))
+
 ### [3.0.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.2...v3.0.3) (2022-11-14)
 
 
