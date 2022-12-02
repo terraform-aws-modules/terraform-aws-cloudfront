@@ -1,5 +1,6 @@
 locals {
   create_origin_access_identity = var.create_origin_access_identity && length(keys(var.origin_access_identities)) > 0
+  create_origin_access_control  = var.create_origin_access_control && length(keys(var.origin_access_control)) > 0
 }
 
 resource "aws_cloudfront_origin_access_identity" "this" {
@@ -10,6 +11,17 @@ resource "aws_cloudfront_origin_access_identity" "this" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_cloudfront_origin_access_control" "this" {
+  for_each = local.create_origin_access_control ? var.origin_access_control : {}
+
+  name = each.key
+
+  description                       = each.value["description"]
+  origin_access_control_origin_type = each.value["origin_type"]
+  signing_behavior                  = each.value["signing_behavior"]
+  signing_protocol                  = each.value["signing_protocol"]
 }
 
 resource "aws_cloudfront_distribution" "this" {
