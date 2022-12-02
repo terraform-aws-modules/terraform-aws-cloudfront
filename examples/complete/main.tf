@@ -37,6 +37,16 @@ module "cloudfront" {
     s3_bucket_one = "My awesome CloudFront can access"
   }
 
+  create_origin_access_control = true
+  origin_access_control = {
+    s3 = {
+      description      = "CloudFront access to S3"
+      origin_type      = "s3"
+      signing_behavior = "always"
+      signing_protocol = "sigv4"
+    }
+  }
+
   logging_config = {
     bucket = module.log_bucket.s3_bucket_bucket_domain_name
     prefix = "cloudfront"
@@ -75,6 +85,8 @@ module "cloudfront" {
         origin_access_identity = "s3_bucket_one" # key in `origin_access_identities`
         # cloudfront_access_identity_path = "origin-access-identity/cloudfront/E5IGQAA1QO48Z" # external OAI resource
       }
+      # apply after creating cloudfront resource from outputs
+      #origin_access_control_id = "xxx"
     }
   }
 
