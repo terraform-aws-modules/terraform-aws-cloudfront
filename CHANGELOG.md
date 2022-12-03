@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.3...v3.1.0) (2022-11-26)
+
+
+### Features
+
+* Replace hardcoded cloudfront canonical user ID in example ([#96](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/96)) ([2b22eb5](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/2b22eb5cd6c00ca9551392d7cbf79a62d3b06b5a))
+
+### [3.0.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.2...v3.0.3) (2022-11-14)
+
+
+### Bug Fixes
+
+* Fixed bug when custom_error_response is empty ([#91](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/91)) ([ce35c50](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/ce35c50d47b1f491c10661bd140318b7b5a6e134))
+
+### [3.0.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.1...v3.0.2) (2022-11-14)
+
+
+### Bug Fixes
+
+* Updated handling of one or many custom_error_response values ([#89](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/89)) ([0945c77](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/0945c773106ba60c5ada5818728d407e5613c3ae))
+
 ### [3.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.0...v3.0.1) (2022-10-27)
 
 

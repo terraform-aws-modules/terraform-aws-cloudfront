@@ -152,6 +152,14 @@ module "cloudfront" {
     ssl_support_method  = "sni-only"
   }
 
+  custom_error_response = [{
+    error_code         = 404
+    response_page_path = "/errors/404.html"
+    }, {
+    error_code         = 403
+    response_page_path = "/errors/403.html"
+  }]
+
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]
@@ -181,6 +189,7 @@ module "acm" {
 #############
 
 data "aws_canonical_user_id" "current" {}
+data "aws_cloudfront_log_delivery_canonical_user_id" "cloudfront" {}
 
 module "s3_one" {
   source  = "terraform-aws-modules/s3-bucket/aws"
@@ -203,7 +212,7 @@ module "log_bucket" {
     }, {
     type       = "CanonicalUser"
     permission = "FULL_CONTROL"
-    id         = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
+    id         = data.aws_cloudfront_log_delivery_canonical_user_id.cloudfront.id
     # Ref. https://github.com/terraform-providers/terraform-provider-aws/issues/12512
     # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
   }]
