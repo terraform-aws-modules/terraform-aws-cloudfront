@@ -118,7 +118,7 @@ variable "logging_config" {
 variable "custom_error_response" {
   description = "One or more custom error response elements"
   type        = any
-  default     = {}
+  default     = []
 }
 
 variable "default_cache_behavior" {
