@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.1.0...v3.2.0) (2023-01-27)
+
+
+### Features
+
+* Added Origin Access Control (OAC) ([#97](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/97)) ([c76dad4](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/c76dad42cbb5abfc2370f06431e8899ac8077cd0))
+
 ## [3.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.3...v3.1.0) (2022-11-26)
 
 
