@@ -2,7 +2,6 @@ provider "aws" {
   region = "us-east-1" # CloudFront expects ACM resources in us-east-1 region only
 
   # Make it faster by skipping something
-  skip_get_ec2_platforms      = true
   skip_metadata_api_check     = true
   skip_region_validation      = true
   skip_credentials_validation = true
@@ -39,7 +38,7 @@ module "cloudfront" {
 
   create_origin_access_control = true
   origin_access_control = {
-    s3 = {
+    s3_oac = {
       description      = "CloudFront access to S3"
       origin_type      = "s3"
       signing_behavior = "always"
@@ -79,14 +78,18 @@ module "cloudfront" {
       }
     }
 
-    s3_one = {
+    s3_one = { # with origin access identity (legacy)
       domain_name = module.s3_one.s3_bucket_bucket_regional_domain_name
       s3_origin_config = {
         origin_access_identity = "s3_bucket_one" # key in `origin_access_identities`
         # cloudfront_access_identity_path = "origin-access-identity/cloudfront/E5IGQAA1QO48Z" # external OAI resource
       }
-      # apply after creating cloudfront resource from outputs
-      #origin_access_control_id = "xxx"
+    }
+
+    s3_oac = { # with origin access control settings (recommended)
+      domain_name           = module.s3_one.s3_bucket_bucket_regional_domain_name
+      origin_access_control = "s3_oac" # key in `origin_access_control`
+      #      origin_access_control_id = "E345SXM82MIOSU" # external OAС resource
     }
   }
 
@@ -154,9 +157,11 @@ module "cloudfront" {
 
   custom_error_response = [{
     error_code         = 404
+    response_code      = 404
     response_page_path = "/errors/404.html"
     }, {
     error_code         = 403
+    response_code      = 403
     response_page_path = "/errors/403.html"
   }]
 
