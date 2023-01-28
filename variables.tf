@@ -16,6 +16,31 @@ variable "origin_access_identities" {
   default     = {}
 }
 
+variable "create_origin_access_control" {
+  description = "Controls if CloudFront origin access control should be created"
+  type        = bool
+  default     = false
+}
+
+variable "origin_access_control" {
+  description = "Map of CloudFront origin access control"
+  type = map(object({
+    description      = string
+    origin_type      = string
+    signing_behavior = string
+    signing_protocol = string
+  }))
+
+  default = {
+    s3 = {
+      description      = "",
+      origin_type      = "s3",
+      signing_behavior = "always",
+      signing_protocol = "sigv4"
+    }
+  }
+}
+
 variable "aliases" {
   description = "Extra CNAMEs (alternate domain names), if any, for this distribution."
   type        = list(string)
