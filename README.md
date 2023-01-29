@@ -81,6 +81,50 @@ module "cdn" {
 
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, ACM Certificate, Route53 Records.
 
+## Working with `forwarded_values` for `default_cache_behavior` and `ordered_cache_behavior`
+
+For the `aws_cloudfront_distribution` resource the standard pattern for passing in `forwarded_values` inside of `ordered_cache_behavior` or `default_cache_behavior` is through nested attributes. 
+```hcl
+ default_cache_behavior {
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.s3_origin_id
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "allow-all"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+```
+
+However, this module will only take into account attributes for `forwarded_values` one layer deep on declaration. Attributes that would usually be nested inside blocks such as `cookies` how have their nested values sitting at the top level of `forwarded_values` as shown below. Where `forward` is no longer a child of `cookies`, now exists at the top level of `forwarded_values` but upon execution will be assigned to the cookies block. 
+
+```hcl
+ default_cache_behavior = {
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.s3_origin_id
+
+    forwarded_values = {
+      query_string = false
+      forward = "none"
+    }
+
+    viewer_protocol_policy = "allow-all"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+```
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
