@@ -290,10 +290,8 @@ module "records" {
   ]
 }
 
-###########################
-# Origin Access Identities
-###########################
 data "aws_iam_policy_document" "s3_policy" {
+  # Origin Access Identities
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${module.s3_one.s3_bucket_arn}/static/*"]
@@ -303,24 +301,17 @@ data "aws_iam_policy_document" "s3_policy" {
       identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
     }
   }
-}
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = module.s3_one.s3_bucket_id
-  policy = data.aws_iam_policy_document.s3_policy.json
-}
-  
-########################
-# Origin Access Controls
-########################
-data "aws_iam_policy_document" "s3_policy" {
+  # Origin Access Controls
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${module.s3_one.s3_bucket_arn}/static/*"]
+
     principals {
       type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
+
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
