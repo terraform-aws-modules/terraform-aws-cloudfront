@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.2.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.2.0...v3.2.1) (2023-03-10)
+
+
+### Bug Fixes
+
+* Fixed possible values for http_version input ([#106](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/106)) ([de6ffe3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/de6ffe36dba1ccbec0a84542eb84273e7c8b1c25))
+
 ## [3.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.1.0...v3.2.0) (2023-01-27)
 
 
