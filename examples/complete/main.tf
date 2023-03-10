@@ -22,6 +22,7 @@ module "cloudfront" {
 
   comment             = "My awesome CloudFront"
   enabled             = true
+  http_version        = "http2and3"
   is_ipv6_enabled     = true
   price_class         = "PriceClass_All"
   retain_on_delete    = false
