@@ -2,7 +2,6 @@ provider "aws" {
   region = "us-east-1" # CloudFront expects ACM resources in us-east-1 region only
 
   # Make it faster by skipping something
-  skip_get_ec2_platforms      = true
   skip_metadata_api_check     = true
   skip_region_validation      = true
   skip_credentials_validation = true
@@ -23,6 +22,7 @@ module "cloudfront" {
 
   comment             = "My awesome CloudFront"
   enabled             = true
+  http_version        = "http2and3"
   is_ipv6_enabled     = true
   price_class         = "PriceClass_All"
   retain_on_delete    = false
@@ -35,6 +35,16 @@ module "cloudfront" {
   create_origin_access_identity = true
   origin_access_identities = {
     s3_bucket_one = "My awesome CloudFront can access"
+  }
+
+  create_origin_access_control = true
+  origin_access_control = {
+    s3_oac = {
+      description      = "CloudFront access to S3"
+      origin_type      = "s3"
+      signing_behavior = "always"
+      signing_protocol = "sigv4"
+    }
   }
 
   logging_config = {
@@ -69,12 +79,18 @@ module "cloudfront" {
       }
     }
 
-    s3_one = {
+    s3_one = { # with origin access identity (legacy)
       domain_name = module.s3_one.s3_bucket_bucket_regional_domain_name
       s3_origin_config = {
         origin_access_identity = "s3_bucket_one" # key in `origin_access_identities`
         # cloudfront_access_identity_path = "origin-access-identity/cloudfront/E5IGQAA1QO48Z" # external OAI resource
       }
+    }
+
+    s3_oac = { # with origin access control settings (recommended)
+      domain_name           = module.s3_one.s3_bucket_bucket_regional_domain_name
+      origin_access_control = "s3_oac" # key in `origin_access_control`
+      #      origin_access_control_id = "E345SXM82MIOSU" # external OAС resource
     }
   }
 
@@ -140,6 +156,16 @@ module "cloudfront" {
     ssl_support_method  = "sni-only"
   }
 
+  custom_error_response = [{
+    error_code         = 404
+    response_code      = 404
+    response_page_path = "/errors/404.html"
+    }, {
+    error_code         = 403
+    response_code      = 403
+    response_page_path = "/errors/403.html"
+  }]
+
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]
@@ -157,7 +183,7 @@ data "aws_route53_zone" "this" {
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   domain_name               = local.domain_name
   zone_id                   = data.aws_route53_zone.this.id
@@ -169,10 +195,11 @@ module "acm" {
 #############
 
 data "aws_canonical_user_id" "current" {}
+data "aws_cloudfront_log_delivery_canonical_user_id" "cloudfront" {}
 
 module "s3_one" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   bucket        = "s3-one-${random_pet.this.id}"
   force_destroy = true
@@ -180,18 +207,18 @@ module "s3_one" {
 
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   bucket = "logs-${random_pet.this.id}"
   acl    = null
   grant = [{
-    type        = "CanonicalUser"
-    permissions = ["FULL_CONTROL"]
-    id          = data.aws_canonical_user_id.current.id
+    type       = "CanonicalUser"
+    permission = "FULL_CONTROL"
+    id         = data.aws_canonical_user_id.current.id
     }, {
-    type        = "CanonicalUser"
-    permissions = ["FULL_CONTROL"]
-    id          = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
+    type       = "CanonicalUser"
+    permission = "FULL_CONTROL"
+    id         = data.aws_cloudfront_log_delivery_canonical_user_id.cloudfront.id
     # Ref. https://github.com/terraform-providers/terraform-provider-aws/issues/12512
     # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
   }]
@@ -219,7 +246,7 @@ resource "null_resource" "download_package" {
 
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "~> 2.0"
+  version = "~> 4.0"
 
   function_name = "${random_pet.this.id}-lambda"
   description   = "My awesome lambda function"
@@ -248,7 +275,7 @@ module "lambda_function" {
 
 module "records" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "2.0.0" # @todo: revert to "~> 2.0" once 2.1.0 is fixed properly
+  version = "~> 2.0"
 
   zone_id = data.aws_route53_zone.this.zone_id
 
@@ -264,10 +291,8 @@ module "records" {
   ]
 }
 
-###########################
-# Origin Access Identities
-###########################
 data "aws_iam_policy_document" "s3_policy" {
+  # Origin Access Identities
   statement {
     actions   = ["s3:GetObject"]
     resources = ["${module.s3_one.s3_bucket_arn}/static/*"]
@@ -275,6 +300,23 @@ data "aws_iam_policy_document" "s3_policy" {
     principals {
       type        = "AWS"
       identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
+    }
+  }
+
+  # Origin Access Controls
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${module.s3_one.s3_bucket_arn}/static/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [module.cloudfront.cloudfront_distribution_arn]
     }
   }
 }

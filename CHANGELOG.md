@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.2.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.2.0...v3.2.1) (2023-03-10)
+
+
+### Bug Fixes
+
+* Fixed possible values for http_version input ([#106](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/106)) ([de6ffe3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/de6ffe36dba1ccbec0a84542eb84273e7c8b1c25))
+
+## [3.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.1.0...v3.2.0) (2023-01-27)
+
+
+### Features
+
+* Added Origin Access Control (OAC) ([#97](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/97)) ([c76dad4](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/c76dad42cbb5abfc2370f06431e8899ac8077cd0))
+
+## [3.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.3...v3.1.0) (2022-11-26)
+
+
+### Features
+
+* Replace hardcoded cloudfront canonical user ID in example ([#96](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/96)) ([2b22eb5](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/2b22eb5cd6c00ca9551392d7cbf79a62d3b06b5a))
+
+### [3.0.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.2...v3.0.3) (2022-11-14)
+
+
+### Bug Fixes
+
+* Fixed bug when custom_error_response is empty ([#91](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/91)) ([ce35c50](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/ce35c50d47b1f491c10661bd140318b7b5a6e134))
+
+### [3.0.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.1...v3.0.2) (2022-11-14)
+
+
+### Bug Fixes
+
+* Updated handling of one or many custom_error_response values ([#89](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/89)) ([0945c77](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/0945c773106ba60c5ada5818728d407e5613c3ae))
+
+### [3.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.0.0...v3.0.1) (2022-10-27)
+
+
+### Bug Fixes
+
+* Update CI configuration files to use latest version ([#84](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/84)) ([035ea6c](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/035ea6c5817b70bf2e544664ca500d0a2210cf39))
+
+## [3.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.3...v3.0.0) (2022-09-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* Added support for origin_access_control_id, bumped AWS provider version (#79)
+
+### Features
+
+* Added support for origin_access_control_id, bumped AWS provider version ([#79](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/79)) ([403ca24](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/403ca2446e2711307268d62bdac24f8691be3faa))
+
 ### [2.9.3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v2.9.2...v2.9.3) (2022-03-18)
 
 
