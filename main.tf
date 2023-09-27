@@ -1,6 +1,7 @@
 locals {
   create_origin_access_identity = var.create_origin_access_identity && length(keys(var.origin_access_identities)) > 0
   create_origin_access_control  = var.create_origin_access_control && length(keys(var.origin_access_control)) > 0
+  default_ttl_seconds = 3600
 }
 
 resource "aws_cloudfront_origin_access_identity" "this" {
@@ -142,9 +143,9 @@ resource "aws_cloudfront_distribution" "this" {
       response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
       realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
 
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
+      min_ttl     = lookup(i.value, "min_ttl", local.default_ttl_seconds)
+      default_ttl = lookup(i.value, "default_ttl", local.default_ttl_seconds)
+      max_ttl     = lookup(i.value, "max_ttl", local.default_ttl_seconds)
 
       dynamic "forwarded_values" {
         for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
@@ -206,9 +207,9 @@ resource "aws_cloudfront_distribution" "this" {
       response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
       realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
 
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
+      min_ttl     = lookup(i.value, "min_ttl", local.default_ttl_seconds)
+      default_ttl = lookup(i.value, "default_ttl", local.default_ttl_seconds)
+      max_ttl     = lookup(i.value, "max_ttl", local.default_ttl_seconds)
 
       dynamic "forwarded_values" {
         for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
