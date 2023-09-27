@@ -27,17 +27,19 @@ resource "aws_cloudfront_origin_access_control" "this" {
 resource "aws_cloudfront_distribution" "this" {
   count = var.create_distribution ? 1 : 0
 
-  aliases             = var.aliases
-  comment             = var.comment
-  default_root_object = var.default_root_object
-  enabled             = var.enabled
-  http_version        = var.http_version
-  is_ipv6_enabled     = var.is_ipv6_enabled
-  price_class         = var.price_class
-  retain_on_delete    = var.retain_on_delete
-  wait_for_deployment = var.wait_for_deployment
-  web_acl_id          = var.web_acl_id
-  tags                = var.tags
+  aliases                         = var.aliases
+  comment                         = var.comment
+  continuous_deployment_policy_id = var.continuous_deployment_policy_id
+  default_root_object             = var.default_root_object
+  enabled                         = var.enabled
+  http_version                    = var.http_version
+  is_ipv6_enabled                 = var.is_ipv6_enabled
+  price_class                     = var.price_class
+  retain_on_delete                = var.retain_on_delete
+  staging                         = var.staging
+  wait_for_deployment             = var.wait_for_deployment
+  web_acl_id                      = var.web_acl_id
+  tags                            = var.tags
 
   dynamic "logging_config" {
     for_each = length(keys(var.logging_config)) == 0 ? [] : [var.logging_config]
@@ -61,7 +63,9 @@ resource "aws_cloudfront_distribution" "this" {
       origin_access_control_id = lookup(origin.value, "origin_access_control_id", lookup(lookup(aws_cloudfront_origin_access_control.this, lookup(origin.value, "origin_access_control", ""), {}), "id", null))
 
       dynamic "s3_origin_config" {
-        for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
+        for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [
+          lookup(origin.value, "s3_origin_config", {})
+        ]
 
         content {
           origin_access_identity = lookup(s3_origin_config.value, "cloudfront_access_identity_path", lookup(lookup(aws_cloudfront_origin_access_identity.this, lookup(s3_origin_config.value, "origin_access_identity", ""), {}), "cloudfront_access_identity_path", null))
@@ -69,7 +73,9 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "custom_origin_config" {
-        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
+        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [
+          lookup(origin.value, "custom_origin_config", "")
+        ]
 
         content {
           http_port                = custom_origin_config.value.http_port
@@ -91,7 +97,9 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "origin_shield" {
-        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [lookup(origin.value, "origin_shield", {})]
+        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [
+          lookup(origin.value, "origin_shield", {})
+        ]
 
         content {
           enabled              = origin_shield.value.enabled
@@ -129,8 +137,12 @@ resource "aws_cloudfront_distribution" "this" {
       target_origin_id       = i.value["target_origin_id"]
       viewer_protocol_policy = i.value["viewer_protocol_policy"]
 
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
+      allowed_methods = lookup(i.value, "allowed_methods", [
+        "GET", "HEAD", "OPTIONS"
+      ])
+      cached_methods = lookup(i.value, "cached_methods", [
+        "GET", "HEAD"
+      ])
       compress                  = lookup(i.value, "compress", null)
       field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
       smooth_streaming          = lookup(i.value, "smooth_streaming", null)
@@ -193,8 +205,12 @@ resource "aws_cloudfront_distribution" "this" {
       target_origin_id       = i.value["target_origin_id"]
       viewer_protocol_policy = i.value["viewer_protocol_policy"]
 
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
+      allowed_methods = lookup(i.value, "allowed_methods", [
+        "GET", "HEAD", "OPTIONS"
+      ])
+      cached_methods = lookup(i.value, "cached_methods", [
+        "GET", "HEAD"
+      ])
       compress                  = lookup(i.value, "compress", null)
       field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
       smooth_streaming          = lookup(i.value, "smooth_streaming", null)
@@ -258,7 +274,9 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "custom_error_response" {
-    for_each = length(flatten([var.custom_error_response])[0]) > 0 ? flatten([var.custom_error_response]) : []
+    for_each = length(flatten([var.custom_error_response])[0]) > 0 ? flatten([
+      var.custom_error_response
+    ]) : []
 
     content {
       error_code = custom_error_response.value["error_code"]

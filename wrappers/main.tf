@@ -39,4 +39,6 @@ module "wrapper" {
   ordered_cache_behavior               = try(each.value.ordered_cache_behavior, var.defaults.ordered_cache_behavior, [])
   create_monitoring_subscription       = try(each.value.create_monitoring_subscription, var.defaults.create_monitoring_subscription, false)
   realtime_metrics_subscription_status = try(each.value.realtime_metrics_subscription_status, var.defaults.realtime_metrics_subscription_status, "Enabled")
+  staging                              = try(each.value.staging, var.defaults.staging, null)
+  continuous_deployment_policy_id      = try(each.value.continuous_deployment_policy_id, var.defaults.continuous_deployment_policy_id, null)
 }

@@ -169,3 +169,15 @@ variable "realtime_metrics_subscription_status" {
   type        = string
   default     = "Enabled"
 }
+
+variable "staging" {
+  description = "A Boolean that indicates whether this is a staging distribution. Defaults to false."
+  type        = bool
+  default     = null
+}
+
+variable "continuous_deployment_policy_id" {
+  description = "Identifier of a continuous deployment policy. This argument should only be set on a production distribution. See the aws_cloudfront_continuous_deployment_policy resource for additional details."
+  type        = string
+  default     = null
+}
