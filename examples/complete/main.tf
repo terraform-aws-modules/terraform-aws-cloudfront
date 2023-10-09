@@ -337,5 +337,5 @@ resource "random_pet" "this" {
 resource "aws_cloudfront_function" "example" {
   name    = "example-${random_pet.this.id}"
   runtime = "cloudfront-js-1.0"
-  code    = file("example-function.js")
+  code    = file("${path.module}/example-function.js")
 }
