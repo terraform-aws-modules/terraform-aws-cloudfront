@@ -77,9 +77,29 @@ module "cdn" {
 }
 ```
 
-## Examples:
+## Examples
 
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, ACM Certificate, Route53 Records.
+
+## Notes
+
+- `Error: updating CloudFront Distribution (ETXXXXXXXXXXXX): InvalidArgument: The parameter ForwardedValues cannot be used when a cache policy is associated to the cache behavior.`
+  - When defining a behavior in `ordered_cache_behavior` and `default_cache_behavior` with a cache policy, you must specify `use_forwarded_values = false`.
+
+```
+ordered_cache_behavior = [{
+  path_pattern           = "/my/path"
+  target_origin_id       = "my-origin"
+  viewer_protocol_policy = "https-only"
+  allowed_methods        = ["GET", "HEAD"]
+  use_forwarded_values   = false
+
+  # AllViewerAndCloudFrontHeaders-2022-06
+  origin_request_policy_id = "33f36d7e-f396-46d9-90e0-52428a34d9dc"
+  # CachingDisabled
+  cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+}]
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
