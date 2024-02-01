@@ -292,3 +292,42 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
     }
   }
 }
+
+locals {
+  s3_origin = {for i in keys({for k, v in var.origin_access_control: k => v if v.origin_type == "s3"}) : i => lookup(var.origin, i, {})}
+}
+
+resource "aws_s3_bucket_policy" "this" {
+  for_each = local.create_origin_access_control ? local.s3_origin : {}
+
+  bucket = split(".s3.", lookup(each.value, "domain_name", null))[0]
+  policy = data.aws_iam_policy_document.this[each.key].json
+}
+
+data "aws_iam_policy_document" "this" {
+  for_each = local.create_origin_access_control ? local.s3_origin : {}
+
+  statement {
+    sid    = "AllowCloudFrontServicePrincipal"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+    ]
+    resources = [
+      "arn:aws:s3:::${split(".s3.", lookup(each.value, "domain_name", null))[0]}/*",
+    ]
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+
+      values = [
+        "${aws_cloudfront_distribution.this[0].arn}"
+      ]
+    }
+  }
+}
+
