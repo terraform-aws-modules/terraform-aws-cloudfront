@@ -199,7 +199,7 @@ data "aws_cloudfront_log_delivery_canonical_user_id" "cloudfront" {}
 
 module "s3_one" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   bucket        = "s3-one-${random_pet.this.id}"
   force_destroy = true
@@ -207,10 +207,13 @@ module "s3_one" {
 
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   bucket = "logs-${random_pet.this.id}"
-  acl    = null
+
+  control_object_ownership = true
+  object_ownership         = "ObjectWriter"
+
   grant = [{
     type       = "CanonicalUser"
     permission = "FULL_CONTROL"
@@ -246,7 +249,7 @@ resource "null_resource" "download_package" {
 
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "~> 4.0"
+  version = "~> 7.0"
 
   function_name = "${random_pet.this.id}-lambda"
   description   = "My awesome lambda function"
