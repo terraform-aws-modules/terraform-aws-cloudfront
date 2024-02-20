@@ -53,6 +53,12 @@ variable "comment" {
   default     = null
 }
 
+variable "continuous_deployment_policy_id" {
+  description = "Identifier of a continuous deployment policy. This argument should only be set on a production distribution."
+  type        = string
+  default     = null
+}
+
 variable "default_root_object" {
   description = "The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL."
   type        = string
@@ -99,6 +105,12 @@ variable "web_acl_id" {
   description = "If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL."
   type        = string
   default     = null
+}
+
+variable "staging" {
+  description = "Whether the distribution is a staging distribution."
+  type        = bool
+  default     = false
 }
 
 variable "tags" {

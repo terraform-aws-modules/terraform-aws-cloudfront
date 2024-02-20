@@ -22,11 +22,17 @@ module "cloudfront" {
 
   comment             = "My awesome CloudFront"
   enabled             = true
+  staging             = false # If you want to create a staging distribution, set this to true
   http_version        = "http2and3"
   is_ipv6_enabled     = true
   price_class         = "PriceClass_All"
   retain_on_delete    = false
   wait_for_deployment = false
+
+  # If you want to create a primary distribution with a continuous deployment policy, set this to the ID of the policy.
+  # This argument should only be set on a production distribution.
+  # ref. `aws_cloudfront_continuous_deployment_policy` resource: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_continuous_deployment_policy
+  continuous_deployment_policy_id = null
 
   # When you enable additional metrics for a distribution, CloudFront sends up to 8 metrics to CloudWatch in the US East (N. Virginia) Region.
   # This rate is charged only once per month, per metric (up to 8 metrics per distribution).
