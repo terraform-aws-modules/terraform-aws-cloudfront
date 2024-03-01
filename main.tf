@@ -27,17 +27,19 @@ resource "aws_cloudfront_origin_access_control" "this" {
 resource "aws_cloudfront_distribution" "this" {
   count = var.create_distribution ? 1 : 0
 
-  aliases             = var.aliases
-  comment             = var.comment
-  default_root_object = var.default_root_object
-  enabled             = var.enabled
-  http_version        = var.http_version
-  is_ipv6_enabled     = var.is_ipv6_enabled
-  price_class         = var.price_class
-  retain_on_delete    = var.retain_on_delete
-  wait_for_deployment = var.wait_for_deployment
-  web_acl_id          = var.web_acl_id
-  tags                = var.tags
+  aliases                         = var.aliases
+  comment                         = var.comment
+  continuous_deployment_policy_id = var.continuous_deployment_policy_id
+  default_root_object             = var.default_root_object
+  enabled                         = var.enabled
+  http_version                    = var.http_version
+  is_ipv6_enabled                 = var.is_ipv6_enabled
+  price_class                     = var.price_class
+  retain_on_delete                = var.retain_on_delete
+  staging                         = var.staging
+  wait_for_deployment             = var.wait_for_deployment
+  web_acl_id                      = var.web_acl_id
+  tags                            = var.tags
 
   dynamic "logging_config" {
     for_each = length(keys(var.logging_config)) == 0 ? [] : [var.logging_config]
