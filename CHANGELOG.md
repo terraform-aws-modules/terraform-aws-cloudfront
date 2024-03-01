@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.2.2...v3.3.0) (2024-03-01)
+
+
+### Features
+
+* Added support for Staging Distribution ([#130](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/130)) ([601df49](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/601df4903d11e8bff2c907a9c8ce711ccb43a05c))
+
 ### [3.2.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.2.1...v3.2.2) (2024-02-09)
 
 
