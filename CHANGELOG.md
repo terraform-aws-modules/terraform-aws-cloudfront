@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.3.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.3.0...v3.3.1) (2024-03-04)
+
+
+### Bug Fixes
+
+* Fix provider version for `staging` and `continuous_deployment_policy_id` params ([#132](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/132)) ([334f2f7](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/334f2f7f41e20f8532f0e609e7286b87f31a5f6d))
+
 ## [3.3.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.2.2...v3.3.0) (2024-03-01)
 
 
