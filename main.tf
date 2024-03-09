@@ -139,7 +139,11 @@ resource "aws_cloudfront_distribution" "this" {
       trusted_signers           = lookup(i.value, "trusted_signers", null)
       trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
-      cache_policy_id            = lookup(i.value, "cache_policy_id", null)
+      cache_policy_id = lookup(
+        i.value,
+        "cache_policy_id",
+        can(i.value["cache_policy_name"]) ? (data.aws_cloudfront_cache_policy.default[i.value["cache_policy_name"]].id) : null
+      )
       origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
       response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
       realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
@@ -203,7 +207,11 @@ resource "aws_cloudfront_distribution" "this" {
       trusted_signers           = lookup(i.value, "trusted_signers", null)
       trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
-      cache_policy_id            = lookup(i.value, "cache_policy_id", null)
+      cache_policy_id = lookup(
+        i.value,
+        "cache_policy_id",
+        can(i.value["cache_policy_name"]) ? (data.aws_cloudfront_cache_policy.ordered[i.value["cache_policy_name"]].id) : null
+      )
       origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
       response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
       realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
@@ -293,4 +301,16 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
       realtime_metrics_subscription_status = var.realtime_metrics_subscription_status
     }
   }
+}
+
+data "aws_cloudfront_cache_policy" "default" {
+  for_each = toset(can(var.default_cache_behavior["cache_policy_name"]) ? [var.default_cache_behavior["cache_policy_name"]] : [])
+
+  name = var.default_cache_behavior["cache_policy_name"]
+}
+
+data "aws_cloudfront_cache_policy" "ordered" {
+  for_each = toset([for b in var.ordered_cache_behavior : b["cache_policy_name"] if can(b["cache_policy_name"])])
+
+  name = each.value
 }
