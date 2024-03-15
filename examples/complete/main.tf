@@ -113,11 +113,10 @@ module "cloudfront" {
     viewer_protocol_policy = "allow-all"
     allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
-    compress               = true
-    query_string           = true
-    cache_policy_id        = "b2884449-e4de-46a7-ac36-70bc7f1ddd6d"
 
-    # This is id for SecurityHeadersPolicy copied from https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-response-headers-policies.html
+    use_forwarded_values = false
+
+    cache_policy_id            = "b2884449-e4de-46a7-ac36-70bc7f1ddd6d"
     response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
 
     lambda_function_association = {
@@ -140,11 +139,14 @@ module "cloudfront" {
       target_origin_id       = "s3_one"
       viewer_protocol_policy = "redirect-to-https"
 
-      allowed_methods   = ["GET", "HEAD", "OPTIONS"]
-      cached_methods    = ["GET", "HEAD"]
-      cache_policy_name = "Managed-CachingOptimized"
-      compress          = true
-      query_string      = true
+      allowed_methods = ["GET", "HEAD", "OPTIONS"]
+      cached_methods  = ["GET", "HEAD"]
+
+      use_forwarded_values = false
+
+      cache_policy_name            = "Managed-CachingOptimized"
+      origin_request_policy_name   = "Managed-UserAgentRefererHeaders"
+      response_headers_policy_name = "Managed-SimpleCORS"
 
       function_association = {
         # Valid keys: viewer-request, viewer-response
@@ -156,6 +158,18 @@ module "cloudfront" {
           function_arn = aws_cloudfront_function.example.arn
         }
       }
+    },
+    {
+      path_pattern           = "/static-no-policies/*"
+      target_origin_id       = "s3_one"
+      viewer_protocol_policy = "redirect-to-https"
+
+      allowed_methods = ["GET", "HEAD", "OPTIONS"]
+      cached_methods  = ["GET", "HEAD"]
+
+      # Using Cache/ResponseHeaders/OriginRequest policies is not allowed together with `compress` and `query_string` settings
+      compress     = true
+      query_string = true
     }
   ]
 

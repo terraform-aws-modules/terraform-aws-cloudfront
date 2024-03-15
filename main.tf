@@ -139,14 +139,11 @@ resource "aws_cloudfront_distribution" "this" {
       trusted_signers           = lookup(i.value, "trusted_signers", null)
       trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
-      cache_policy_id = lookup(
-        i.value,
-        "cache_policy_id",
-        can(i.value["cache_policy_name"]) ? (data.aws_cloudfront_cache_policy.default[i.value["cache_policy_name"]].id) : null
-      )
-      origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
-      response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
-      realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
+      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
+      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
+      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
+
+      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
 
       min_ttl     = lookup(i.value, "min_ttl", null)
       default_ttl = lookup(i.value, "default_ttl", null)
@@ -207,14 +204,11 @@ resource "aws_cloudfront_distribution" "this" {
       trusted_signers           = lookup(i.value, "trusted_signers", null)
       trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
 
-      cache_policy_id = lookup(
-        i.value,
-        "cache_policy_id",
-        can(i.value["cache_policy_name"]) ? (data.aws_cloudfront_cache_policy.ordered[i.value["cache_policy_name"]].id) : null
-      )
-      origin_request_policy_id   = lookup(i.value, "origin_request_policy_id", null)
-      response_headers_policy_id = lookup(i.value, "response_headers_policy_id", null)
-      realtime_log_config_arn    = lookup(i.value, "realtime_log_config_arn", null)
+      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
+      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
+      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
+
+      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
 
       min_ttl     = lookup(i.value, "min_ttl", null)
       default_ttl = lookup(i.value, "default_ttl", null)
@@ -303,14 +297,20 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
   }
 }
 
-data "aws_cloudfront_cache_policy" "default" {
-  for_each = toset(can(var.default_cache_behavior["cache_policy_name"]) ? [var.default_cache_behavior["cache_policy_name"]] : [])
+data "aws_cloudfront_cache_policy" "this" {
+  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.cache_policy_name if can(v.cache_policy_name)])
 
-  name = var.default_cache_behavior["cache_policy_name"]
+  name = each.key
 }
 
-data "aws_cloudfront_cache_policy" "ordered" {
-  for_each = toset([for b in var.ordered_cache_behavior : b["cache_policy_name"] if can(b["cache_policy_name"])])
+data "aws_cloudfront_origin_request_policy" "this" {
+  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.origin_request_policy_name if can(v.origin_request_policy_name)])
 
-  name = each.value
+  name = each.key
+}
+
+data "aws_cloudfront_response_headers_policy" "this" {
+  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.response_headers_policy_name if can(v.response_headers_policy_name)])
+
+  name = each.key
 }
