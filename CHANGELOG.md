@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.3.2...v3.4.0) (2024-03-15)
+
+
+### Features
+
+* Allow all policies to be specified by name or ID ([#134](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/134)) ([fcd12c3](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/fcd12c3fee578b8a0c2b796c00b5cbda782819c2))
+
 ## [3.3.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.3.1...v3.3.2) (2024-03-07)
 
 
