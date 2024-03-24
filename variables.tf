@@ -16,6 +16,31 @@ variable "origin_access_identities" {
   default     = {}
 }
 
+variable "create_origin_access_control" {
+  description = "Controls if CloudFront origin access control should be created"
+  type        = bool
+  default     = false
+}
+
+variable "origin_access_control" {
+  description = "Map of CloudFront origin access control"
+  type = map(object({
+    description      = string
+    origin_type      = string
+    signing_behavior = string
+    signing_protocol = string
+  }))
+
+  default = {
+    s3 = {
+      description      = "",
+      origin_type      = "s3",
+      signing_behavior = "always",
+      signing_protocol = "sigv4"
+    }
+  }
+}
+
 variable "aliases" {
   description = "Extra CNAMEs (alternate domain names), if any, for this distribution."
   type        = list(string)
@@ -24,6 +49,12 @@ variable "aliases" {
 
 variable "comment" {
   description = "Any comments you want to include about the distribution."
+  type        = string
+  default     = null
+}
+
+variable "continuous_deployment_policy_id" {
+  description = "Identifier of a continuous deployment policy. This argument should only be set on a production distribution."
   type        = string
   default     = null
 }
@@ -41,7 +72,7 @@ variable "enabled" {
 }
 
 variable "http_version" {
-  description = "The maximum HTTP version to support on the distribution. Allowed values are http1.1 and http2. The default is http2."
+  description = "The maximum HTTP version to support on the distribution. Allowed values are http1.1, http2, http2and3, and http3. The default is http2."
   type        = string
   default     = "http2"
 }
@@ -65,7 +96,7 @@ variable "retain_on_delete" {
 }
 
 variable "wait_for_deployment" {
-  description = "If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this tofalse will skip the process."
+  description = "If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this to false will skip the process."
   type        = bool
   default     = true
 }
@@ -74,6 +105,12 @@ variable "web_acl_id" {
   description = "If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL."
   type        = string
   default     = null
+}
+
+variable "staging" {
+  description = "Whether the distribution is a staging distribution."
+  type        = bool
+  default     = false
 }
 
 variable "tags" {
