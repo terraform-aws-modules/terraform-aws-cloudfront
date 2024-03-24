@@ -266,6 +266,9 @@ resource "aws_cloudfront_distribution" "this" {
       }
     }
   }
+  lifecycle {
+    ignore_changes = [ web_acl_id ]
+  }
 }
 
 resource "aws_cloudfront_monitoring_subscription" "this" {
