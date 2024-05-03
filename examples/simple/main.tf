@@ -1,3 +1,14 @@
+provider "aws" {
+  region = "us-east-1" # CloudFront expects ACM resources in us-east-1 region only
+
+  # Make it faster by skipping something
+  skip_metadata_api_check     = true
+  skip_region_validation      = true
+  skip_credentials_validation = true
+
+  # skip_requesting_account_id should be disabled to generate valid ARN in apigatewayv2_api_execution_arn
+  skip_requesting_account_id = false
+}
 ########
 # Load Balancer
 ########
@@ -19,9 +30,6 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   subnets            = data.aws_subnets.public.ids
-
-  enable_deletion_protection = true
-
   tags = {
     Environment = "Demo"
   }
@@ -47,11 +55,13 @@ module "cloudfront" {
   }]
 
   origin = {
-    aws_lb = {
+    aws_alb = {
       domain_name = aws_lb.alb.dns_name
       custom_origin_config = {
-        http_port = 80
-
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "http-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
       }
 
 
