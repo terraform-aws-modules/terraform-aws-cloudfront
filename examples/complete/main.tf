@@ -79,6 +79,7 @@ module "cloudfront" {
         }
       ]
 
+      # this block needs to be removed instead if set to false otherwise cause re-creations of cloudflare during re-applying.
       origin_shield = {
         enabled              = true
         origin_shield_region = "us-east-1"
