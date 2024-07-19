@@ -60,7 +60,7 @@ resource "aws_cloudfront_distribution" "this" {
       origin_path              = lookup(origin.value, "origin_path", "")
       connection_attempts      = lookup(origin.value, "connection_attempts", null)
       connection_timeout       = lookup(origin.value, "connection_timeout", null)
-      origin_access_control_id = lookup(origin.value, "origin_access_control_id", lookup(lookup(aws_cloudfront_origin_access_control.this, lookup(origin.value, "origin_access_control", ""), {}), "id", null))
+      origin_access_control_id = lookup(origin.value, "origin_access_control_id", can(origin.value.origin_access_control) ? lookup(aws_cloudfront_origin_access_control.this[origin.value.origin_access_control], "id", null) : null)
 
       dynamic "s3_origin_config" {
         for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
