@@ -63,7 +63,7 @@ resource "aws_cloudfront_distribution" "this" {
       origin_access_control_id = lookup(origin.value, "origin_access_control_id", lookup(lookup(aws_cloudfront_origin_access_control.this, lookup(origin.value, "origin_access_control", ""), {}), "id", null))
 
       dynamic "s3_origin_config" {
-        for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
+        for_each = lookup(origin.value, "s3_origin_config", null) == null ? [] : [origin.value.s3_origin_config]
 
         content {
           origin_access_identity = lookup(s3_origin_config.value, "cloudfront_access_identity_path", lookup(lookup(aws_cloudfront_origin_access_identity.this, lookup(s3_origin_config.value, "origin_access_identity", ""), {}), "cloudfront_access_identity_path", null))
@@ -71,7 +71,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "custom_origin_config" {
-        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
+        for_each = lookup(origin.value, "custom_origin_config", null) == null ? [] : [origin.value.custom_origin_config]
 
         content {
           http_port                = custom_origin_config.value.http_port
