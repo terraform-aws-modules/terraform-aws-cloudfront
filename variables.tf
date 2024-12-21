@@ -181,3 +181,25 @@ variable "realtime_metrics_subscription_status" {
   type        = string
   default     = "Enabled"
 }
+
+variable "create_vpc_origin" {
+  description = "If enabled, the resource for VPC origin will be created."
+  type        = bool
+  default     = false
+}
+
+variable "vpc_origin" {
+  description = "Map of CloudFront VPC origin"
+  type = map(object({
+    name                   = string
+    arn                    = string
+    http_port              = number
+    https_port             = number
+    origin_protocol_policy = string
+    origin_ssl_protocols = object({
+      items    = list(string)
+      quantity = number
+    })
+  }))
+  default = {}
+}
