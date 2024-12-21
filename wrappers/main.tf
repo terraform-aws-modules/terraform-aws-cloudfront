@@ -10,6 +10,7 @@ module "wrapper" {
   create_monitoring_subscription  = try(each.value.create_monitoring_subscription, var.defaults.create_monitoring_subscription, false)
   create_origin_access_control    = try(each.value.create_origin_access_control, var.defaults.create_origin_access_control, false)
   create_origin_access_identity   = try(each.value.create_origin_access_identity, var.defaults.create_origin_access_identity, false)
+  create_vpc_origin               = try(each.value.create_vpc_origin, var.defaults.create_vpc_origin, false)
   custom_error_response           = try(each.value.custom_error_response, var.defaults.custom_error_response, {})
   default_cache_behavior          = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior, null)
   default_root_object             = try(each.value.default_root_object, var.defaults.default_root_object, null)
@@ -39,6 +40,7 @@ module "wrapper" {
     cloudfront_default_certificate = true
     minimum_protocol_version       = "TLSv1"
   })
+  vpc_origin          = try(each.value.vpc_origin, var.defaults.vpc_origin, null)
   wait_for_deployment = try(each.value.wait_for_deployment, var.defaults.wait_for_deployment, true)
   web_acl_id          = try(each.value.web_acl_id, var.defaults.web_acl_id, null)
 }
