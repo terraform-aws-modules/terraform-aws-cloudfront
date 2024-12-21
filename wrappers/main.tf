@@ -40,7 +40,7 @@ module "wrapper" {
     cloudfront_default_certificate = true
     minimum_protocol_version       = "TLSv1"
   })
-  vpc_origin          = try(each.value.vpc_origin, var.defaults.vpc_origin, null)
+  vpc_origin          = try(each.value.vpc_origin, var.defaults.vpc_origin, {})
   wait_for_deployment = try(each.value.wait_for_deployment, var.defaults.wait_for_deployment, true)
   web_acl_id          = try(each.value.web_acl_id, var.defaults.web_acl_id, null)
 }
