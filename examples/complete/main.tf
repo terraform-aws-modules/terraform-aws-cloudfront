@@ -479,8 +479,9 @@ module "security_group_ec2" {
 data "aws_availability_zones" "available" {}
 
 data "aws_security_group" "vpc_origin" {
-  name   = "CloudFront-VPCOrigins-Service-SG"
-  vpc_id = module.vpc.vpc_id
+  name       = "CloudFront-VPCOrigins-Service-SG"
+  vpc_id     = module.vpc.vpc_id
+  depends_on = [module.cloudfront]
 }
 
 data "aws_ami" "al2023" {
