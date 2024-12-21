@@ -35,7 +35,6 @@ resource "aws_cloudfront_vpc_origin" "this" {
     https_port             = each.value["https_port"]
     origin_protocol_policy = each.value["origin_protocol_policy"]
 
-
     origin_ssl_protocols {
       items    = each.value.origin_ssl_protocols.items
       quantity = each.value.origin_ssl_protocols.quantity
