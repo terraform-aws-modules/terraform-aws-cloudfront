@@ -53,6 +53,21 @@ module "cloudfront" {
     }
   }
 
+  create_vpc_origin = true
+  vpc_origin = {
+    ec2_vpc_origin = {
+      name                   = local.subdomain
+      arn                    = module.ec2.arn
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols = {
+        items    = ["TLSv1.2"]
+        quantity = 1
+      }
+    }
+  }
+
   logging_config = {
     bucket = module.log_bucket.s3_bucket_bucket_domain_name
     prefix = "cloudfront"
@@ -97,6 +112,14 @@ module "cloudfront" {
       domain_name           = module.s3_one.s3_bucket_bucket_regional_domain_name
       origin_access_control = "s3_oac" # key in `origin_access_control`
       #      origin_access_control_id = "E345SXM82MIOSU" # external OAС resource
+    }
+
+    ec2_vpc_origin = {
+      domain_name = module.ec2.private_dns
+      vpc_origin_config = {
+        vpc_origin = "ec2_vpc_origin" # key in `vpc_origin`
+        #  vpc_origin_id  = "vo_Cg6A14otX0DB1yyDQ6Nond" # external VPC Origin resource
+      }
     }
   }
 
@@ -170,7 +193,16 @@ module "cloudfront" {
       # Using Cache/ResponseHeaders/OriginRequest policies is not allowed together with `compress` and `query_string` settings
       compress     = true
       query_string = true
+    },
+    {
+      path_pattern           = "/vpc-origin/*"
+      target_origin_id       = "ec2_vpc_origin"
+      viewer_protocol_policy = "redirect-to-https"
+
+      allowed_methods = ["GET", "HEAD", "OPTIONS"]
+      cached_methods  = ["GET", "HEAD"]
     }
+
   ]
 
   viewer_certificate = {
@@ -363,4 +395,100 @@ resource "aws_cloudfront_function" "example" {
   name    = "example-${random_pet.this.id}"
   runtime = "cloudfront-js-1.0"
   code    = file("${path.module}/example-function.js")
+}
+
+#######################################
+# EC2 and VPC for CloudFront VPC origin
+#######################################
+
+locals {
+  vpc_cidr = "10.0.0.0/16"
+  vpc_azs  = slice(data.aws_availability_zones.available.names, 0, 2)
+}
+
+module "ec2" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 5.0"
+
+  name = local.subdomain
+  ami  = data.aws_ami.al2023.id
+
+  user_data = <<-EOF
+    #!/bin/bash
+    dnf update
+    dnf install -y nginx
+    systemctl start nginx
+  EOF
+
+  subnet_id              = element(module.vpc.intra_subnets, 0)
+  vpc_security_group_ids = [module.security_group_ec2.security_group_id]
+
+  create_iam_instance_profile = true
+  iam_role_description        = "IAM role for EC2 instance"
+  iam_role_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
+}
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
+
+  name = local.subdomain
+  cidr = local.vpc_cidr
+
+  azs            = local.vpc_azs
+  intra_subnets  = [for k, v in local.vpc_azs : cidrsubnet(local.vpc_cidr, 8, k)]
+  public_subnets = [for k, v in local.vpc_azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
+}
+
+module "vpc_endpoints" {
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "~> 5.0"
+
+  vpc_id = module.vpc.vpc_id
+
+  endpoints = {
+    s3 = {
+      service         = "s3"
+      service_type    = "Gateway"
+      route_table_ids = module.vpc.intra_route_table_ids
+    },
+  }
+}
+
+module "security_group_ec2" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 5.0"
+
+  name        = "${local.subdomain}-ec2"
+  description = "Security Group for EC2 Instance Egress"
+
+  vpc_id = module.vpc.vpc_id
+
+  egress_rules = ["http-80-tcp", "https-443-tcp"]
+  ingress_with_source_security_group_id = [
+    {
+      from_port                = 80
+      to_port                  = 80
+      protocol                 = "tcp"
+      description              = "Allow access to the CloudFront origin"
+      source_security_group_id = data.aws_security_group.vpc_origin.id
+  }]
+}
+
+data "aws_availability_zones" "available" {}
+
+data "aws_security_group" "vpc_origin" {
+  name   = "CloudFront-VPCOrigins-Service-SG"
+  vpc_id = module.vpc.vpc_id
+}
+
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023*-x86_64"]
+  }
 }
