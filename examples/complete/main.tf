@@ -422,13 +422,8 @@ module "ec2" {
 
   subnet_id              = element(module.vpc.intra_subnets, 0)
   vpc_security_group_ids = [module.security_group_ec2.security_group_id]
-
-  create_iam_instance_profile = true
-  iam_role_description        = "IAM role for EC2 instance"
-  iam_role_policies = {
-    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  }
 }
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
