@@ -56,7 +56,7 @@ module "cloudfront" {
   create_vpc_origin = true
   vpc_origin = {
     ec2_vpc_origin = {
-      name                   = local.subdomain
+      name                   = random_pet.this.id
       arn                    = module.ec2.arn
       http_port              = 80
       https_port             = 443
@@ -348,6 +348,10 @@ module "records" {
   ]
 }
 
+#########################################
+# S3 bucket policy
+#########################################
+
 data "aws_iam_policy_document" "s3_policy" {
   # Origin Access Identities
   statement {
@@ -383,13 +387,9 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = data.aws_iam_policy_document.s3_policy.json
 }
 
-########
-# Extra
-########
-
-resource "random_pet" "this" {
-  length = 2
-}
+#########################################
+# CloudFront function
+#########################################
 
 resource "aws_cloudfront_function" "example" {
   name    = "example-${random_pet.this.id}"
@@ -397,87 +397,9 @@ resource "aws_cloudfront_function" "example" {
   code    = file("${path.module}/example-function.js")
 }
 
-#######################################
-# EC2 and VPC for CloudFront VPC origin
-#######################################
-
-locals {
-  vpc_cidr = "10.0.0.0/16"
-  vpc_azs  = slice(data.aws_availability_zones.available.names, 0, 2)
-}
-
-module "ec2" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 5.0"
-
-  name = local.subdomain
-  ami  = data.aws_ami.al2023.id
-
-  user_data = <<-EOF
-    #!/bin/bash
-    dnf update
-    dnf install -y nginx
-    systemctl start nginx
-  EOF
-
-  subnet_id              = element(module.vpc.intra_subnets, 0)
-  vpc_security_group_ids = [module.security_group_ec2.security_group_id]
-}
-
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
-
-  name = local.subdomain
-  cidr = local.vpc_cidr
-
-  azs            = local.vpc_azs
-  intra_subnets  = [for k, v in local.vpc_azs : cidrsubnet(local.vpc_cidr, 8, k)]
-  public_subnets = [for k, v in local.vpc_azs : cidrsubnet(local.vpc_cidr, 8, k + 4)]
-}
-
-module "vpc_endpoints" {
-  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
-  version = "~> 5.0"
-
-  vpc_id = module.vpc.vpc_id
-
-  endpoints = {
-    s3 = {
-      service         = "s3"
-      service_type    = "Gateway"
-      route_table_ids = module.vpc.intra_route_table_ids
-    },
-  }
-}
-
-module "security_group_ec2" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 5.0"
-
-  name        = "${local.subdomain}-ec2"
-  description = "Security Group for EC2 Instance Egress"
-
-  vpc_id = module.vpc.vpc_id
-
-  egress_rules = ["http-80-tcp", "https-443-tcp"]
-  ingress_with_source_security_group_id = [
-    {
-      from_port                = 80
-      to_port                  = 80
-      protocol                 = "tcp"
-      description              = "Allow access to the CloudFront origin"
-      source_security_group_id = data.aws_security_group.vpc_origin.id
-  }]
-}
-
-data "aws_availability_zones" "available" {}
-
-data "aws_security_group" "vpc_origin" {
-  name       = "CloudFront-VPCOrigins-Service-SG"
-  vpc_id     = module.vpc.vpc_id
-  depends_on = [module.cloudfront]
-}
+#########################################
+# EC2 instance for CloudFront VPC origin
+#########################################
 
 data "aws_ami" "al2023" {
   most_recent = true
@@ -487,4 +409,19 @@ data "aws_ami" "al2023" {
     name   = "name"
     values = ["al2023-ami-2023*-x86_64"]
   }
+}
+
+module "ec2" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "~> 5.0"
+
+  ami = data.aws_ami.al2023.id
+}
+
+########
+# Extra
+########
+
+resource "random_pet" "this" {
+  length = 2
 }

@@ -28,8 +28,6 @@ resource "aws_cloudfront_origin_access_control" "this" {
 resource "aws_cloudfront_vpc_origin" "this" {
   for_each = local.create_vpc_origin ? var.vpc_origin : {}
 
-  tags = var.tags
-
   vpc_origin_endpoint_config {
     name                   = each.value["name"]
     arn                    = each.value["arn"]
@@ -42,6 +40,8 @@ resource "aws_cloudfront_vpc_origin" "this" {
       quantity = each.value.origin_ssl_protocols.quantity
     }
   }
+
+  tags = var.tags
 }
 
 resource "aws_cloudfront_distribution" "this" {
