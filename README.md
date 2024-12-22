@@ -79,7 +79,7 @@ module "cdn" {
 
 ## Examples
 
-- [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, ACM Certificate, Route53 Records.
+- [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, VPC Origins, ACM Certificate, Route53 Records.
 
 ## Notes
 
@@ -107,13 +107,13 @@ ordered_cache_behavior = [{
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.12.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.82 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.12.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.82 |
 
 ## Modules
 
@@ -127,6 +127,7 @@ No modules.
 | [aws_cloudfront_monitoring_subscription.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription) | resource |
 | [aws_cloudfront_origin_access_control.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control) | resource |
 | [aws_cloudfront_origin_access_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity) | resource |
+| [aws_cloudfront_vpc_origin.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_vpc_origin) | resource |
 | [aws_cloudfront_cache_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_origin_request_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
 | [aws_cloudfront_response_headers_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_response_headers_policy) | data source |
@@ -142,6 +143,7 @@ No modules.
 | <a name="input_create_monitoring_subscription"></a> [create\_monitoring\_subscription](#input\_create\_monitoring\_subscription) | If enabled, the resource for monitoring subscription will created. | `bool` | `false` | no |
 | <a name="input_create_origin_access_control"></a> [create\_origin\_access\_control](#input\_create\_origin\_access\_control) | Controls if CloudFront origin access control should be created | `bool` | `false` | no |
 | <a name="input_create_origin_access_identity"></a> [create\_origin\_access\_identity](#input\_create\_origin\_access\_identity) | Controls if CloudFront origin access identity should be created | `bool` | `false` | no |
+| <a name="input_create_vpc_origin"></a> [create\_vpc\_origin](#input\_create\_vpc\_origin) | If enabled, the resource for VPC origin will be created. | `bool` | `false` | no |
 | <a name="input_custom_error_response"></a> [custom\_error\_response](#input\_custom\_error\_response) | One or more custom error response elements | `any` | `{}` | no |
 | <a name="input_default_cache_behavior"></a> [default\_cache\_behavior](#input\_default\_cache\_behavior) | The default cache behavior for this distribution | `any` | `null` | no |
 | <a name="input_default_root_object"></a> [default\_root\_object](#input\_default\_root\_object) | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL. | `string` | `null` | no |
@@ -161,6 +163,7 @@ No modules.
 | <a name="input_staging"></a> [staging](#input\_staging) | Whether the distribution is a staging distribution. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `null` | no |
 | <a name="input_viewer_certificate"></a> [viewer\_certificate](#input\_viewer\_certificate) | The SSL configuration for this distribution | `any` | <pre>{<br/>  "cloudfront_default_certificate": true,<br/>  "minimum_protocol_version": "TLSv1"<br/>}</pre> | no |
+| <a name="input_vpc_origin"></a> [vpc\_origin](#input\_vpc\_origin) | Map of CloudFront VPC origin | <pre>map(object({<br/>    name                   = string<br/>    arn                    = string<br/>    http_port              = number<br/>    https_port             = number<br/>    origin_protocol_policy = string<br/>    origin_ssl_protocols = object({<br/>      items    = list(string)<br/>      quantity = number<br/>    })<br/>  }))</pre> | `{}` | no |
 | <a name="input_wait_for_deployment"></a> [wait\_for\_deployment](#input\_wait\_for\_deployment) | If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this to false will skip the process. | `bool` | `true` | no |
 | <a name="input_web_acl_id"></a> [web\_acl\_id](#input\_web\_acl\_id) | If you're using AWS WAF to filter CloudFront requests, the Id of the AWS WAF web ACL that is associated with the distribution. The WAF Web ACL must exist in the WAF Global (CloudFront) region and the credentials configuring this argument must have waf:GetWebACL permissions assigned. If using WAFv2, provide the ARN of the web ACL. | `string` | `null` | no |
 
@@ -185,6 +188,7 @@ No modules.
 | <a name="output_cloudfront_origin_access_identities"></a> [cloudfront\_origin\_access\_identities](#output\_cloudfront\_origin\_access\_identities) | The origin access identities created |
 | <a name="output_cloudfront_origin_access_identity_iam_arns"></a> [cloudfront\_origin\_access\_identity\_iam\_arns](#output\_cloudfront\_origin\_access\_identity\_iam\_arns) | The IAM arns of the origin access identities created |
 | <a name="output_cloudfront_origin_access_identity_ids"></a> [cloudfront\_origin\_access\_identity\_ids](#output\_cloudfront\_origin\_access\_identity\_ids) | The IDS of the origin access identities created |
+| <a name="output_cloudfront_vpc_origin_ids"></a> [cloudfront\_vpc\_origin\_ids](#output\_cloudfront\_vpc\_origin\_ids) | The IDS of the VPC origin created |
 <!-- END_TF_DOCS -->
 
 ## Authors
