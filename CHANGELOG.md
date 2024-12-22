@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.4.1...v4.0.0) (2024-12-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* Bump AWS provider version to 5.82, added VPC Origin support (#153)
+
+### Features
+
+* Bump AWS provider version to 5.82, added VPC Origin support ([#153](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/153)) ([9ff6c63](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/9ff6c63ab665709aaef8e0429ed00b2bea06af31))
+
 ## [3.4.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.4.0...v3.4.1) (2024-10-11)
 
 
