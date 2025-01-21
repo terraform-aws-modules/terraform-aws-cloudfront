@@ -214,6 +214,13 @@ resource "aws_cloudfront_distribution" "this" {
           function_arn = f.value.function_arn
         }
       }
+
+      dynamic "grpc_config" {
+        for_each = try([i.value.grpc_config], [])
+        content {
+          enabled = grpc_config.value.enabled
+        }
+      }
     }
   }
 
@@ -277,6 +284,13 @@ resource "aws_cloudfront_distribution" "this" {
         content {
           event_type   = f.key
           function_arn = f.value.function_arn
+        }
+      }
+
+      dynamic "grpc_config" {
+        for_each = try([i.value.grpc_config], [])
+        content {
+          enabled = grpc_config.value.enabled
         }
       }
     }
