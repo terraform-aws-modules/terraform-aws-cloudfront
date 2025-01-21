@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v4.0.0...v4.1.0) (2025-01-21)
+
+
+### Features
+
+* Support `grpc_config` in `default_cache_behavior` and `ordered_cache_behavior` ([#155](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/155)) ([7f176ff](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/7f176ff39790083a418a8e5921ba3088baf56e3e))
+
 ## [4.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v3.4.1...v4.0.0) (2024-12-22)
 
 
