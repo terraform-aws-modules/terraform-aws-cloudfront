@@ -42,7 +42,7 @@ module "cdn" {
     s3_one = {
       domain_name = "my-s3-bycket.s3.amazonaws.com"
       s3_origin_config = {
-        origin_access_identity = "s3_bucket_one"
+        cloudfront_access_identity_path = "s3_bucket_one"
       }
     }
   }
