@@ -65,6 +65,11 @@ module "cloudfront" {
         items    = ["TLSv1.2"]
         quantity = 1
       }
+      timeouts = {
+        create  = "20m"
+        update  = "20m"
+        destroy = "20m"
+      }
     }
   }
 
