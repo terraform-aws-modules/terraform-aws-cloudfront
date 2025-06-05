@@ -42,9 +42,9 @@ resource "aws_cloudfront_vpc_origin" "this" {
   }
 
   timeouts {
-    create = try(each.value.timeouts.create, null)
-    update = try(each.value.timeouts.update, null)
-    delete = try(each.value.timeouts.delete, null)
+    create = each.value.timeouts.create
+    update = each.value.timeouts.update
+    delete = each.value.timeouts.delete
   }
 
   tags = var.tags
