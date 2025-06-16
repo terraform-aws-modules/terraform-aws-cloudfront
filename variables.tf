@@ -208,3 +208,9 @@ variable "vpc_origin" {
   }))
   default = {}
 }
+
+variable "vpc_origin_timeouts" {
+  description = "Create, update, and delete timeout configurations for vpc origin"
+  type        = map(string)
+  default     = {}
+}

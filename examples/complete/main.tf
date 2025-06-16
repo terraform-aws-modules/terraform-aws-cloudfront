@@ -65,12 +65,13 @@ module "cloudfront" {
         items    = ["TLSv1.2"]
         quantity = 1
       }
-      timeouts = {
-        create  = "20m"
-        update  = "20m"
-        destroy = "20m"
-      }
     }
+  }
+
+  vpc_origin_timeouts = {
+    create = "20m"
+    update = "20m"
+    delete = "20m"
   }
 
   logging_config = {
