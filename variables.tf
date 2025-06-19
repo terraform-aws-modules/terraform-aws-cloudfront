@@ -200,11 +200,6 @@ variable "vpc_origin" {
       items    = list(string)
       quantity = number
     })
-    timeouts = optional(object({
-      create = optional(string)
-      update = optional(string)
-      delete = optional(string)
-    }))
   }))
   default = {}
 }
