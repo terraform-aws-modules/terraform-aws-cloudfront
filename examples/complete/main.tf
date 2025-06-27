@@ -259,17 +259,17 @@ data "aws_cloudfront_log_delivery_canonical_user_id" "cloudfront" {}
 
 module "s3_one" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
-  bucket        = "s3-one-${random_pet.this.id}"
+  bucket_prefix = "s3-one-"
   force_destroy = true
 }
 
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
-  bucket = "logs-${random_pet.this.id}"
+  bucket_prefix = "logs-"
 
   control_object_ownership = true
   object_ownership         = "ObjectWriter"
@@ -293,7 +293,7 @@ module "log_bucket" {
 #############################################
 
 locals {
-  package_url = "https://raw.githubusercontent.com/terraform-aws-modules/terraform-aws-lambda/master/examples/fixtures/python3.8-zip/existing_package.zip"
+  package_url = "https://raw.githubusercontent.com/terraform-aws-modules/terraform-aws-lambda/master/examples/fixtures/python-zip/existing_package.zip"
   downloaded  = "downloaded_package_${md5(local.package_url)}.zip"
 }
 
@@ -309,12 +309,12 @@ resource "null_resource" "download_package" {
 
 module "lambda_function" {
   source  = "terraform-aws-modules/lambda/aws"
-  version = "~> 7.0"
+  version = "~> 8.0"
 
   function_name = "${random_pet.this.id}-lambda"
   description   = "My awesome lambda function"
   handler       = "index.lambda_handler"
-  runtime       = "python3.8"
+  runtime       = "python3.11"
 
   publish        = true
   lambda_at_edge = true
@@ -338,7 +338,7 @@ module "lambda_function" {
 
 module "records" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "~> 2.0"
+  version = "~> 5.0"
 
   zone_id = data.aws_route53_zone.this.zone_id
 
@@ -407,21 +407,11 @@ resource "aws_cloudfront_function" "example" {
 # EC2 instance for CloudFront VPC origin
 #########################################
 
-data "aws_ami" "al2023" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023*-x86_64"]
-  }
-}
-
 module "ec2" {
   source  = "terraform-aws-modules/ec2-instance/aws"
-  version = "~> 5.0"
+  version = "~> 6.0"
 
-  ami = data.aws_ami.al2023.id
+  name = "ec2-vpc-origin-${random_pet.this.id}"
 }
 
 ########
