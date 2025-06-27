@@ -41,6 +41,12 @@ resource "aws_cloudfront_vpc_origin" "this" {
     }
   }
 
+  timeouts {
+    create = try(var.vpc_origin_timeouts.create, null)
+    update = try(var.vpc_origin_timeouts.update, null)
+    delete = try(var.vpc_origin_timeouts.delete, null)
+  }
+
   tags = var.tags
 }
 
