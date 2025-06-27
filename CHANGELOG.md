@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v4.1.0...v4.2.0) (2025-06-27)
+
+
+### Features
+
+* Add timeouts block for vpc origin resource ([#165](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/165)) ([dac9b8a](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/dac9b8a592afb7219a253c8d9faab6d37e81de6f))
+
 ## [4.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v4.0.0...v4.1.0) (2025-01-21)
 
 
