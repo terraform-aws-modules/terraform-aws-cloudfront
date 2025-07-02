@@ -17,7 +17,7 @@ resource "aws_cloudfront_origin_access_identity" "this" {
 resource "aws_cloudfront_origin_access_control" "this" {
   for_each = local.create_origin_access_control ? var.origin_access_control : {}
 
-  name = each.key
+  name = try(each.value.name, null) != null ? each.value.name : each.key
 
   description                       = each.value["description"]
   origin_access_control_origin_type = each.value["origin_type"]

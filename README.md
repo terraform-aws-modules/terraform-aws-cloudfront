@@ -106,7 +106,7 @@ ordered_cache_behavior = [{
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.83 |
 
 ## Providers
@@ -154,7 +154,7 @@ No modules.
 | <a name="input_logging_config"></a> [logging\_config](#input\_logging\_config) | The logging configuration that controls how logs are written to your distribution (maximum one). | `any` | `{}` | no |
 | <a name="input_ordered_cache_behavior"></a> [ordered\_cache\_behavior](#input\_ordered\_cache\_behavior) | An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0. | `any` | `[]` | no |
 | <a name="input_origin"></a> [origin](#input\_origin) | One or more origins for this distribution (multiples allowed). | `any` | `null` | no |
-| <a name="input_origin_access_control"></a> [origin\_access\_control](#input\_origin\_access\_control) | Map of CloudFront origin access control | <pre>map(object({<br/>    description      = string<br/>    origin_type      = string<br/>    signing_behavior = string<br/>    signing_protocol = string<br/>  }))</pre> | <pre>{<br/>  "s3": {<br/>    "description": "",<br/>    "origin_type": "s3",<br/>    "signing_behavior": "always",<br/>    "signing_protocol": "sigv4"<br/>  }<br/>}</pre> | no |
+| <a name="input_origin_access_control"></a> [origin\_access\_control](#input\_origin\_access\_control) | Map of CloudFront origin access control | <pre>map(object({<br/>    name             = optional(string)<br/>    description      = string<br/>    origin_type      = string<br/>    signing_behavior = string<br/>    signing_protocol = string<br/>  }))</pre> | <pre>{<br/>  "s3": {<br/>    "description": "",<br/>    "origin_type": "s3",<br/>    "signing_behavior": "always",<br/>    "signing_protocol": "sigv4"<br/>  }<br/>}</pre> | no |
 | <a name="input_origin_access_identities"></a> [origin\_access\_identities](#input\_origin\_access\_identities) | Map of CloudFront origin access identities (value as a comment) | `map(string)` | `{}` | no |
 | <a name="input_origin_group"></a> [origin\_group](#input\_origin\_group) | One or more origin\_group for this distribution (multiples allowed). | `any` | `{}` | no |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | no |
