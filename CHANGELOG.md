@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v4.2.0...v5.0.0) (2025-07-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Support specifying name for OAC and Terraform MSV 1.5.7 (#166)
+
+### Features
+
+* Support specifying name for OAC and Terraform MSV 1.5.7 ([#166](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/166)) ([736ce3b](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/736ce3bbf7e731b35c3b36d354f238fe112df2ed))
+
 ## [4.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v4.1.0...v4.2.0) (2025-06-27)
 
 
