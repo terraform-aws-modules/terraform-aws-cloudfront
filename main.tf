@@ -162,76 +162,67 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  dynamic "default_cache_behavior" {
-    for_each = [var.default_cache_behavior]
-    iterator = i
+  default_cache_behavior {
+    allowed_methods           = var.default_cache_behavior.allowed_methods
+    cached_methods            = var.default_cache_behavior.cached_methods
+    cache_policy_id           = var.default_cache_behavior.cache_policy_id
+    compress                  = var.default_cache_behavior.compress
+    default_ttl               = var.default_cache_behavior.default_ttl
+    field_level_encryption_id = var.default_cache_behavior.field_level_encryption_id
 
-    content {
-      target_origin_id       = i.value["target_origin_id"]
-      viewer_protocol_policy = i.value["viewer_protocol_policy"]
+    dynamic "forwarded_values" {
+      for_each = var.default_cache_behavior.forwarded_values != null ? [var.default_cache_behavior.forwarded_values] : []
 
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
-      compress                  = lookup(i.value, "compress", null)
-      field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
-      smooth_streaming          = lookup(i.value, "smooth_streaming", null)
-      trusted_signers           = lookup(i.value, "trusted_signers", null)
-      trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
-
-      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
-      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
-      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
-
-      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
-
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
-
-      dynamic "forwarded_values" {
-        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
-
-        content {
-          query_string            = lookup(i.value, "query_string", false)
-          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-          headers                 = lookup(i.value, "headers", [])
-
-          cookies {
-            forward           = lookup(i.value, "cookies_forward", "none")
-            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
-          }
+      content {
+        cookies {
+          forward           = forwarded_values.value.cookies.forward
+          whitelisted_names = forwarded_values.value.cookies.whitelisted_names
         }
+        headers                 = forwarded_values.value.headers
+        query_string            = forwarded_values.value.query_string
+        query_string_cache_keys = forwarded_values.value.query_string_cache_keys
       }
+    }
 
-      dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
-        iterator = l
+    dynamic "lambda_function_association" {
+      for_each = var.default_cache_behavior.lambda_function_association
 
-        content {
-          event_type   = l.key
-          lambda_arn   = l.value.lambda_arn
-          include_body = lookup(l.value, "include_body", null)
-        }
+      content {
+        event_type   = lambda_function_association.key
+        lambda_arn   = lambda_function_association.value.lambda_arn
+        include_body = lambda_function_association.value.include_body
       }
+    }
 
-      dynamic "function_association" {
-        for_each = lookup(i.value, "function_association", [])
-        iterator = f
+    dynamic "function_association" {
+      for_each = var.default_cache_behavior.function_association
 
-        content {
-          event_type   = f.key
-          function_arn = f.value.function_arn
-        }
+      content {
+        event_type   = function_association.key
+        function_arn = function_association.value.function_arn
       }
+    }
 
-      dynamic "grpc_config" {
-        for_each = try([i.value.grpc_config], [])
-        content {
-          enabled = grpc_config.value.enabled
-        }
+    max_ttl                    = var.default_cache_behavior.max_ttl
+    min_ttl                    = var.default_cache_behavior.min_ttl
+    origin_request_policy_id   = var.default_cache_behavior.origin_request_policy_id
+    realtime_log_config_arn    = var.default_cache_behavior.realtime_log_config_arn
+    response_headers_policy_id = var.default_cache_behavior.response_headers_policy_id
+    smooth_streaming           = var.default_cache_behavior.smooth_streaming
+    target_origin_id           = var.default_cache_behavior.target_origin_id
+    trusted_key_groups         = var.default_cache_behavior.trusted_key_groups
+    trusted_signers            = var.default_cache_behavior.trusted_signers
+    viewer_protocol_policy     = var.default_cache_behavior.viewer_protocol_policy
+
+    dynamic "grpc_config" {
+      for_each = var.default_cache_behavior.grpc_config != null ? [var.default_cache_behavior.grpc_config] : []
+
+      content {
+        enabled = grpc_config.value.enabled
       }
     }
   }
+
 
   dynamic "ordered_cache_behavior" {
     for_each = var.ordered_cache_behavior

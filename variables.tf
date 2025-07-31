@@ -193,8 +193,45 @@ variable "custom_error_response" {
 
 variable "default_cache_behavior" {
   description = "The default cache behavior for this distribution"
-  type        = any
-  default     = null
+  type = object({
+    allowed_methods           = list(string)
+    cached_methods            = list(string)
+    cache_policy_id           = optional(string)
+    compress                  = optional(bool)
+    default_ttl               = optional(number)
+    field_level_encryption_id = optional(string)
+    forwarded_values = optional(object({
+      cookies = object({
+        forward           = string
+        whitelisted_names = optional(list(string))
+      })
+      headers                 = optional(list(string))
+      query_string            = bool
+      query_string_cache_keys = optional(list(string))
+    }))
+    lambda_function_association = optional(map(object({
+      # event_type = map key
+      lambda_arn   = string
+      include_body = optional(bool)
+    })), {})
+    function_association = optional(map(object({
+      # event_type = map key
+      function_arn = string
+    })), {})
+    max_ttl                    = optional(number)
+    min_ttl                    = optional(number)
+    origin_request_policy_id   = optional(string)
+    realtime_log_config_arn    = optional(string)
+    response_headers_policy_id = optional(string)
+    smooth_streaming           = optional(bool)
+    target_origin_id           = string
+    trusted_key_groups         = optional(list(string))
+    trusted_signers            = optional(list(string))
+    viewer_protocol_policy     = string
+    grpc_config = optional(object({
+      enabled = bool
+    }))
+  })
 }
 
 variable "ordered_cache_behavior" {

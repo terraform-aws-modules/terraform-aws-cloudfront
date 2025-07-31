@@ -12,7 +12,7 @@ module "wrapper" {
   create_origin_access_identity   = try(each.value.create_origin_access_identity, var.defaults.create_origin_access_identity, false)
   create_vpc_origin               = try(each.value.create_vpc_origin, var.defaults.create_vpc_origin, false)
   custom_error_response           = try(each.value.custom_error_response, var.defaults.custom_error_response, {})
-  default_cache_behavior          = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior, null)
+  default_cache_behavior          = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior)
   default_root_object             = try(each.value.default_root_object, var.defaults.default_root_object, null)
   enabled                         = try(each.value.enabled, var.defaults.enabled, true)
   geo_restriction                 = try(each.value.geo_restriction, var.defaults.geo_restriction, {})
