@@ -122,8 +122,39 @@ variable "tags" {
 
 variable "origin" {
   description = "One or more origins for this distribution (multiples allowed)."
-  type        = any
-  default     = null
+  type = map(object({
+    connection_attempts = optional(number)
+    connection_timeout  = optional(number)
+    custom_origin_config = optional(object({
+      http_port                = number
+      https_port               = number
+      origin_protocol_policy   = string
+      origin_ssl_protocols     = list(string)
+      origin_keepalive_timeout = optional(number)
+      origin_read_timeout      = optional(number)
+    }))
+    domain_name = string
+    custom_header = optional(list(object({
+      name  = string
+      value = string
+    })))
+    origin_access_control_id = optional(string)
+    origin_id                = optional(string) # If not provided, map key is used.
+    origin_path              = optional(string)
+    origin_shield = optional(object({
+      enabled              = bool
+      origin_shield_region = optional(string)
+    }))
+    s3_origin_config = optional(object({
+      origin_access_identity = string
+    }))
+    vpc_origin_config = optional(object({
+      origin_keepalive_timeout = optional(number)
+      origin_read_timeout      = optional(number)
+      vpc_origin_id            = optional(string) # If not provided, uses aws_cloudfront_vpc_origin.this
+    }))
+  }))
+  default = null
 }
 
 variable "origin_group" {

@@ -81,36 +81,26 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.origin
 
     content {
-      domain_name              = origin.value.domain_name
-      origin_id                = lookup(origin.value, "origin_id", origin.key)
-      origin_path              = lookup(origin.value, "origin_path", "")
-      connection_attempts      = lookup(origin.value, "connection_attempts", null)
-      connection_timeout       = lookup(origin.value, "connection_timeout", null)
-      origin_access_control_id = lookup(origin.value, "origin_access_control_id", lookup(lookup(aws_cloudfront_origin_access_control.this, lookup(origin.value, "origin_access_control", ""), {}), "id", null))
-
-      dynamic "s3_origin_config" {
-        for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
-
-        content {
-          origin_access_identity = lookup(s3_origin_config.value, "cloudfront_access_identity_path", lookup(lookup(aws_cloudfront_origin_access_identity.this, lookup(s3_origin_config.value, "origin_access_identity", ""), {}), "cloudfront_access_identity_path", null))
-        }
-      }
+      connection_attempts = origin.value.connection_attempts
+      connection_timeout  = origin.value.connection_timeout
 
       dynamic "custom_origin_config" {
-        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
+        for_each = origin.value.custom_origin_config != null ? [origin.value.custom_origin_config] : []
 
         content {
           http_port                = custom_origin_config.value.http_port
           https_port               = custom_origin_config.value.https_port
           origin_protocol_policy   = custom_origin_config.value.origin_protocol_policy
           origin_ssl_protocols     = custom_origin_config.value.origin_ssl_protocols
-          origin_keepalive_timeout = lookup(custom_origin_config.value, "origin_keepalive_timeout", null)
-          origin_read_timeout      = lookup(custom_origin_config.value, "origin_read_timeout", null)
+          origin_keepalive_timeout = custom_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = custom_origin_config.value.origin_read_timeout
         }
       }
 
+      domain_name = origin.value.domain_name
+
       dynamic "custom_header" {
-        for_each = lookup(origin.value, "custom_header", [])
+        for_each = origin.value.custom_header
 
         content {
           name  = custom_header.value.name
@@ -118,8 +108,12 @@ resource "aws_cloudfront_distribution" "this" {
         }
       }
 
+      origin_access_control_id = origin.value.origin_access_control_id
+      origin_id                = coalesce(origin.value.origin_id, origin.key)
+      origin_path              = origin.value.origin_path
+
       dynamic "origin_shield" {
-        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [lookup(origin.value, "origin_shield", {})]
+        for_each = origin.value.origin_shield != null ? [origin.value.origin_shield] : []
 
         content {
           enabled              = origin_shield.value.enabled
@@ -127,13 +121,21 @@ resource "aws_cloudfront_distribution" "this" {
         }
       }
 
-      dynamic "vpc_origin_config" {
-        for_each = length(keys(lookup(origin.value, "vpc_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "vpc_origin_config", {})]
+      dynamic "s3_origin_config" {
+        for_each = origin.value.s3_origin_config != null ? [origin.value.s3_origin_config] : []
 
         content {
-          vpc_origin_id            = lookup(vpc_origin_config.value, "vpc_origin_id", lookup(lookup(aws_cloudfront_vpc_origin.this, lookup(vpc_origin_config.value, "vpc_origin", ""), {}), "id", null))
-          origin_keepalive_timeout = lookup(vpc_origin_config.value, "origin_keepalive_timeout", null)
-          origin_read_timeout      = lookup(vpc_origin_config.value, "origin_read_timeout", null)
+          origin_access_identity = s3_origin_config.value.origin_access_identity
+        }
+      }
+
+      dynamic "vpc_origin_config" {
+        for_each = origin.value.vpc_origin_config != null ? [origin.value.vpc_origin_config] : []
+
+        content {
+          vpc_origin_id            = coalesce(vpc_origin_config.value.vpc_origin_id, aws_cloudfront_vpc_origin.this[origin.key].id)
+          origin_keepalive_timeout = vpc_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = vpc_origin_config.value.origin_read_timeout
         }
       }
     }
