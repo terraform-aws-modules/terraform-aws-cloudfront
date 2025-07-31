@@ -137,7 +137,7 @@ variable "origin" {
     custom_header = optional(list(object({
       name  = string
       value = string
-    })))
+    })), [])
     origin_access_control_id = optional(string)
     origin_id                = optional(string) # If not provided, map key is used.
     origin_path              = optional(string)
