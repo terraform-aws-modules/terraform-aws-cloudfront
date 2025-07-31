@@ -133,7 +133,8 @@ resource "aws_cloudfront_distribution" "this" {
         for_each = origin.value.vpc_origin_config != null ? [origin.value.vpc_origin_config] : []
 
         content {
-          vpc_origin_id            = coalesce(vpc_origin_config.value.vpc_origin_id, aws_cloudfront_vpc_origin.this[origin.key].id)
+          vpc_origin_id = coalesce(vpc_origin_config.value.vpc_origin_id,
+          aws_cloudfront_vpc_origin.this[vpc_origin_config.value.vpc_origin].id)
           origin_keepalive_timeout = vpc_origin_config.value.origin_keepalive_timeout
           origin_read_timeout      = vpc_origin_config.value.origin_read_timeout
         }

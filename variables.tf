@@ -151,10 +151,11 @@ variable "origin" {
     vpc_origin_config = optional(object({
       origin_keepalive_timeout = optional(number)
       origin_read_timeout      = optional(number)
-      vpc_origin_id            = optional(string) # If not provided, uses aws_cloudfront_vpc_origin.this
+      vpc_origin_id            = optional(string) # If not provided, uses aws_cloudfront_vpc_origin.this[this.vpc_origin].id
+      vpc_origin               = optional(string) # Custom parameter to lookup against aws_cloudfront_vpc_origin.this
     }))
   }))
-  default = null
+  default = {}
 }
 
 variable "origin_group" {
