@@ -119,7 +119,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "origin_shield" {
-        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [lookup(origin.value, "origin_shield", {})]
+        for_each = lookup(lookup(origin.value, "origin_shield", {}), "enabled", false) ? [lookup(origin.value, "origin_shield", {})] : []
 
         content {
           enabled              = origin_shield.value.enabled
