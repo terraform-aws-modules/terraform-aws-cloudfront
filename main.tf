@@ -54,6 +54,7 @@ resource "aws_cloudfront_distribution" "this" {
   count = var.create_distribution ? 1 : 0
 
   aliases                         = var.aliases
+  anycast_ip_list_id              = var.anycast_ip_list_id
   comment                         = var.comment
   continuous_deployment_policy_id = var.continuous_deployment_policy_id
   default_root_object             = var.default_root_object

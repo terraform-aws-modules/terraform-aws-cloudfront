@@ -48,6 +48,12 @@ variable "aliases" {
   default     = null
 }
 
+variable "anycast_ip_list_id" {
+  description = "The ID of the anycast static IP list to use for this distribution"
+  type        = string
+  default     = null
+}
+
 variable "comment" {
   description = "Any comments you want to include about the distribution."
   type        = string
