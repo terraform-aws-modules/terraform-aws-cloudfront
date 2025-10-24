@@ -176,6 +176,8 @@ module "cloudfront" {
       cache_policy_name            = "Managed-CachingOptimized"
       origin_request_policy_name   = "Managed-UserAgentRefererHeaders"
       response_headers_policy_name = "Managed-SimpleCORS"
+      # using a response header policy you're dynamically creating below
+      # response_header_policy: "cors_policy"
 
       function_association = {
         # Valid keys: viewer-request, viewer-response
@@ -229,6 +231,79 @@ module "cloudfront" {
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]
+  }
+
+  create_response_headers_policy = true
+  response_headers_policy = {
+    cors_policy = {
+      name    = "CORSPolicy"
+      comment = "CORS configuration for API"
+
+      cors_config = {
+        access_control_allow_credentials = true
+        origin_override                  = true
+
+        access_control_allow_headers = {
+          items = ["*"]
+        }
+
+        access_control_allow_methods = {
+          items = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        }
+
+        access_control_allow_origins = {
+          items = ["https://example.com", "https://app.example.com"]
+        }
+
+        access_control_expose_headers = {
+          items = ["X-Custom-Header", "X-Request-Id"]
+        }
+
+        access_control_max_age_sec = 3600
+      }
+    }
+    custom_headers = {
+      name    = "CustomHeadersPolicy"
+      comment = "Add custom response headers"
+
+      custom_headers_config = {
+        items = [
+          {
+            header   = "X-Powered-By"
+            override = true
+            value    = "MyApp/1.0"
+          },
+          {
+            header   = "X-API-Version"
+            override = false
+            value    = "v2"
+          },
+          {
+            header   = "Cache-Control"
+            override = true
+            value    = "public, max-age=3600"
+          }
+        ]
+      }
+    }
+    remove_headers = {
+      name    = "RemoveHeadersPolicy"
+      comment = "Remove unwanted headers from origin"
+
+      remove_headers_config = {
+        items = [
+          {
+            header = "x-robots-tag"
+          },
+          {
+            header = "server"
+          },
+          {
+            header = "x-powered-by"
+          }
+        ]
+      }
+    }
   }
 
 }
