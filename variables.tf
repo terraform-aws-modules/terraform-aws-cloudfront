@@ -206,7 +206,7 @@ variable "vpc_origin" {
 }
 
 variable "vpc_origin_timeouts" {
-  description = "Create, update, and delete timeout configurations for vpc origin"
+  description = "Custom timeouts for Terraform VPC origin operations. Useful when VPC origin provisioning or updates take longer than Terraform's default timeout. These do not affect the resource itself."
   type        = map(string)
   default     = {}
 }
