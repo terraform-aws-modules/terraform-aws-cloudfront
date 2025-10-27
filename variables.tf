@@ -122,8 +122,40 @@ variable "tags" {
 
 variable "origin" {
   description = "One or more origins for this distribution (multiples allowed)."
-  type        = any
-  default     = null
+  type = map(object({
+    connection_attempts = optional(number)
+    connection_timeout  = optional(number)
+    custom_origin_config = optional(object({
+      http_port                = number
+      https_port               = number
+      origin_protocol_policy   = string
+      origin_ssl_protocols     = list(string)
+      origin_keepalive_timeout = optional(number)
+      origin_read_timeout      = optional(number)
+    }))
+    domain_name = string
+    custom_header = optional(list(object({
+      name  = string
+      value = string
+    })), [])
+    origin_access_control_id = optional(string)
+    origin_id                = optional(string) # If not provided, map key is used.
+    origin_path              = optional(string)
+    origin_shield = optional(object({
+      enabled              = bool
+      origin_shield_region = optional(string)
+    }))
+    s3_origin_config = optional(object({
+      origin_access_identity = string
+    }))
+    vpc_origin_config = optional(object({
+      origin_keepalive_timeout = optional(number)
+      origin_read_timeout      = optional(number)
+      vpc_origin_id            = optional(string) # If not provided, uses aws_cloudfront_vpc_origin.this[this.vpc_origin].id
+      vpc_origin               = optional(string) # Custom parameter to lookup against aws_cloudfront_vpc_origin.this
+    }))
+  }))
+  default = {}
 }
 
 variable "origin_group" {
@@ -161,14 +193,96 @@ variable "custom_error_response" {
 
 variable "default_cache_behavior" {
   description = "The default cache behavior for this distribution"
-  type        = any
-  default     = null
+  type = object({
+    allowed_methods           = list(string)
+    cached_methods            = list(string)
+    cache_policy_id           = optional(string)
+    cache_policy_name         = optional(string) # convenience variable to lookup
+    compress                  = optional(bool)
+    default_ttl               = optional(number)
+    field_level_encryption_id = optional(string)
+    forwarded_values = optional(object({
+      cookies = object({
+        forward           = string
+        whitelisted_names = optional(list(string))
+      })
+      headers                 = optional(list(string))
+      query_string            = bool
+      query_string_cache_keys = optional(list(string))
+    }))
+    lambda_function_association = optional(map(object({
+      # event_type = map key
+      lambda_arn   = string
+      include_body = optional(bool)
+    })), {})
+    function_association = optional(map(object({
+      # event_type = map key
+      function_arn = string
+    })), {})
+    max_ttl                      = optional(number)
+    min_ttl                      = optional(number)
+    origin_request_policy_id     = optional(string)
+    origin_request_policy_name   = optional(string) # convenience variable to lookup
+    realtime_log_config_arn      = optional(string)
+    response_headers_policy_id   = optional(string)
+    response_headers_policy_name = optional(string) # convenience variable to lookup
+    smooth_streaming             = optional(bool)
+    target_origin_id             = string
+    trusted_key_groups           = optional(list(string))
+    trusted_signers              = optional(list(string))
+    viewer_protocol_policy       = string
+    grpc_config = optional(object({
+      enabled = bool
+    }))
+  })
 }
 
 variable "ordered_cache_behavior" {
   description = "An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0."
-  type        = any
-  default     = []
+  type = list(object({
+    allowed_methods           = list(string)
+    cached_methods            = list(string)
+    cache_policy_id           = optional(string)
+    cache_policy_name         = optional(string) # convenience variable to lookup
+    compress                  = optional(bool)
+    default_ttl               = optional(number)
+    field_level_encryption_id = optional(string)
+    forwarded_values = optional(object({
+      cookies = object({
+        forward           = string
+        whitelisted_names = optional(list(string))
+      })
+      headers                 = optional(list(string))
+      query_string            = bool
+      query_string_cache_keys = optional(list(string))
+    }))
+    lambda_function_association = optional(map(object({
+      # event_type = map key
+      lambda_arn   = string
+      include_body = optional(bool)
+    })), {})
+    function_association = optional(map(object({
+      # event_type = map key
+      function_arn = string
+    })), {})
+    max_ttl                      = optional(number)
+    min_ttl                      = optional(number)
+    origin_request_policy_id     = optional(string)
+    origin_request_policy_name   = optional(string) # convenience variable to lookup
+    path_pattern                 = string
+    realtime_log_config_arn      = optional(string)
+    response_headers_policy_id   = optional(string)
+    response_headers_policy_name = optional(string) # convenience variable to lookup
+    smooth_streaming             = optional(bool)
+    target_origin_id             = string
+    trusted_key_groups           = optional(list(string))
+    trusted_signers              = optional(list(string))
+    viewer_protocol_policy       = string
+    grpc_config = optional(object({
+      enabled = bool
+    }))
+  }))
+  default = []
 }
 
 variable "create_monitoring_subscription" {

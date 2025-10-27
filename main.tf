@@ -81,36 +81,26 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.origin
 
     content {
-      domain_name              = origin.value.domain_name
-      origin_id                = lookup(origin.value, "origin_id", origin.key)
-      origin_path              = lookup(origin.value, "origin_path", "")
-      connection_attempts      = lookup(origin.value, "connection_attempts", null)
-      connection_timeout       = lookup(origin.value, "connection_timeout", null)
-      origin_access_control_id = lookup(origin.value, "origin_access_control_id", lookup(lookup(aws_cloudfront_origin_access_control.this, lookup(origin.value, "origin_access_control", ""), {}), "id", null))
-
-      dynamic "s3_origin_config" {
-        for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
-
-        content {
-          origin_access_identity = lookup(s3_origin_config.value, "cloudfront_access_identity_path", lookup(lookup(aws_cloudfront_origin_access_identity.this, lookup(s3_origin_config.value, "origin_access_identity", ""), {}), "cloudfront_access_identity_path", null))
-        }
-      }
+      connection_attempts = origin.value.connection_attempts
+      connection_timeout  = origin.value.connection_timeout
 
       dynamic "custom_origin_config" {
-        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
+        for_each = origin.value.custom_origin_config != null ? [origin.value.custom_origin_config] : []
 
         content {
           http_port                = custom_origin_config.value.http_port
           https_port               = custom_origin_config.value.https_port
           origin_protocol_policy   = custom_origin_config.value.origin_protocol_policy
           origin_ssl_protocols     = custom_origin_config.value.origin_ssl_protocols
-          origin_keepalive_timeout = lookup(custom_origin_config.value, "origin_keepalive_timeout", null)
-          origin_read_timeout      = lookup(custom_origin_config.value, "origin_read_timeout", null)
+          origin_keepalive_timeout = custom_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = custom_origin_config.value.origin_read_timeout
         }
       }
 
+      domain_name = origin.value.domain_name
+
       dynamic "custom_header" {
-        for_each = lookup(origin.value, "custom_header", [])
+        for_each = origin.value.custom_header
 
         content {
           name  = custom_header.value.name
@@ -118,8 +108,12 @@ resource "aws_cloudfront_distribution" "this" {
         }
       }
 
+      origin_access_control_id = origin.value.origin_access_control_id
+      origin_id                = coalesce(origin.value.origin_id, origin.key)
+      origin_path              = origin.value.origin_path
+
       dynamic "origin_shield" {
-        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [lookup(origin.value, "origin_shield", {})]
+        for_each = origin.value.origin_shield != null ? [origin.value.origin_shield] : []
 
         content {
           enabled              = origin_shield.value.enabled
@@ -127,13 +121,22 @@ resource "aws_cloudfront_distribution" "this" {
         }
       }
 
-      dynamic "vpc_origin_config" {
-        for_each = length(keys(lookup(origin.value, "vpc_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "vpc_origin_config", {})]
+      dynamic "s3_origin_config" {
+        for_each = origin.value.s3_origin_config != null ? [origin.value.s3_origin_config] : []
 
         content {
-          vpc_origin_id            = lookup(vpc_origin_config.value, "vpc_origin_id", lookup(lookup(aws_cloudfront_vpc_origin.this, lookup(vpc_origin_config.value, "vpc_origin", ""), {}), "id", null))
-          origin_keepalive_timeout = lookup(vpc_origin_config.value, "origin_keepalive_timeout", null)
-          origin_read_timeout      = lookup(vpc_origin_config.value, "origin_read_timeout", null)
+          origin_access_identity = s3_origin_config.value.origin_access_identity
+        }
+      }
+
+      dynamic "vpc_origin_config" {
+        for_each = origin.value.vpc_origin_config != null ? [origin.value.vpc_origin_config] : []
+
+        content {
+          vpc_origin_id = coalesce(vpc_origin_config.value.vpc_origin_id,
+          aws_cloudfront_vpc_origin.this[vpc_origin_config.value.vpc_origin].id)
+          origin_keepalive_timeout = vpc_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = vpc_origin_config.value.origin_read_timeout
         }
       }
     }
@@ -159,132 +162,119 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
-  dynamic "default_cache_behavior" {
-    for_each = [var.default_cache_behavior]
-    iterator = i
+  default_cache_behavior {
+    allowed_methods = var.default_cache_behavior.allowed_methods
+    cached_methods  = var.default_cache_behavior.cached_methods
+    cache_policy_id = try(
+      data.aws_cloudfront_cache_policy.this[var.default_cache_behavior.cache_policy_name].id,
+      var.default_cache_behavior.cache_policy_id
+    )
+    compress                  = var.default_cache_behavior.compress
+    default_ttl               = var.default_cache_behavior.default_ttl
+    field_level_encryption_id = var.default_cache_behavior.field_level_encryption_id
 
-    content {
-      target_origin_id       = i.value["target_origin_id"]
-      viewer_protocol_policy = i.value["viewer_protocol_policy"]
+    dynamic "forwarded_values" {
+      for_each = var.default_cache_behavior.forwarded_values != null ? [var.default_cache_behavior.forwarded_values] : []
 
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
-      compress                  = lookup(i.value, "compress", null)
-      field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
-      smooth_streaming          = lookup(i.value, "smooth_streaming", null)
-      trusted_signers           = lookup(i.value, "trusted_signers", null)
-      trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
-
-      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
-      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
-      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
-
-      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
-
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
-
-      dynamic "forwarded_values" {
-        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
-
-        content {
-          query_string            = lookup(i.value, "query_string", false)
-          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-          headers                 = lookup(i.value, "headers", [])
-
-          cookies {
-            forward           = lookup(i.value, "cookies_forward", "none")
-            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
-          }
+      content {
+        cookies {
+          forward           = forwarded_values.value.cookies.forward
+          whitelisted_names = forwarded_values.value.cookies.whitelisted_names
         }
+        headers                 = forwarded_values.value.headers
+        query_string            = forwarded_values.value.query_string
+        query_string_cache_keys = forwarded_values.value.query_string_cache_keys
       }
+    }
 
-      dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
-        iterator = l
+    dynamic "lambda_function_association" {
+      for_each = var.default_cache_behavior.lambda_function_association
 
-        content {
-          event_type   = l.key
-          lambda_arn   = l.value.lambda_arn
-          include_body = lookup(l.value, "include_body", null)
-        }
+      content {
+        event_type   = lambda_function_association.key
+        lambda_arn   = lambda_function_association.value.lambda_arn
+        include_body = lambda_function_association.value.include_body
       }
+    }
 
-      dynamic "function_association" {
-        for_each = lookup(i.value, "function_association", [])
-        iterator = f
+    dynamic "function_association" {
+      for_each = var.default_cache_behavior.function_association
 
-        content {
-          event_type   = f.key
-          function_arn = f.value.function_arn
-        }
+      content {
+        event_type   = function_association.key
+        function_arn = function_association.value.function_arn
       }
+    }
 
-      dynamic "grpc_config" {
-        for_each = try([i.value.grpc_config], [])
-        content {
-          enabled = grpc_config.value.enabled
-        }
+    max_ttl = var.default_cache_behavior.max_ttl
+    min_ttl = var.default_cache_behavior.min_ttl
+    origin_request_policy_id = try(
+      data.aws_cloudfront_origin_request_policy.this[var.default_cache_behavior.origin_request_policy_name].id,
+      var.default_cache_behavior.origin_request_policy_id
+    )
+    realtime_log_config_arn = var.default_cache_behavior.realtime_log_config_arn
+    response_headers_policy_id = try(
+      data.aws_cloudfront_response_headers_policy.this[var.default_cache_behavior.response_headers_policy_name].id,
+      var.default_cache_behavior.response_headers_policy_id
+    )
+    smooth_streaming       = var.default_cache_behavior.smooth_streaming
+    target_origin_id       = var.default_cache_behavior.target_origin_id
+    trusted_key_groups     = var.default_cache_behavior.trusted_key_groups
+    trusted_signers        = var.default_cache_behavior.trusted_signers
+    viewer_protocol_policy = var.default_cache_behavior.viewer_protocol_policy
+
+    dynamic "grpc_config" {
+      for_each = var.default_cache_behavior.grpc_config != null ? [var.default_cache_behavior.grpc_config] : []
+
+      content {
+        enabled = grpc_config.value.enabled
       }
     }
   }
+
 
   dynamic "ordered_cache_behavior" {
     for_each = var.ordered_cache_behavior
     iterator = i
 
     content {
-      path_pattern           = i.value["path_pattern"]
-      target_origin_id       = i.value["target_origin_id"]
-      viewer_protocol_policy = i.value["viewer_protocol_policy"]
-
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
-      compress                  = lookup(i.value, "compress", null)
-      field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
-      smooth_streaming          = lookup(i.value, "smooth_streaming", null)
-      trusted_signers           = lookup(i.value, "trusted_signers", null)
-      trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
-
-      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
-      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
-      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
-
-      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
-
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
+      allowed_methods = i.value.allowed_methods
+      cached_methods  = i.value.cached_methods
+      cache_policy_id = try(
+        data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id,
+        i.value.cache_policy_id
+      )
+      compress                  = i.value.compress
+      default_ttl               = i.value.default_ttl
+      field_level_encryption_id = i.value.field_level_encryption_id
 
       dynamic "forwarded_values" {
-        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
+        for_each = i.value.forwarded_values != null ? [i.value.forwarded_values] : []
 
         content {
-          query_string            = lookup(i.value, "query_string", false)
-          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-          headers                 = lookup(i.value, "headers", [])
-
           cookies {
-            forward           = lookup(i.value, "cookies_forward", "none")
-            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
+            forward           = i.value.cookies_forward
+            whitelisted_names = i.value.cookies_whitelisted_names
           }
+          headers                 = i.value.headers
+          query_string            = i.value.query_string
+          query_string_cache_keys = i.value.query_string_cache_keys
         }
       }
 
       dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
+        for_each = i.value.lambda_function_association
         iterator = l
 
         content {
           event_type   = l.key
           lambda_arn   = l.value.lambda_arn
-          include_body = lookup(l.value, "include_body", null)
+          include_body = l.value.include_body
         }
       }
 
       dynamic "function_association" {
-        for_each = lookup(i.value, "function_association", [])
+        for_each = i.value.function_association
         iterator = f
 
         content {
@@ -293,8 +283,27 @@ resource "aws_cloudfront_distribution" "this" {
         }
       }
 
+      max_ttl = i.value.max_ttl
+      min_ttl = i.value.min_ttl
+      origin_request_policy_id = try(
+        data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id,
+        i.value.origin_request_policy_id
+      )
+      path_pattern            = i.value.path_pattern
+      realtime_log_config_arn = i.value.realtime_log_config_arn
+      response_headers_policy_id = try(
+        data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id,
+        i.value.response_headers_policy_id
+      )
+      smooth_streaming       = i.value.smooth_streaming
+      target_origin_id       = i.value.target_origin_id
+      trusted_key_groups     = i.value.trusted_key_groups
+      trusted_signers        = i.value.trusted_signers
+      viewer_protocol_policy = i.value.viewer_protocol_policy
+
       dynamic "grpc_config" {
-        for_each = try([i.value.grpc_config], [])
+        for_each = i.value.grpc_config != null ? [i.value.grpc_config] : []
+
         content {
           enabled = grpc_config.value.enabled
         }
@@ -312,7 +321,9 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "custom_error_response" {
-    for_each = length(flatten([var.custom_error_response])[0]) > 0 ? flatten([var.custom_error_response]) : []
+    for_each = length(
+      flatten([var.custom_error_response])[0]) > 0 ? flatten([var.custom_error_response]
+    ) : []
 
     content {
       error_code = custom_error_response.value["error_code"]
@@ -348,19 +359,28 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
 }
 
 data "aws_cloudfront_cache_policy" "this" {
-  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.cache_policy_name if can(v.cache_policy_name)])
+  for_each = toset([
+    for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) :
+    v.cache_policy_name if can(v.cache_policy_name) && v.cache_policy_name != null
+  ])
 
   name = each.key
 }
 
 data "aws_cloudfront_origin_request_policy" "this" {
-  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.origin_request_policy_name if can(v.origin_request_policy_name)])
+  for_each = toset([
+    for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) :
+    v.origin_request_policy_name if can(v.origin_request_policy_name) && v.origin_request_policy_name != null
+  ])
 
   name = each.key
 }
 
 data "aws_cloudfront_response_headers_policy" "this" {
-  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.response_headers_policy_name if can(v.response_headers_policy_name)])
+  for_each = toset([
+    for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) :
+    v.response_headers_policy_name if can(v.response_headers_policy_name) && v.response_headers_policy_name != null
+  ])
 
   name = each.key
 }
