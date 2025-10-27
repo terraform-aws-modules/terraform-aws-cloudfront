@@ -143,6 +143,18 @@ resource "aws_cloudfront_response_headers_policy" "this" {
   }
 }
 
+resource "aws_cloudfront_function" "this" {
+  for_each = var.create_cloudfront_function && var.cloudfront_functions != null ? var.cloudfront_functions : {}
+
+  name    = try(coalesce(each.value.name, each.key))
+  runtime = each.value.runtime
+  comment = each.value.comment
+  publish = each.value.publish
+  code    = each.value.code
+
+  key_value_store_associations = each.value.key_value_store_associations
+}
+
 resource "aws_cloudfront_origin_access_identity" "this" {
   for_each = local.create_origin_access_identity ? var.origin_access_identities : {}
 
@@ -205,6 +217,11 @@ resource "aws_cloudfront_distribution" "this" {
   wait_for_deployment             = var.wait_for_deployment
   web_acl_id                      = var.web_acl_id
   tags                            = var.tags
+
+  # Ensure CloudFront Functions are created before the distribution
+  depends_on = [
+    aws_cloudfront_function.this
+  ]
 
   dynamic "logging_config" {
     for_each = length(keys(var.logging_config)) == 0 ? [] : [var.logging_config]
@@ -356,7 +373,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = f.value.function_arn
+          function_arn = try(f.value.function_arn, aws_cloudfront_function.this[f.value.function_name].arn, null)
         }
       }
 
@@ -428,7 +445,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = f.value.function_arn
+          function_arn = try(f.value.function_arn, aws_cloudfront_function.this[f.value.function_name].arn, null)
         }
       }
 

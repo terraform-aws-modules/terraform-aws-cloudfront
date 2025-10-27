@@ -287,3 +287,30 @@ variable "response_headers_policies" {
   }))
   default = null
 }
+
+variable "create_cloudfront_function" {
+  description = "Controls if CloudFront Functions should be created"
+  type        = bool
+  default     = false
+}
+
+variable "cloudfront_functions" {
+  description = "Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified."
+  type = map(object({
+    name                         = optional(string)
+    runtime                      = optional(string, "cloudfront-js-2.0")
+    comment                      = optional(string)
+    publish                      = optional(bool, true)
+    code                         = string
+    key_value_store_associations = optional(list(string), null)
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for k, v in var.cloudfront_functions :
+      contains(["cloudfront-js-1.0", "cloudfront-js-2.0"], v.runtime)
+    ])
+    error_message = "Runtime must be 'cloudfront-js-1.0' or 'cloudfront-js-2.0'. Provided runtime is invalid."
+  }
+}

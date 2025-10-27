@@ -77,6 +77,128 @@ module "cdn" {
 }
 ```
 
+### CloudFront distribution with CloudFront Functions
+
+```hcl
+module "cdn" {
+  source = "terraform-aws-modules/cloudfront/aws"
+
+  aliases = ["cdn.example.com"]
+
+  comment             = "CloudFront with Functions"
+  enabled             = true
+  is_ipv6_enabled     = true
+  price_class         = "PriceClass_All"
+  retain_on_delete    = false
+  wait_for_deployment = false
+
+  # Enable CloudFront Functions
+  create_cloudfront_function = true
+
+  cloudfront_functions = {
+    viewer-request-function = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Function to add security headers and modify requests"
+      code    = file("${path.module}/functions/viewer-request.js")
+      publish = true
+    }
+
+    viewer-response-function = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Function to add security response headers"
+      code    = file("${path.module}/functions/viewer-response.js")
+      publish = true
+      # Optional: Associate with CloudFront KeyValueStore
+      key_value_store_associations = ["arn:aws:cloudfront::123456789012:key-value-store/example-store"]
+    }
+  }
+
+  origin = {
+    s3_bucket = {
+      domain_name = "my-bucket.s3.amazonaws.com"
+      s3_origin_config = {
+        origin_access_identity = "s3_bucket"
+      }
+    }
+  }
+
+  default_cache_behavior = {
+    target_origin_id       = "s3_bucket"
+    viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+    compress        = true
+    query_string    = true
+
+    # Associate CloudFront Functions with cache behavior
+    # Option 1: Direct ARN reference (recommended for external functions)
+    # function_association = {
+    #   viewer-request = {
+    #     function_arn = aws_cloudfront_function.external.arn
+    #   }
+    # }
+
+    # Option 2: Dynamic reference to module-managed functions by name
+    function_association = {
+      viewer-request = {
+        function_name = "viewer-request-function"
+      }
+      viewer-response = {
+        function_name = "viewer-response-function"
+      }
+    }
+  }
+
+  viewer_certificate = {
+    acm_certificate_arn = "arn:aws:acm:us-east-1:135367859851:certificate/1032b155-22da-4ae0-9f69-e206f825458b"
+    ssl_support_method  = "sni-only"
+  }
+}
+```
+
+**CloudFront Functions Features:**
+
+- **Lightweight JavaScript execution** at CloudFront edge locations
+- **Sub-millisecond execution** for viewer request/response modifications
+- **Runtime options**: `cloudfront-js-1.0` (10KB limit) or `cloudfront-js-2.0` (30KB limit, default)
+- **Event types**: viewer-request, viewer-response (not origin-request/response)
+- **Key-Value Store integration**: Associate functions with CloudFront KeyValueStore (max 1 per function)
+- **Cost-effective**: Lower cost than Lambda@Edge for simple transformations
+
+**Common use cases:**
+
+- URL redirects and rewrites
+- Request/response header manipulation
+- Access control and authentication
+- A/B testing and feature flags
+- Cache key normalization
+
+**Usage Pattern Note:**
+
+The module supports two flexible patterns for associating CloudFront Functions with cache behaviors:
+
+1. **Direct ARN Reference** (`function_arn`): Pass the ARN directly from external `aws_cloudfront_function` resources
+
+   ```hcl
+   function_association = {
+     viewer-request = {
+       function_arn = aws_cloudfront_function.external.arn
+     }
+   }
+   ```
+
+2. **Dynamic Name Reference** (`function_name`): Reference module-managed functions by their map key
+   ```hcl
+   function_association = {
+     viewer-request = {
+       function_name = "viewer-request-function"  # Key from cloudfront_functions map
+     }
+   }
+   ```
+
+The module automatically resolves function ARNs using Terraform's `try()` function, checking for `function_arn` first, then falling back to `function_name` lookup in module-created functions. This eliminates circular dependency issues while maintaining flexibility.
+
 ## Examples
 
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, VPC Origins, ACM Certificate, Route53 Records.
@@ -124,6 +246,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_cloudfront_distribution.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
+| [aws_cloudfront_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function) | resource |
 | [aws_cloudfront_monitoring_subscription.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription) | resource |
 | [aws_cloudfront_origin_access_control.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control) | resource |
 | [aws_cloudfront_origin_access_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity) | resource |
@@ -138,8 +261,10 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution. | `list(string)` | `null` | no |
+| <a name="input_cloudfront_functions"></a> [cloudfront\_functions](#input\_cloudfront\_functions) | Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified. | <pre>map(object({<br/>    name                         = optional(string)<br/>    runtime                      = optional(string, "cloudfront-js-2.0")<br/>    comment                      = optional(string)<br/>    publish                      = optional(bool, true)<br/>    code                         = string<br/>    key_value_store_associations = optional(list(string), null)<br/>  }))</pre> | `{}` | no |
 | <a name="input_comment"></a> [comment](#input\_comment) | Any comments you want to include about the distribution. | `string` | `null` | no |
 | <a name="input_continuous_deployment_policy_id"></a> [continuous\_deployment\_policy\_id](#input\_continuous\_deployment\_policy\_id) | Identifier of a continuous deployment policy. This argument should only be set on a production distribution. | `string` | `null` | no |
+| <a name="input_create_cloudfront_function"></a> [create\_cloudfront\_function](#input\_create\_cloudfront\_function) | Controls if CloudFront Functions should be created | `bool` | `false` | no |
 | <a name="input_create_distribution"></a> [create\_distribution](#input\_create\_distribution) | Controls if CloudFront distribution should be created | `bool` | `true` | no |
 | <a name="input_create_monitoring_subscription"></a> [create\_monitoring\_subscription](#input\_create\_monitoring\_subscription) | If enabled, the resource for monitoring subscription will created. | `bool` | `false` | no |
 | <a name="input_create_origin_access_control"></a> [create\_origin\_access\_control](#input\_create\_origin\_access\_control) | Controls if CloudFront origin access control should be created | `bool` | `false` | no |
@@ -186,6 +311,7 @@ No modules.
 | <a name="output_cloudfront_distribution_status"></a> [cloudfront\_distribution\_status](#output\_cloudfront\_distribution\_status) | The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system. |
 | <a name="output_cloudfront_distribution_tags"></a> [cloudfront\_distribution\_tags](#output\_cloudfront\_distribution\_tags) | Tags of the distribution's |
 | <a name="output_cloudfront_distribution_trusted_signers"></a> [cloudfront\_distribution\_trusted\_signers](#output\_cloudfront\_distribution\_trusted\_signers) | List of nested attributes for active trusted signers, if the distribution is set up to serve private content with signed URLs |
+| <a name="output_cloudfront_functions"></a> [cloudfront\_functions](#output\_cloudfront\_functions) | The CloudFront Functions created |
 | <a name="output_cloudfront_monitoring_subscription_id"></a> [cloudfront\_monitoring\_subscription\_id](#output\_cloudfront\_monitoring\_subscription\_id) | The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`. |
 | <a name="output_cloudfront_origin_access_controls"></a> [cloudfront\_origin\_access\_controls](#output\_cloudfront\_origin\_access\_controls) | The origin access controls created |
 | <a name="output_cloudfront_origin_access_controls_ids"></a> [cloudfront\_origin\_access\_controls\_ids](#output\_cloudfront\_origin\_access\_controls\_ids) | The IDS of the origin access identities created |

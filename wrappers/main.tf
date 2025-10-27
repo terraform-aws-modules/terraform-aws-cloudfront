@@ -4,8 +4,10 @@ module "wrapper" {
   for_each = var.items
 
   aliases                         = try(each.value.aliases, var.defaults.aliases, null)
+  cloudfront_functions            = try(each.value.cloudfront_functions, var.defaults.cloudfront_functions, {})
   comment                         = try(each.value.comment, var.defaults.comment, null)
   continuous_deployment_policy_id = try(each.value.continuous_deployment_policy_id, var.defaults.continuous_deployment_policy_id, null)
+  create_cloudfront_function      = try(each.value.create_cloudfront_function, var.defaults.create_cloudfront_function, false)
   create_distribution             = try(each.value.create_distribution, var.defaults.create_distribution, true)
   create_monitoring_subscription  = try(each.value.create_monitoring_subscription, var.defaults.create_monitoring_subscription, false)
   create_origin_access_control    = try(each.value.create_origin_access_control, var.defaults.create_origin_access_control, false)

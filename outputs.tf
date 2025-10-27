@@ -92,3 +92,8 @@ output "cloudfront_response_headers_policies" {
   description = "The response headers policies created"
   value       = aws_cloudfront_response_headers_policy.this
 }
+
+output "cloudfront_functions" {
+  description = "The CloudFront Functions created"
+  value       = aws_cloudfront_function.this
+}
