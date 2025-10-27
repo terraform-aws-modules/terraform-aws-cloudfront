@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.0.0...v5.0.1) (2025-10-21)
+
+### Bug Fixes
+
+* Update CI workflow versions to latest ([#172](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/172)) ([7f42384](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/7f42384fc445a8f56a966b1c3cb396c8a970bc1b))
+
 ## [5.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v4.2.0...v5.0.0) (2025-07-06)
 
 
