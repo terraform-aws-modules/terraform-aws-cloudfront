@@ -102,3 +102,23 @@ output "cloudfront_response_headers_policy_etags" {
   description = "The ETags of the response headers policies created"
   value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v.etag } : {}
 }
+
+output "cloudfront_function_arns" {
+  description = "The ARNs of the CloudFront Functions created"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.arn } : {}
+}
+
+output "cloudfront_function_status" {
+  description = "The deployment status of the CloudFront Functions"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.status } : {}
+}
+
+output "cloudfront_function_etags" {
+  description = "The ETags of the CloudFront Functions (DEVELOPMENT stage)"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.etag } : {}
+}
+
+output "cloudfront_function_live_stage_etags" {
+  description = "The ETags of the CloudFront Functions (LIVE stage)"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.live_stage_etag } : {}
+}

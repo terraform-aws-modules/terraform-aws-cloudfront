@@ -181,10 +181,23 @@ module "cloudfront" {
 
       function_association = {
         # Valid keys: viewer-request, viewer-response
+
+        # Option 1: Direct ARN reference to standalone resource
         viewer-request = {
           function_arn = aws_cloudfront_function.example.arn
         }
 
+        # Option 2: Dynamic reference to module-managed function by name
+        # Uncomment to use module-managed functions instead:
+        # viewer-request = {
+        #   function_name = "viewer-request-security"
+        # }
+
+        # viewer-response = {
+        #   function_name = "viewer-response-headers"
+        # }
+
+        # For this example, using standalone function for both
         viewer-response = {
           function_arn = aws_cloudfront_function.example.arn
         }
@@ -231,6 +244,39 @@ module "cloudfront" {
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]
+  }
+
+  # CloudFront Functions - module managed
+  create_cloudfront_function = true
+  cloudfront_functions = {
+    viewer-request-security = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Security headers and cache key normalization"
+      code    = file("${path.module}/viewer-request-security.js")
+      publish = true
+    }
+    viewer-response-headers = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Add security response headers"
+      code    = file("${path.module}/viewer-response-headers.js")
+      publish = true
+    }
+    ab-testing = {
+      runtime = "cloudfront-js-2.0"
+      comment = "A/B testing function"
+      code    = file("${path.module}/ab-testing.js")
+      publish = true
+    }
+    # Example with KeyValueStore association (uncomment and provide actual KV store ARN)
+    # kvstore-redirect = {
+    #   runtime = "cloudfront-js-2.0"
+    #   comment = "Function using CloudFront KeyValueStore for dynamic redirects"
+    #   code    = file("${path.module}/kvstore-redirect.js")
+    #   publish = true
+    #   key_value_store_associations = [
+    #     "arn:aws:cloudfront::123456789012:key-value-store/example-redirects"
+    #   ]
+    # }
   }
 
   create_response_headers_policy = true
