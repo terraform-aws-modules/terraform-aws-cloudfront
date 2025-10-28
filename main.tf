@@ -146,13 +146,12 @@ resource "aws_cloudfront_response_headers_policy" "this" {
 resource "aws_cloudfront_function" "this" {
   for_each = var.create_cloudfront_function && var.cloudfront_functions != null ? var.cloudfront_functions : {}
 
-  name    = try(coalesce(each.value.name, each.key))
-  runtime = each.value.runtime
-  comment = each.value.comment
-  publish = each.value.publish
-  code    = each.value.code
-
+  code                         = each.value.code
+  comment                      = each.value.comment
   key_value_store_associations = each.value.key_value_store_associations
+  name                         = try(coalesce(each.value.name, each.key))
+  publish                      = each.value.publish
+  runtime                      = each.value.runtime
 }
 
 resource "aws_cloudfront_origin_access_identity" "this" {
