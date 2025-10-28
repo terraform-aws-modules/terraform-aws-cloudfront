@@ -87,3 +87,38 @@ output "cloudfront_vpc_origin_ids" {
   description = "The IDS of the VPC origin created"
   value       = local.create_vpc_origin ? [for v in aws_cloudfront_vpc_origin.this : v.id] : []
 }
+
+output "cloudfront_response_headers_policies" {
+  description = "The response headers policies created"
+  value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v } : {}
+}
+
+output "cloudfront_response_headers_policy_ids" {
+  description = "The IDs of the response headers policies created"
+  value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v.id } : {}
+}
+
+output "cloudfront_response_headers_policy_etags" {
+  description = "The ETags of the response headers policies created"
+  value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v.etag } : {}
+}
+
+output "cloudfront_function_arns" {
+  description = "The ARNs of the CloudFront Functions created"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.arn } : {}
+}
+
+output "cloudfront_function_status" {
+  description = "The deployment status of the CloudFront Functions"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.status } : {}
+}
+
+output "cloudfront_function_etags" {
+  description = "The ETags of the CloudFront Functions (DEVELOPMENT stage)"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.etag } : {}
+}
+
+output "cloudfront_function_live_stage_etags" {
+  description = "The ETags of the CloudFront Functions (LIVE stage)"
+  value       = local.create_cloudfront_function ? { for k, v in aws_cloudfront_function.this : k => v.live_stage_etag } : {}
+}

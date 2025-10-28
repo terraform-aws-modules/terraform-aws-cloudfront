@@ -4,12 +4,15 @@ module "wrapper" {
   for_each = var.items
 
   aliases                         = try(each.value.aliases, var.defaults.aliases, null)
+  cloudfront_functions            = try(each.value.cloudfront_functions, var.defaults.cloudfront_functions, {})
   comment                         = try(each.value.comment, var.defaults.comment, null)
   continuous_deployment_policy_id = try(each.value.continuous_deployment_policy_id, var.defaults.continuous_deployment_policy_id, null)
+  create_cloudfront_function      = try(each.value.create_cloudfront_function, var.defaults.create_cloudfront_function, false)
   create_distribution             = try(each.value.create_distribution, var.defaults.create_distribution, true)
   create_monitoring_subscription  = try(each.value.create_monitoring_subscription, var.defaults.create_monitoring_subscription, false)
   create_origin_access_control    = try(each.value.create_origin_access_control, var.defaults.create_origin_access_control, false)
   create_origin_access_identity   = try(each.value.create_origin_access_identity, var.defaults.create_origin_access_identity, false)
+  create_response_headers_policy  = try(each.value.create_response_headers_policy, var.defaults.create_response_headers_policy, false)
   create_vpc_origin               = try(each.value.create_vpc_origin, var.defaults.create_vpc_origin, false)
   custom_error_response           = try(each.value.custom_error_response, var.defaults.custom_error_response, {})
   default_cache_behavior          = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior, null)
@@ -33,6 +36,7 @@ module "wrapper" {
   origin_group                         = try(each.value.origin_group, var.defaults.origin_group, {})
   price_class                          = try(each.value.price_class, var.defaults.price_class, null)
   realtime_metrics_subscription_status = try(each.value.realtime_metrics_subscription_status, var.defaults.realtime_metrics_subscription_status, "Enabled")
+  response_headers_policy              = try(each.value.response_headers_policy, var.defaults.response_headers_policy, {})
   retain_on_delete                     = try(each.value.retain_on_delete, var.defaults.retain_on_delete, false)
   staging                              = try(each.value.staging, var.defaults.staging, false)
   tags                                 = try(each.value.tags, var.defaults.tags, null)

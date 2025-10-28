@@ -77,6 +77,128 @@ module "cdn" {
 }
 ```
 
+### CloudFront distribution with CloudFront Functions
+
+```hcl
+module "cdn" {
+  source = "terraform-aws-modules/cloudfront/aws"
+
+  aliases = ["cdn.example.com"]
+
+  comment             = "CloudFront with Functions"
+  enabled             = true
+  is_ipv6_enabled     = true
+  price_class         = "PriceClass_All"
+  retain_on_delete    = false
+  wait_for_deployment = false
+
+  # Enable CloudFront Functions
+  create_cloudfront_function = true
+
+  cloudfront_functions = {
+    viewer-request-function = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Function to add security headers and modify requests"
+      code    = file("${path.module}/functions/viewer-request.js")
+      publish = true
+    }
+
+    viewer-response-function = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Function to add security response headers"
+      code    = file("${path.module}/functions/viewer-response.js")
+      publish = true
+      # Optional: Associate with CloudFront KeyValueStore
+      key_value_store_associations = ["arn:aws:cloudfront::123456789012:key-value-store/example-store"]
+    }
+  }
+
+  origin = {
+    s3_bucket = {
+      domain_name = "my-bucket.s3.amazonaws.com"
+      s3_origin_config = {
+        origin_access_identity = "s3_bucket"
+      }
+    }
+  }
+
+  default_cache_behavior = {
+    target_origin_id       = "s3_bucket"
+    viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+    compress        = true
+    query_string    = true
+
+    # Associate CloudFront Functions with cache behavior
+    # Option 1: Direct ARN reference (recommended for external functions)
+    # function_association = {
+    #   viewer-request = {
+    #     function_arn = aws_cloudfront_function.external.arn
+    #   }
+    # }
+
+    # Option 2: Dynamic reference to module-managed functions by name
+    function_association = {
+      viewer-request = {
+        function_name = "viewer-request-function"
+      }
+      viewer-response = {
+        function_name = "viewer-response-function"
+      }
+    }
+  }
+
+  viewer_certificate = {
+    acm_certificate_arn = "arn:aws:acm:us-east-1:135367859851:certificate/1032b155-22da-4ae0-9f69-e206f825458b"
+    ssl_support_method  = "sni-only"
+  }
+}
+```
+
+**CloudFront Functions Features:**
+
+- **Lightweight JavaScript execution** at CloudFront edge locations
+- **Sub-millisecond execution** for viewer request/response modifications
+- **Runtime options**: `cloudfront-js-1.0` (10KB limit) or `cloudfront-js-2.0` (30KB limit, default)
+- **Event types**: viewer-request, viewer-response (not origin-request/response)
+- **Key-Value Store integration**: Associate functions with CloudFront KeyValueStore (max 1 per function)
+- **Cost-effective**: Lower cost than Lambda@Edge for simple transformations
+
+**Common use cases:**
+
+- URL redirects and rewrites
+- Request/response header manipulation
+- Access control and authentication
+- A/B testing and feature flags
+- Cache key normalization
+
+**Usage Pattern Note:**
+
+The module supports two flexible patterns for associating CloudFront Functions with cache behaviors:
+
+1. **Direct ARN Reference** (`function_arn`): Pass the ARN directly from external `aws_cloudfront_function` resources
+
+   ```hcl
+   function_association = {
+     viewer-request = {
+       function_arn = aws_cloudfront_function.external.arn
+     }
+   }
+   ```
+
+2. **Dynamic Name Reference** (`function_name`): Reference module-managed functions by their map key
+   ```hcl
+   function_association = {
+     viewer-request = {
+       function_name = "viewer-request-function"  # Key from cloudfront_functions map
+     }
+   }
+   ```
+
+The module automatically resolves function ARNs using Terraform's `try()` function, checking for `function_arn` first, then falling back to `function_name` lookup in module-created functions. This eliminates circular dependency issues while maintaining flexibility.
+
 ## Examples
 
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, VPC Origins, ACM Certificate, Route53 Records.
@@ -124,9 +246,11 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_cloudfront_distribution.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
+| [aws_cloudfront_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function) | resource |
 | [aws_cloudfront_monitoring_subscription.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription) | resource |
 | [aws_cloudfront_origin_access_control.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control) | resource |
 | [aws_cloudfront_origin_access_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity) | resource |
+| [aws_cloudfront_response_headers_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_response_headers_policy) | resource |
 | [aws_cloudfront_vpc_origin.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_vpc_origin) | resource |
 | [aws_cloudfront_cache_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_origin_request_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
@@ -137,12 +261,15 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution. | `list(string)` | `null` | no |
+| <a name="input_cloudfront_functions"></a> [cloudfront\_functions](#input\_cloudfront\_functions) | Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified. | <pre>map(object({<br/>    name                         = optional(string)<br/>    runtime                      = optional(string, "cloudfront-js-2.0")<br/>    comment                      = optional(string)<br/>    publish                      = optional(bool, true)<br/>    code_path                    = string<br/>    key_value_store_associations = optional(list(string), null)<br/>  }))</pre> | `{}` | no |
 | <a name="input_comment"></a> [comment](#input\_comment) | Any comments you want to include about the distribution. | `string` | `null` | no |
 | <a name="input_continuous_deployment_policy_id"></a> [continuous\_deployment\_policy\_id](#input\_continuous\_deployment\_policy\_id) | Identifier of a continuous deployment policy. This argument should only be set on a production distribution. | `string` | `null` | no |
+| <a name="input_create_cloudfront_function"></a> [create\_cloudfront\_function](#input\_create\_cloudfront\_function) | Controls if CloudFront Functions should be created | `bool` | `false` | no |
 | <a name="input_create_distribution"></a> [create\_distribution](#input\_create\_distribution) | Controls if CloudFront distribution should be created | `bool` | `true` | no |
 | <a name="input_create_monitoring_subscription"></a> [create\_monitoring\_subscription](#input\_create\_monitoring\_subscription) | If enabled, the resource for monitoring subscription will created. | `bool` | `false` | no |
 | <a name="input_create_origin_access_control"></a> [create\_origin\_access\_control](#input\_create\_origin\_access\_control) | Controls if CloudFront origin access control should be created | `bool` | `false` | no |
 | <a name="input_create_origin_access_identity"></a> [create\_origin\_access\_identity](#input\_create\_origin\_access\_identity) | Controls if CloudFront origin access identity should be created | `bool` | `false` | no |
+| <a name="input_create_response_headers_policy"></a> [create\_response\_headers\_policy](#input\_create\_response\_headers\_policy) | Controls if CloudFront response headers policies should be created | `bool` | `false` | no |
 | <a name="input_create_vpc_origin"></a> [create\_vpc\_origin](#input\_create\_vpc\_origin) | If enabled, the resource for VPC origin will be created. | `bool` | `false` | no |
 | <a name="input_custom_error_response"></a> [custom\_error\_response](#input\_custom\_error\_response) | One or more custom error response elements | `any` | `{}` | no |
 | <a name="input_default_cache_behavior"></a> [default\_cache\_behavior](#input\_default\_cache\_behavior) | The default cache behavior for this distribution | `any` | `null` | no |
@@ -159,6 +286,7 @@ No modules.
 | <a name="input_origin_group"></a> [origin\_group](#input\_origin\_group) | One or more origin\_group for this distribution (multiples allowed). | `any` | `{}` | no |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | no |
 | <a name="input_realtime_metrics_subscription_status"></a> [realtime\_metrics\_subscription\_status](#input\_realtime\_metrics\_subscription\_status) | A flag that indicates whether additional CloudWatch metrics are enabled for a given CloudFront distribution. Valid values are `Enabled` and `Disabled`. | `string` | `"Enabled"` | no |
+| <a name="input_response_headers_policy"></a> [response\_headers\_policy](#input\_response\_headers\_policy) | Map of CloudFront response headers policies with their configurations | <pre>map(object({<br/>    name    = optional(string)<br/>    comment = optional(string)<br/><br/>    cors_config = optional(object({<br/>      access_control_allow_credentials = bool<br/>      origin_override                  = bool<br/>      access_control_allow_headers = object({<br/>        items = list(string)<br/>      })<br/>      access_control_allow_methods = object({<br/>        items = list(string)<br/>      })<br/>      access_control_allow_origins = object({<br/>        items = list(string)<br/>      })<br/>      access_control_expose_headers = optional(object({<br/>        items = list(string)<br/>      }))<br/>      access_control_max_age_sec = optional(number)<br/>    }))<br/><br/>    custom_headers_config = optional(object({<br/>      items = list(object({<br/>        header   = string<br/>        override = bool<br/>        value    = string<br/>      }))<br/>    }))<br/><br/>    remove_headers_config = optional(object({<br/>      items = list(object({<br/>        header = string<br/>      }))<br/>    }))<br/><br/>    security_headers_config = optional(object({<br/>      content_security_policy = optional(object({<br/>        content_security_policy = string<br/>        override                = bool<br/>      }))<br/>      content_type_options = optional(object({<br/>        override = bool<br/>      }))<br/>      frame_options = optional(object({<br/>        frame_option = string<br/>        override     = bool<br/>      }))<br/>      referrer_policy = optional(object({<br/>        referrer_policy = string<br/>        override        = bool<br/>      }))<br/>      strict_transport_security = optional(object({<br/>        access_control_max_age_sec = number<br/>        override                   = bool<br/>        include_subdomains         = optional(bool)<br/>        preload                    = optional(bool)<br/>      }))<br/>      xss_protection = optional(object({<br/>        mode_block = bool<br/>        override   = bool<br/>        protection = bool<br/>        report_uri = optional(string)<br/>      }))<br/>    }))<br/><br/>    server_timing_headers_config = optional(object({<br/>      enabled       = bool<br/>      sampling_rate = number<br/>    }))<br/>  }))</pre> | `{}` | no |
 | <a name="input_retain_on_delete"></a> [retain\_on\_delete](#input\_retain\_on\_delete) | Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards. | `bool` | `false` | no |
 | <a name="input_staging"></a> [staging](#input\_staging) | Whether the distribution is a staging distribution. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `null` | no |
@@ -183,12 +311,19 @@ No modules.
 | <a name="output_cloudfront_distribution_status"></a> [cloudfront\_distribution\_status](#output\_cloudfront\_distribution\_status) | The current status of the distribution. Deployed if the distribution's information is fully propagated throughout the Amazon CloudFront system. |
 | <a name="output_cloudfront_distribution_tags"></a> [cloudfront\_distribution\_tags](#output\_cloudfront\_distribution\_tags) | Tags of the distribution's |
 | <a name="output_cloudfront_distribution_trusted_signers"></a> [cloudfront\_distribution\_trusted\_signers](#output\_cloudfront\_distribution\_trusted\_signers) | List of nested attributes for active trusted signers, if the distribution is set up to serve private content with signed URLs |
+| <a name="output_cloudfront_function_arns"></a> [cloudfront\_function\_arns](#output\_cloudfront\_function\_arns) | The ARNs of the CloudFront Functions created |
+| <a name="output_cloudfront_function_etags"></a> [cloudfront\_function\_etags](#output\_cloudfront\_function\_etags) | The ETags of the CloudFront Functions (DEVELOPMENT stage) |
+| <a name="output_cloudfront_function_live_stage_etags"></a> [cloudfront\_function\_live\_stage\_etags](#output\_cloudfront\_function\_live\_stage\_etags) | The ETags of the CloudFront Functions (LIVE stage) |
+| <a name="output_cloudfront_function_status"></a> [cloudfront\_function\_status](#output\_cloudfront\_function\_status) | The deployment status of the CloudFront Functions |
 | <a name="output_cloudfront_monitoring_subscription_id"></a> [cloudfront\_monitoring\_subscription\_id](#output\_cloudfront\_monitoring\_subscription\_id) | The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`. |
 | <a name="output_cloudfront_origin_access_controls"></a> [cloudfront\_origin\_access\_controls](#output\_cloudfront\_origin\_access\_controls) | The origin access controls created |
 | <a name="output_cloudfront_origin_access_controls_ids"></a> [cloudfront\_origin\_access\_controls\_ids](#output\_cloudfront\_origin\_access\_controls\_ids) | The IDS of the origin access identities created |
 | <a name="output_cloudfront_origin_access_identities"></a> [cloudfront\_origin\_access\_identities](#output\_cloudfront\_origin\_access\_identities) | The origin access identities created |
 | <a name="output_cloudfront_origin_access_identity_iam_arns"></a> [cloudfront\_origin\_access\_identity\_iam\_arns](#output\_cloudfront\_origin\_access\_identity\_iam\_arns) | The IAM arns of the origin access identities created |
 | <a name="output_cloudfront_origin_access_identity_ids"></a> [cloudfront\_origin\_access\_identity\_ids](#output\_cloudfront\_origin\_access\_identity\_ids) | The IDS of the origin access identities created |
+| <a name="output_cloudfront_response_headers_policies"></a> [cloudfront\_response\_headers\_policies](#output\_cloudfront\_response\_headers\_policies) | The response headers policies created |
+| <a name="output_cloudfront_response_headers_policy_etags"></a> [cloudfront\_response\_headers\_policy\_etags](#output\_cloudfront\_response\_headers\_policy\_etags) | The ETags of the response headers policies created |
+| <a name="output_cloudfront_response_headers_policy_ids"></a> [cloudfront\_response\_headers\_policy\_ids](#output\_cloudfront\_response\_headers\_policy\_ids) | The IDs of the response headers policies created |
 | <a name="output_cloudfront_vpc_origin_ids"></a> [cloudfront\_vpc\_origin\_ids](#output\_cloudfront\_vpc\_origin\_ids) | The IDS of the VPC origin created |
 <!-- END_TF_DOCS -->
 

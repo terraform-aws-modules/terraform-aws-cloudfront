@@ -210,3 +210,112 @@ variable "vpc_origin_timeouts" {
   type        = map(string)
   default     = {}
 }
+
+variable "create_response_headers_policy" {
+  description = "Controls if CloudFront response headers policies should be created"
+  type        = bool
+  default     = false
+}
+
+variable "response_headers_policy" {
+  description = "Map of CloudFront response headers policies with their configurations"
+  type = map(object({
+    name    = optional(string)
+    comment = optional(string)
+
+    cors_config = optional(object({
+      access_control_allow_credentials = bool
+      origin_override                  = bool
+      access_control_allow_headers = object({
+        items = list(string)
+      })
+      access_control_allow_methods = object({
+        items = list(string)
+      })
+      access_control_allow_origins = object({
+        items = list(string)
+      })
+      access_control_expose_headers = optional(object({
+        items = list(string)
+      }))
+      access_control_max_age_sec = optional(number)
+    }))
+
+    custom_headers_config = optional(object({
+      items = list(object({
+        header   = string
+        override = bool
+        value    = string
+      }))
+    }))
+
+    remove_headers_config = optional(object({
+      items = list(object({
+        header = string
+      }))
+    }))
+
+    security_headers_config = optional(object({
+      content_security_policy = optional(object({
+        content_security_policy = string
+        override                = bool
+      }))
+      content_type_options = optional(object({
+        override = bool
+      }))
+      frame_options = optional(object({
+        frame_option = string
+        override     = bool
+      }))
+      referrer_policy = optional(object({
+        referrer_policy = string
+        override        = bool
+      }))
+      strict_transport_security = optional(object({
+        access_control_max_age_sec = number
+        override                   = bool
+        include_subdomains         = optional(bool)
+        preload                    = optional(bool)
+      }))
+      xss_protection = optional(object({
+        mode_block = bool
+        override   = bool
+        protection = bool
+        report_uri = optional(string)
+      }))
+    }))
+
+    server_timing_headers_config = optional(object({
+      enabled       = bool
+      sampling_rate = number
+    }))
+  }))
+  default = {}
+}
+
+variable "create_cloudfront_function" {
+  description = "Controls if CloudFront Functions should be created"
+  type        = bool
+  default     = false
+}
+
+variable "cloudfront_functions" {
+  description = "Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified."
+  type = map(object({
+    name                         = optional(string)
+    runtime                      = optional(string, "cloudfront-js-2.0")
+    comment                      = optional(string)
+    publish                      = optional(bool, true)
+    code_path                    = string
+    key_value_store_associations = optional(list(string), null)
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for k, v in var.cloudfront_functions :
+      contains(["cloudfront-js-1.0", "cloudfront-js-2.0"], v.runtime)
+    ])
+    error_message = "Runtime must be 'cloudfront-js-1.0' or 'cloudfront-js-2.0'. Provided runtime is invalid."
+  }
+}

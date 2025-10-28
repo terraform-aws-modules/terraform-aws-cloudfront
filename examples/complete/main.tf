@@ -176,13 +176,28 @@ module "cloudfront" {
       cache_policy_name            = "Managed-CachingOptimized"
       origin_request_policy_name   = "Managed-UserAgentRefererHeaders"
       response_headers_policy_name = "Managed-SimpleCORS"
+      # using a response header policy you're dynamically creating below
+      # response_header_policy: "cors_policy"
 
       function_association = {
         # Valid keys: viewer-request, viewer-response
+
+        # Option 1: Direct ARN reference to standalone resource
         viewer-request = {
           function_arn = aws_cloudfront_function.example.arn
         }
 
+        # Option 2: Dynamic reference to module-managed function by name
+        # Uncomment to use module-managed functions instead:
+        # viewer-request = {
+        #   function_name = "viewer-request-security"
+        # }
+
+        # viewer-response = {
+        #   function_name = "viewer-response-headers"
+        # }
+
+        # For this example, using standalone function for both
         viewer-response = {
           function_arn = aws_cloudfront_function.example.arn
         }
@@ -229,6 +244,112 @@ module "cloudfront" {
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]
+  }
+
+  # CloudFront Functions - module managed
+  create_cloudfront_function = true
+  cloudfront_functions = {
+    viewer-request-security = {
+      runtime   = "cloudfront-js-2.0"
+      comment   = "Security headers and cache key normalization"
+      code_path = "functions/viewer-request-security.js"
+      publish   = true
+    }
+    viewer-response-headers = {
+      runtime   = "cloudfront-js-2.0"
+      comment   = "Add security response headers"
+      code_path = "functions/viewer-response-headers.js"
+      publish   = true
+    }
+    ab-testing = {
+      runtime   = "cloudfront-js-2.0"
+      comment   = "A/B testing function"
+      code_path = "functions//ab-testing.js"
+      publish   = true
+    }
+    # Example with KeyValueStore association (uncomment and provide actual KV store ARN)
+    # kvstore-redirect = {
+    #   runtime = "cloudfront-js-2.0"
+    #   comment = "Function using CloudFront KeyValueStore for dynamic redirects"
+    #   code    = file("${path.module}/kvstore-redirect.js")
+    #   publish = true
+    #   key_value_store_associations = [
+    #     "arn:aws:cloudfront::123456789012:key-value-store/example-redirects"
+    #   ]
+    # }
+  }
+
+  create_response_headers_policy = true
+  response_headers_policy = {
+    cors_policy = {
+      name    = "CORSPolicy"
+      comment = "CORS configuration for API"
+
+      cors_config = {
+        access_control_allow_credentials = true
+        origin_override                  = true
+
+        access_control_allow_headers = {
+          items = ["*"]
+        }
+
+        access_control_allow_methods = {
+          items = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        }
+
+        access_control_allow_origins = {
+          items = ["https://example.com", "https://app.example.com"]
+        }
+
+        access_control_expose_headers = {
+          items = ["X-Custom-Header", "X-Request-Id"]
+        }
+
+        access_control_max_age_sec = 3600
+      }
+    }
+    custom_headers = {
+      name    = "CustomHeadersPolicy"
+      comment = "Add custom response headers"
+
+      custom_headers_config = {
+        items = [
+          {
+            header   = "X-Powered-By"
+            override = true
+            value    = "MyApp/1.0"
+          },
+          {
+            header   = "X-API-Version"
+            override = false
+            value    = "v2"
+          },
+          {
+            header   = "Cache-Control"
+            override = true
+            value    = "public, max-age=3600"
+          }
+        ]
+      }
+    }
+    remove_headers = {
+      name    = "RemoveHeadersPolicy"
+      comment = "Remove unwanted headers from origin"
+
+      remove_headers_config = {
+        items = [
+          {
+            header = "x-robots-tag"
+          },
+          {
+            header = "server"
+          },
+          {
+            header = "x-powered-by"
+          }
+        ]
+      }
+    }
   }
 
 }

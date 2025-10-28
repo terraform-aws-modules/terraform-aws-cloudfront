@@ -1,14 +1,36 @@
 # Complete CloudFront distribution with most of supported features enabled
 
 Configuration in this directory creates CloudFront distribution which demos such capabilities:
+
 - access logging
 - origins and origin groups
 - caching behaviours
 - Origin Access Identities (with S3 bucket policy)
+- Origin Access Control (recommended over OAI)
 - Lambda@Edge
+- **CloudFront Functions** (lightweight JavaScript execution at edge locations)
+- Response Headers Policies
 - ACM certificate
 - Route53 record
 - VPC Origins
+
+## CloudFront Functions
+
+This example demonstrates CloudFront Functions integration with the module:
+
+**Functions included:**
+
+- `viewer-request-security.js` - Security headers and cache key normalization
+- `viewer-response-headers.js` - Add security response headers
+- `ab-testing.js` - A/B testing with path rewriting
+- `kvstore-redirect.js` - Example with CloudFront KeyValueStore integration (commented)
+
+**Features demonstrated:**
+
+- Module-managed CloudFront Functions creation
+- Function association with cache behaviors
+- Runtime selection (cloudfront-js-2.0)
+- KeyValueStore association pattern
 
 ## Usage
 
