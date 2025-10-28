@@ -152,7 +152,7 @@ resource "aws_cloudfront_function" "this" {
   runtime = each.value.runtime
   comment = each.value.comment
   publish = each.value.publish
-  code    = each.value.code
+  code    = file("${path.module}/${each.value.code_path}")
 
   key_value_store_associations = each.value.key_value_store_associations
 }

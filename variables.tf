@@ -306,7 +306,7 @@ variable "cloudfront_functions" {
     runtime                      = optional(string, "cloudfront-js-2.0")
     comment                      = optional(string)
     publish                      = optional(bool, true)
-    code                         = string
+    code_path                    = string
     key_value_store_associations = optional(list(string), null)
   }))
   default = {}
