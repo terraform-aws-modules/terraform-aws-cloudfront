@@ -375,7 +375,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = try(f.value.function_arn, aws_cloudfront_function.this[f.value.function_name].arn, null)
+          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[lookup(f.value, "function_name", "")].arn, null))
         }
       }
 
@@ -447,7 +447,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = try(f.value.function_arn, aws_cloudfront_function.this[f.value.function_name].arn, null)
+          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[lookup(f.value, "function_name", "")].arn, null))
         }
       }
 
