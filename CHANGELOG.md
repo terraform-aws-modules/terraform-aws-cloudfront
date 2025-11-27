@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.0.1...v5.1.0) (2025-11-27)
+
+### Features
+
+* Add cloudfront response header policy support ([#174](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/174)) ([8488553](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/8488553852495e4fe5b8b10574d454149a735c31))
+
 ## [5.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.0.0...v5.0.1) (2025-10-21)
 
 ### Bug Fixes
