@@ -5,19 +5,25 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 ## List of backwards incompatible changes
 
-- AWS provider `v6.0` is now minimum supported version
+- AWS provider `v6.20` is now minimum supported version
 - Support for `aws_cloudfront_origin_access_identity` has been removed in favor of `aws_cloudfront_origin_access_control`
 
 ## Additional changes
 
 ### Added
 
-- Support for `region` parameter to specify the AWS region for the resources created if different from the provider region.
+- None
 
 ### Modified
 
-- Variable definitions now contain detailed `object` types in place of the previously used any type.
-- `is_ipv6_enabled` now defaults to `true` if not specified.
+- Variable definitions now contain detailed `object` types in place of the previously used any type
+- `is_ipv6_enabled` now defaults to `true` if not specified
+- `default_cache_behavior.compress` and `ordered_cache_behavior.compress` now default to `true`
+- `origin.origin_ssl_protocols` now defaults to `["TLSv1.2"]`
+- `vpc_origin.origin_ssl_protocols.items` now defaults to `["TLSv1.2"]`
+- `vpc_origin_timeouts` is now embedded under `vpc_origin`
+- `viewer_certificate.minimum_protocol_version` now defaults to `"TLSv1.2_2025"`
+- See the the `Before vs After` examples below for more details on variable type definition changes
 
 ### Variable and output changes
 
@@ -50,7 +56,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 5. Renamed outputs:
 
-    -
+    - None
 
 6. Added outputs:
 
@@ -67,6 +73,58 @@ module "cloudfront" {
 
   # Truncated for brevity ...
 
+  create_vpc_origin = true
+  vpc_origin = {
+    ec2 = {
+      arn                    = module.ec2.arn
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols = {
+        items    = ["TLSv1.2"]
+        quantity = 1
+      }
+    }
+  }
+
+  vpc_origin_timeouts = {
+    create = "20m"
+    update = "20m"
+    delete = "20m"
+  }
+
+  origin = {
+    s3 = {
+      domain_name = module.s3.bucket_regional_domain_name
+      s3_origin_config = {
+        origin_access_identity = "s3_bucket_one"
+      }
+
+      custom_header = [
+        {
+          name  = "X-Forwarded-Scheme"
+          value = "https"
+        },
+        {
+          name  = "X-Frame-Options"
+          value = "SAMEORIGIN"
+        }
+      ]
+    }
+  }
+
+  origin_group = {
+    group_one = {
+      failover_status_codes      = [403, 404, 500, 502]
+      primary_member_origin_id   = "appsync" # Not shown
+      secondary_member_origin_id = "s3"
+    }
+  }
+
+  geo_restriction = {
+    restriction_type = "whitelist"
+    locations        = ["NO", "UA", "US", "GB"]
+  }
 }
 ```
 
@@ -79,9 +137,60 @@ module "cloudfront" {
 
   # Truncated for brevity ...
 
+  vpc_origin = {
+    ec2 = {
+      arn                    = module.ec2.arn
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols = {
+        items    = ["TLSv1.2"]
+        quantity = 1
+      }
+
+      timeouts = {
+        create = "20m"
+        update = "20m"
+        delete = "20m"
+      }
+    }
+  }
+
+  origin = {
+    s3 = {
+      domain_name = module.s3.bucket_regional_domain_name
+      s3_origin_config = {
+        origin_access_control_key = "s3_bucket_one"
+      }
+
+      custom_header = {
+        "X-Forwarded-Scheme" = "https"
+        "X-Frame-Options"    = "SAMEORIGIN"
+      }
+    }
+  }
+
+  origin_group = {
+    group-one = {
+      failover_criteria = {
+        status_codes = [403, 404, 500, 502]
+      }
+      member = [
+        { origin_id = "appsync" }, # Not shown
+        { origin_id = "s3" }
+      ]
+    }
+  }
+
+  restrictions = {
+    geo_restriction = {
+      restriction_type = "whitelist"
+      locations        = ["NO", "UA", "US", "GB"]
+    }
+  }
 }
 ```
 
 ### State Changes
 
-TBD
+None

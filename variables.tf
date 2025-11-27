@@ -54,7 +54,7 @@ variable "default_cache_behavior" {
   type = object({
     allowed_methods           = optional(list(string), ["GET", "HEAD", "OPTIONS"])
     cache_policy_id           = optional(string)
-    catch_policy_name         = optional(string)
+    cache_policy_name         = optional(string)
     cached_methods            = optional(list(string), ["GET", "HEAD"])
     compress                  = optional(bool, true)
     default_ttl               = optional(number)
@@ -67,7 +67,14 @@ variable "default_cache_behavior" {
       headers                 = optional(list(string))
       query_string            = optional(bool, false)
       query_string_cache_keys = optional(list(string))
-    }))
+      }),
+      {
+        cookies = {
+          forward = "none"
+        }
+        query_string = false
+      }
+    )
     function_association = optional(map(object({
       event_type   = optional(string)
       function_arn = optional(string)
@@ -137,7 +144,7 @@ variable "ordered_cache_behavior" {
     allowed_methods           = optional(list(string), ["GET", "HEAD", "OPTIONS"])
     cached_methods            = optional(list(string), ["GET", "HEAD"])
     cache_policy_id           = optional(string)
-    catch_policy_name         = optional(string)
+    cache_policy_name         = optional(string)
     compress                  = optional(bool, true)
     default_ttl               = optional(number)
     field_level_encryption_id = optional(string)
@@ -149,7 +156,14 @@ variable "ordered_cache_behavior" {
       headers                 = optional(list(string))
       query_string            = optional(bool, false)
       query_string_cache_keys = optional(list(string))
-    }))
+      }),
+      {
+        cookies = {
+          forward = "none"
+        }
+        query_string = false
+      }
+    )
     function_association = optional(map(object({
       event_type   = optional(string)
       function_arn = optional(string)
@@ -207,7 +221,7 @@ variable "origin" {
       origin_keepalive_timeout = optional(number)
       origin_read_timeout      = optional(number)
       origin_protocol_policy   = string
-      origin_ssl_protocols     = list(string)
+      origin_ssl_protocols     = optional(list(string), ["TLSv1.2"])
     }))
     domain_name               = string
     origin_access_control_key = optional(string)
@@ -231,7 +245,7 @@ variable "origin" {
 }
 
 variable "price_class" {
-  description = "The price class for this distribution. One of PriceClass_All, PriceClass_200, PriceClass_100"
+  description = "The price class for this distribution. One of `PriceClass_All`, `PriceClass_200`, `PriceClass_100`"
   type        = string
   default     = null
 }
@@ -268,7 +282,7 @@ variable "viewer_certificate" {
   description = "The SSL configuration for this distribution"
   type = object({
     acm_certificate_arn            = optional(string)
-    cloudfront_default_certificate = optional(bool, true)
+    cloudfront_default_certificate = optional(bool)
     iam_certificate_id             = optional(string)
     minimum_protocol_version       = optional(string, "TLSv1.2_2025")
     ssl_support_method             = optional(string)
@@ -324,8 +338,8 @@ variable "vpc_origin" {
     name                   = optional(string)
     origin_protocol_policy = string
     origin_ssl_protocols = object({
-      items    = list(string)
-      quantity = number
+      items    = optional(list(string), ["TLSv1.2"])
+      quantity = optional(number, 1)
     })
     timeouts = optional(object({
       create = optional(string)

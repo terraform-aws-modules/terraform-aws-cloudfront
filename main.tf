@@ -26,22 +26,23 @@ resource "aws_cloudfront_distribution" "this" {
 
     content {
       allowed_methods           = default_cache_behavior.value.allowed_methods
-      cache_policy_id           = try(coalesce(default_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[default_cache_behavior.value.cache_policy_name].id, null)))
+      cache_policy_id           = try(coalesce(default_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[default_cache_behavior.value.cache_policy_name].id, null)), null)
       cached_methods            = default_cache_behavior.value.cached_methods
       compress                  = default_cache_behavior.value.compress
       default_ttl               = default_cache_behavior.value.default_ttl
       field_level_encryption_id = default_cache_behavior.value.field_level_encryption_id
 
       dynamic "forwarded_values" {
-        for_each = default_cache_behavior.value.forwarded_values != null ? [default_cache_behavior.value.forwarded_values] : []
+        # If a cache policy is specified, then `forwarded_values` must not be set
+        for_each = default_cache_behavior.value.cache_policy_id == null && default_cache_behavior.value.cache_policy_name == null && default_cache_behavior.value.forwarded_values != null ? [default_cache_behavior.value.forwarded_values] : []
 
         content {
           dynamic "cookies" {
             for_each = [forwarded_values.value.cookies]
 
             content {
-              forward           = cookies.value.cookies_forward
-              whitelisted_names = cookies.value.cookies_whitelisted_names
+              forward           = cookies.value.forward
+              whitelisted_names = cookies.value.whitelisted_names
             }
           }
 
@@ -80,9 +81,9 @@ resource "aws_cloudfront_distribution" "this" {
 
       max_ttl                    = default_cache_behavior.value.max_ttl
       min_ttl                    = default_cache_behavior.value.min_ttl
-      origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)))
+      origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)), null)
       realtime_log_config_arn    = default_cache_behavior.value.realtime_log_config_arn
-      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)))
+      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = default_cache_behavior.value.smooth_streaming
       target_origin_id           = default_cache_behavior.value.target_origin_id
       trusted_key_groups         = default_cache_behavior.value.trusted_key_groups
@@ -112,21 +113,22 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       allowed_methods           = ordered_cache_behavior.value.allowed_methods
       cached_methods            = ordered_cache_behavior.value.cached_methods
-      cache_policy_id           = try(coalesce(ordered_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[ordered_cache_behavior.value.cache_policy_name].id, null)))
+      cache_policy_id           = try(coalesce(ordered_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[ordered_cache_behavior.value.cache_policy_name].id, null)), null)
       compress                  = ordered_cache_behavior.value.compress
       default_ttl               = ordered_cache_behavior.value.default_ttl
       field_level_encryption_id = ordered_cache_behavior.value.field_level_encryption_id
 
       dynamic "forwarded_values" {
-        for_each = ordered_cache_behavior.value.forwarded_values != null ? [ordered_cache_behavior.value.forwarded_values] : []
+        # If a cache policy is specified, then `forwarded_values` must not be set
+        for_each = ordered_cache_behavior.value.cache_policy_id == null && ordered_cache_behavior.value.cache_policy_name == null && ordered_cache_behavior.value.forwarded_values != null ? [ordered_cache_behavior.value.forwarded_values] : []
 
         content {
           dynamic "cookies" {
             for_each = [forwarded_values.value.cookies]
 
             content {
-              forward           = cookies.value.cookies_forward
-              whitelisted_names = cookies.value.cookies_whitelisted_names
+              forward           = cookies.value.forward
+              whitelisted_names = cookies.value.whitelisted_names
             }
           }
 
@@ -154,7 +156,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.lambda_function_association != null ? ordered_cache_behavior.value.lambda_function_association : []
+        for_each = ordered_cache_behavior.value.lambda_function_association != null ? ordered_cache_behavior.value.lambda_function_association : {}
 
         content {
           event_type   = try(coalesce(lambda_function_association.value.event_type, lambda_function_association.key))
@@ -165,10 +167,10 @@ resource "aws_cloudfront_distribution" "this" {
 
       max_ttl                    = ordered_cache_behavior.value.max_ttl
       min_ttl                    = ordered_cache_behavior.value.min_ttl
-      origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)))
+      origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)), null)
       path_pattern               = ordered_cache_behavior.value.path_pattern
       realtime_log_config_arn    = ordered_cache_behavior.value.realtime_log_config_arn
-      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)))
+      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = ordered_cache_behavior.value.smooth_streaming
       target_origin_id           = ordered_cache_behavior.value.target_origin_id
       trusted_key_groups         = ordered_cache_behavior.value.trusted_key_groups
@@ -183,8 +185,9 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       dynamic "failover_criteria" {
         for_each = [origin_group.value.failover_criteria]
+
         content {
-          status_codes = origin_group.value.failover_status_codes
+          status_codes = failover_criteria.value.status_codes
         }
       }
 
@@ -231,7 +234,7 @@ resource "aws_cloudfront_distribution" "this" {
       }
 
       domain_name              = origin.value.domain_name
-      origin_access_control_id = try(coalesce(origin.value.origin_access_control_id, try(aws_cloudfront_origin_access_control.this[origin_access_control_key].id, null), null))
+      origin_access_control_id = try(coalesce(origin.value.origin_access_control_id, try(aws_cloudfront_origin_access_control.this[origin.value.origin_access_control_key].id, null)), null)
       origin_id                = try(coalesce(origin.value.origin_id, origin.key))
       origin_path              = origin.value.origin_path
 
@@ -252,7 +255,7 @@ resource "aws_cloudfront_distribution" "this" {
         content {
           origin_keepalive_timeout = vpc_origin_config.value.origin_keepalive_timeout
           origin_read_timeout      = vpc_origin_config.value.origin_read_timeout
-          vpc_origin_id            = try(coalesce(vpc_origin_config.value.vpc_origin_id, try(aws_cloudfront_vpc_origin.this[vpc_origin_key], null), null))
+          vpc_origin_id            = try(coalesce(vpc_origin_config.value.vpc_origin_id, try(aws_cloudfront_vpc_origin.this[vpc_origin_config.value.vpc_origin_key].id, null)), null)
         }
       }
     }
