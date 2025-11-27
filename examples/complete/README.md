@@ -1,11 +1,15 @@
-# Complete CloudFront distribution with most of supported features enabled
+# Complete CloudFront Distribution
 
 Configuration in this directory creates CloudFront distribution which demos such capabilities:
+
 - access logging
 - origins and origin groups
 - caching behaviours
 - Origin Access Identities (with S3 bucket policy)
+- Origin Access Control (recommended over OAI)
 - Lambda@Edge
+- CloudFront Functions
+- Response Headers Policies
 - ACM certificate
 - Route53 record
 - VPC Origins
@@ -15,9 +19,9 @@ Configuration in this directory creates CloudFront distribution which demos such
 To run this example you need to execute:
 
 ```bash
-$ terraform init
-$ terraform plan
-$ terraform apply
+terraform init
+terraform plan
+terraform apply
 ```
 
 Note that this example may create resources which cost money. Run `terraform destroy` when you don't need these resources.

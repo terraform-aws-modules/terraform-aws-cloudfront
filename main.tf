@@ -143,6 +143,17 @@ resource "aws_cloudfront_response_headers_policy" "this" {
   }
 }
 
+resource "aws_cloudfront_function" "this" {
+  for_each = var.create_cloudfront_function && var.cloudfront_functions != null ? var.cloudfront_functions : {}
+
+  code                         = each.value.code
+  comment                      = each.value.comment
+  key_value_store_associations = each.value.key_value_store_associations
+  name                         = try(coalesce(each.value.name, each.key))
+  publish                      = each.value.publish
+  runtime                      = each.value.runtime
+}
+
 resource "aws_cloudfront_origin_access_identity" "this" {
   for_each = local.create_origin_access_identity ? var.origin_access_identities : {}
 
@@ -356,7 +367,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = f.value.function_arn
+          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[f.value.function_key].arn, null))
         }
       }
 
@@ -428,7 +439,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = f.value.function_arn
+          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[f.value.function_key].arn, null))
         }
       }
 
@@ -472,6 +483,10 @@ resource "aws_cloudfront_distribution" "this" {
       }
     }
   }
+
+  depends_on = [
+    aws_cloudfront_function.this
+  ]
 }
 
 resource "aws_cloudfront_monitoring_subscription" "this" {

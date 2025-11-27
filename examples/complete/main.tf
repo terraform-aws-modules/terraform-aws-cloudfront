@@ -181,10 +181,23 @@ module "cloudfront" {
 
       function_association = {
         # Valid keys: viewer-request, viewer-response
+
+        # Option 1: Direct ARN reference to standalone resource
         viewer-request = {
           function_arn = aws_cloudfront_function.example.arn
         }
 
+        # Option 2: Dynamic reference to module-managed function by key/name
+        # Uncomment to use module-managed functions instead:
+        # viewer-request = {
+        #   function_key = "viewer-request-security"
+        # }
+
+        # viewer-response = {
+        #   function_key = "viewer-response-headers"
+        # }
+
+        # For this example, using standalone function for both
         viewer-response = {
           function_arn = aws_cloudfront_function.example.arn
         }
@@ -231,6 +244,39 @@ module "cloudfront" {
   geo_restriction = {
     restriction_type = "whitelist"
     locations        = ["NO", "UA", "US", "GB"]
+  }
+
+  # CloudFront Functions - module managed
+  create_cloudfront_function = true
+  cloudfront_functions = {
+    viewer-request-security = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Security headers and cache key normalization"
+      code    = file("./functions/viewer-request-security.js")
+      publish = true
+    }
+    viewer-response-headers = {
+      runtime = "cloudfront-js-2.0"
+      comment = "Add security response headers"
+      code    = file("./functions/viewer-response-headers.js")
+      publish = true
+    }
+    ab-testing = {
+      runtime = "cloudfront-js-2.0"
+      comment = "A/B testing function"
+      code    = file("./functions/ab-testing.js")
+      publish = true
+    }
+    # Example with KeyValueStore association (uncomment and provide actual KV store ARN)
+    # kvstore-redirect = {
+    #   runtime = "cloudfront-js-2.0"
+    #   comment = "Function using CloudFront KeyValueStore for dynamic redirects"
+    #   code    = file("./functions/kvstore-redirect.js")
+    #   publish = true
+    #   key_value_store_associations = [
+    #     "arn:aws:cloudfront::123456789012:key-value-store/example-redirects"
+    #   ]
+    # }
   }
 
   create_response_headers_policy = true
@@ -305,7 +351,6 @@ module "cloudfront" {
       }
     }
   }
-
 }
 
 ######
@@ -475,7 +520,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 resource "aws_cloudfront_function" "example" {
   name    = "example-${random_pet.this.id}"
   runtime = "cloudfront-js-1.0"
-  code    = file("${path.module}/example-function.js")
+  code    = file("./functions/example-function.js")
 }
 
 #########################################
