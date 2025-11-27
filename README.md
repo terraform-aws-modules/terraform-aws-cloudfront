@@ -107,13 +107,13 @@ ordered_cache_behavior = [{
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.83 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.100 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.83 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.100 |
 
 ## Modules
 
@@ -127,6 +127,7 @@ No modules.
 | [aws_cloudfront_monitoring_subscription.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription) | resource |
 | [aws_cloudfront_origin_access_control.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control) | resource |
 | [aws_cloudfront_origin_access_identity.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity) | resource |
+| [aws_cloudfront_response_headers_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_response_headers_policy) | resource |
 | [aws_cloudfront_vpc_origin.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_vpc_origin) | resource |
 | [aws_cloudfront_cache_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_cache_policy) | data source |
 | [aws_cloudfront_origin_request_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudfront_origin_request_policy) | data source |
@@ -143,6 +144,7 @@ No modules.
 | <a name="input_create_monitoring_subscription"></a> [create\_monitoring\_subscription](#input\_create\_monitoring\_subscription) | If enabled, the resource for monitoring subscription will created. | `bool` | `false` | no |
 | <a name="input_create_origin_access_control"></a> [create\_origin\_access\_control](#input\_create\_origin\_access\_control) | Controls if CloudFront origin access control should be created | `bool` | `false` | no |
 | <a name="input_create_origin_access_identity"></a> [create\_origin\_access\_identity](#input\_create\_origin\_access\_identity) | Controls if CloudFront origin access identity should be created | `bool` | `false` | no |
+| <a name="input_create_response_headers_policy"></a> [create\_response\_headers\_policy](#input\_create\_response\_headers\_policy) | Controls if CloudFront response headers policies should be created | `bool` | `false` | no |
 | <a name="input_create_vpc_origin"></a> [create\_vpc\_origin](#input\_create\_vpc\_origin) | If enabled, the resource for VPC origin will be created. | `bool` | `false` | no |
 | <a name="input_custom_error_response"></a> [custom\_error\_response](#input\_custom\_error\_response) | One or more custom error response elements | `any` | `{}` | no |
 | <a name="input_default_cache_behavior"></a> [default\_cache\_behavior](#input\_default\_cache\_behavior) | The default cache behavior for this distribution | `any` | `null` | no |
@@ -159,6 +161,7 @@ No modules.
 | <a name="input_origin_group"></a> [origin\_group](#input\_origin\_group) | One or more origin\_group for this distribution (multiples allowed). | `any` | `{}` | no |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for this distribution. One of PriceClass\_All, PriceClass\_200, PriceClass\_100 | `string` | `null` | no |
 | <a name="input_realtime_metrics_subscription_status"></a> [realtime\_metrics\_subscription\_status](#input\_realtime\_metrics\_subscription\_status) | A flag that indicates whether additional CloudWatch metrics are enabled for a given CloudFront distribution. Valid values are `Enabled` and `Disabled`. | `string` | `"Enabled"` | no |
+| <a name="input_response_headers_policies"></a> [response\_headers\_policies](#input\_response\_headers\_policies) | Map of CloudFront response headers policies with their configurations | <pre>map(object({<br/>    name    = optional(string)<br/>    comment = optional(string)<br/>    cors_config = optional(object({<br/>      access_control_allow_credentials = bool<br/>      origin_override                  = bool<br/>      access_control_allow_headers = object({<br/>        items = list(string)<br/>      })<br/>      access_control_allow_methods = object({<br/>        items = list(string)<br/>      })<br/>      access_control_allow_origins = object({<br/>        items = list(string)<br/>      })<br/>      access_control_expose_headers = optional(object({<br/>        items = list(string)<br/>      }))<br/>      access_control_max_age_sec = optional(number)<br/>    }))<br/>    custom_headers_config = optional(object({<br/>      items = list(object({<br/>        header   = string<br/>        override = bool<br/>        value    = string<br/>      }))<br/>    }))<br/>    remove_headers_config = optional(object({<br/>      items = list(object({<br/>        header = string<br/>      }))<br/>    }))<br/>    security_headers_config = optional(object({<br/>      content_security_policy = optional(object({<br/>        content_security_policy = string<br/>        override                = bool<br/>      }))<br/>      content_type_options = optional(object({<br/>        override = bool<br/>      }))<br/>      frame_options = optional(object({<br/>        frame_option = string<br/>        override     = bool<br/>      }))<br/>      referrer_policy = optional(object({<br/>        referrer_policy = string<br/>        override        = bool<br/>      }))<br/>      strict_transport_security = optional(object({<br/>        access_control_max_age_sec = number<br/>        override                   = bool<br/>        include_subdomains         = optional(bool)<br/>        preload                    = optional(bool)<br/>      }))<br/>      xss_protection = optional(object({<br/>        mode_block = bool<br/>        override   = bool<br/>        protection = bool<br/>        report_uri = optional(string)<br/>      }))<br/>    }))<br/>    server_timing_headers_config = optional(object({<br/>      enabled       = bool<br/>      sampling_rate = number<br/>    }))<br/>  }))</pre> | `null` | no |
 | <a name="input_retain_on_delete"></a> [retain\_on\_delete](#input\_retain\_on\_delete) | Disables the distribution instead of deleting it when destroying the resource through Terraform. If this is set, the distribution needs to be deleted manually afterwards. | `bool` | `false` | no |
 | <a name="input_staging"></a> [staging](#input\_staging) | Whether the distribution is a staging distribution. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resource. | `map(string)` | `null` | no |
@@ -189,6 +192,7 @@ No modules.
 | <a name="output_cloudfront_origin_access_identities"></a> [cloudfront\_origin\_access\_identities](#output\_cloudfront\_origin\_access\_identities) | The origin access identities created |
 | <a name="output_cloudfront_origin_access_identity_iam_arns"></a> [cloudfront\_origin\_access\_identity\_iam\_arns](#output\_cloudfront\_origin\_access\_identity\_iam\_arns) | The IAM arns of the origin access identities created |
 | <a name="output_cloudfront_origin_access_identity_ids"></a> [cloudfront\_origin\_access\_identity\_ids](#output\_cloudfront\_origin\_access\_identity\_ids) | The IDS of the origin access identities created |
+| <a name="output_cloudfront_response_headers_policies"></a> [cloudfront\_response\_headers\_policies](#output\_cloudfront\_response\_headers\_policies) | The response headers policies created |
 | <a name="output_cloudfront_vpc_origin_ids"></a> [cloudfront\_vpc\_origin\_ids](#output\_cloudfront\_vpc\_origin\_ids) | The IDS of the VPC origin created |
 <!-- END_TF_DOCS -->
 
