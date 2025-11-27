@@ -252,26 +252,26 @@ module "cloudfront" {
     viewer-request-security = {
       runtime = "cloudfront-js-2.0"
       comment = "Security headers and cache key normalization"
-      code    = file("./viewer-request-security.js")
+      code    = file("./functions/viewer-request-security.js")
       publish = true
     }
     viewer-response-headers = {
       runtime = "cloudfront-js-2.0"
       comment = "Add security response headers"
-      code    = file("./viewer-response-headers.js")
+      code    = file("./functions/viewer-response-headers.js")
       publish = true
     }
     ab-testing = {
       runtime = "cloudfront-js-2.0"
       comment = "A/B testing function"
-      code    = file("./ab-testing.js")
+      code    = file("./functions/ab-testing.js")
       publish = true
     }
     # Example with KeyValueStore association (uncomment and provide actual KV store ARN)
     # kvstore-redirect = {
     #   runtime = "cloudfront-js-2.0"
     #   comment = "Function using CloudFront KeyValueStore for dynamic redirects"
-    #   code    = file("./kvstore-redirect.js")
+    #   code    = file("./functions/kvstore-redirect.js")
     #   publish = true
     #   key_value_store_associations = [
     #     "arn:aws:cloudfront::123456789012:key-value-store/example-redirects"
@@ -520,7 +520,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 resource "aws_cloudfront_function" "example" {
   name    = "example-${random_pet.this.id}"
   runtime = "cloudfront-js-1.0"
-  code    = file("./example-function.js")
+  code    = file("./functions/example-function.js")
 }
 
 #########################################
