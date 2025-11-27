@@ -38,11 +38,6 @@ module "cloudfront" {
   # This rate is charged only once per month, per metric (up to 8 metrics per distribution).
   create_monitoring_subscription = true
 
-  create_origin_access_identity = true
-  origin_access_identities = {
-    s3_bucket_one = "My awesome CloudFront can access"
-  }
-
   create_origin_access_control = true
   origin_access_control = {
     s3_oac = {
@@ -486,7 +481,7 @@ data "aws_iam_policy_document" "s3_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = module.cloudfront.cloudfront_origin_access_identity_iam_arns
+      identifiers = ["TODO XXX"]
     }
   }
 

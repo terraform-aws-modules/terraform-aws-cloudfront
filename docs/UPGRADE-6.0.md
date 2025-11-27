@@ -6,6 +6,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 ## List of backwards incompatible changes
 
 - AWS provider `v6.0` is now minimum supported version
+- Support for `aws_cloudfront_origin_access_identity` has been removed in favor of `aws_cloudfront_origin_access_control`
 
 ## Additional changes
 
@@ -21,7 +22,8 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 1. Removed variables:
 
-    -
+    - `create_origin_access_identity`
+    - `origin_access_identities`
 
 2. Renamed variables:
 
@@ -33,7 +35,12 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 4. Removed outputs:
 
-    -
+    - `cloudfront_vpc_origin_ids`
+    - `cloudfront_origin_access_controls_ids`
+    - `cloudfront_origin_access_identities`
+    - `cloudfront_origin_access_identity_ids`
+    - `cloudfront_origin_access_identity_iam_arns`
+    - `cloudfront_distribution_tags`
 
 5. Renamed outputs:
 
@@ -41,7 +48,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 6. Added outputs:
 
-    -
+    - `cloudfront_vpc_origins`
 
 ## Upgrade Migrations
 

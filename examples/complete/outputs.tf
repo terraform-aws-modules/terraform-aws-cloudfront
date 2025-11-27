@@ -1,3 +1,7 @@
+################################################################################
+# Distribution
+################################################################################
+
 output "cloudfront_distribution_id" {
   description = "The identifier for the distribution."
   value       = module.cloudfront.cloudfront_distribution_id
@@ -48,22 +52,47 @@ output "cloudfront_distribution_hosted_zone_id" {
   value       = module.cloudfront.cloudfront_distribution_hosted_zone_id
 }
 
-output "cloudfront_origin_access_identities" {
-  description = "The origin access identities created"
-  value       = module.cloudfront.cloudfront_origin_access_identities
+################################################################################
+# Origin Access Control
+################################################################################
+
+output "cloudfront_origin_access_controls" {
+  description = "The origin access controls created"
+  value       = module.cloudfront.cloudfront_origin_access_controls
 }
 
-output "cloudfront_origin_access_identity_ids" {
-  description = "The IDS of the origin access identities created"
-  value       = module.cloudfront.cloudfront_origin_access_identity_ids
-}
+################################################################################
+# VPC Origin
+################################################################################
 
-output "cloudfront_origin_access_identity_iam_arns" {
-  description = "The IAM arns of the origin access identities created"
-  value       = module.cloudfront.cloudfront_origin_access_identity_iam_arns
-}
-
-output "cloudfront_vpc_origin_ids" {
+output "cloudfront_vpc_origins" {
   description = "The IDS of the VPC origin created"
-  value       = module.cloudfront.cloudfront_vpc_origin_ids
+  value       = module.cloudfront.cloudfront_vpc_origins
+}
+
+################################################################################
+# Response Headers Policy
+################################################################################
+
+output "cloudfront_response_headers_policies" {
+  description = "The response headers policies created"
+  value       = module.cloudfront.cloudfront_response_headers_policies
+}
+
+################################################################################
+# Function(s)
+################################################################################
+
+output "cloudfront_functions" {
+  description = "The CloudFront Functions created"
+  value       = module.cloudfront.cloudfront_functions
+}
+
+################################################################################
+# Monitoring Subscription
+################################################################################
+
+output "cloudfront_monitoring_subscription_id" {
+  description = " The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`."
+  value       = module.cloudfront.cloudfront_monitoring_subscription_id
 }

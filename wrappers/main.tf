@@ -11,7 +11,6 @@ module "wrapper" {
   create_distribution             = try(each.value.create_distribution, var.defaults.create_distribution, true)
   create_monitoring_subscription  = try(each.value.create_monitoring_subscription, var.defaults.create_monitoring_subscription, false)
   create_origin_access_control    = try(each.value.create_origin_access_control, var.defaults.create_origin_access_control, false)
-  create_origin_access_identity   = try(each.value.create_origin_access_identity, var.defaults.create_origin_access_identity, false)
   create_response_headers_policy  = try(each.value.create_response_headers_policy, var.defaults.create_response_headers_policy, false)
   create_vpc_origin               = try(each.value.create_vpc_origin, var.defaults.create_vpc_origin, false)
   custom_error_response           = try(each.value.custom_error_response, var.defaults.custom_error_response, {})
@@ -32,7 +31,6 @@ module "wrapper" {
       signing_protocol = "sigv4"
     }
   })
-  origin_access_identities             = try(each.value.origin_access_identities, var.defaults.origin_access_identities, {})
   origin_group                         = try(each.value.origin_group, var.defaults.origin_group, {})
   price_class                          = try(each.value.price_class, var.defaults.price_class, null)
   realtime_metrics_subscription_status = try(each.value.realtime_metrics_subscription_status, var.defaults.realtime_metrics_subscription_status, "Enabled")
