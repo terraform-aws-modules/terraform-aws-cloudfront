@@ -234,7 +234,7 @@ module "cloudfront" {
   }
 
   create_response_headers_policy = true
-  response_headers_policy = {
+  response_headers_policies = {
     cors_policy = {
       name    = "CORSPolicy"
       comment = "CORS configuration for API"

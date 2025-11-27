@@ -217,12 +217,11 @@ variable "create_response_headers_policy" {
   default     = false
 }
 
-variable "response_headers_policy" {
+variable "response_headers_policies" {
   description = "Map of CloudFront response headers policies with their configurations"
   type = map(object({
     name    = optional(string)
     comment = optional(string)
-
     cors_config = optional(object({
       access_control_allow_credentials = bool
       origin_override                  = bool
@@ -240,7 +239,6 @@ variable "response_headers_policy" {
       }))
       access_control_max_age_sec = optional(number)
     }))
-
     custom_headers_config = optional(object({
       items = list(object({
         header   = string
@@ -248,13 +246,11 @@ variable "response_headers_policy" {
         value    = string
       }))
     }))
-
     remove_headers_config = optional(object({
       items = list(object({
         header = string
       }))
     }))
-
     security_headers_config = optional(object({
       content_security_policy = optional(object({
         content_security_policy = string
@@ -284,11 +280,10 @@ variable "response_headers_policy" {
         report_uri = optional(string)
       }))
     }))
-
     server_timing_headers_config = optional(object({
       enabled       = bool
       sampling_rate = number
     }))
   }))
-  default = {}
+  default = null
 }

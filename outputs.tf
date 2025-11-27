@@ -90,15 +90,5 @@ output "cloudfront_vpc_origin_ids" {
 
 output "cloudfront_response_headers_policies" {
   description = "The response headers policies created"
-  value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v } : {}
-}
-
-output "cloudfront_response_headers_policy_ids" {
-  description = "The IDs of the response headers policies created"
-  value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v.id } : {}
-}
-
-output "cloudfront_response_headers_policy_etags" {
-  description = "The ETags of the response headers policies created"
-  value       = local.create_response_headers_policy ? { for k, v in aws_cloudfront_response_headers_policy.this : k => v.etag } : {}
+  value       = aws_cloudfront_response_headers_policy.this
 }

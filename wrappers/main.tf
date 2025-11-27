@@ -34,7 +34,7 @@ module "wrapper" {
   origin_group                         = try(each.value.origin_group, var.defaults.origin_group, {})
   price_class                          = try(each.value.price_class, var.defaults.price_class, null)
   realtime_metrics_subscription_status = try(each.value.realtime_metrics_subscription_status, var.defaults.realtime_metrics_subscription_status, "Enabled")
-  response_headers_policy              = try(each.value.response_headers_policy, var.defaults.response_headers_policy, {})
+  response_headers_policies            = try(each.value.response_headers_policies, var.defaults.response_headers_policies, null)
   retain_on_delete                     = try(each.value.retain_on_delete, var.defaults.retain_on_delete, false)
   staging                              = try(each.value.staging, var.defaults.staging, false)
   tags                                 = try(each.value.tags, var.defaults.tags, null)

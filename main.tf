@@ -1,14 +1,13 @@
 locals {
-  create_origin_access_identity  = var.create_origin_access_identity && length(keys(var.origin_access_identities)) > 0
-  create_origin_access_control   = var.create_origin_access_control && length(keys(var.origin_access_control)) > 0
-  create_vpc_origin              = var.create_vpc_origin && length(keys(var.vpc_origin)) > 0
-  create_response_headers_policy = var.create_response_headers_policy && length(keys(var.response_headers_policy)) > 0
+  create_origin_access_identity = var.create_origin_access_identity && length(keys(var.origin_access_identities)) > 0
+  create_origin_access_control  = var.create_origin_access_control && length(keys(var.origin_access_control)) > 0
+  create_vpc_origin             = var.create_vpc_origin && length(keys(var.vpc_origin)) > 0
 }
 
 resource "aws_cloudfront_response_headers_policy" "this" {
-  for_each = local.create_response_headers_policy ? var.response_headers_policy : {}
+  for_each = var.create_response_headers_policy && var.response_headers_policies != null ? var.response_headers_policies : {}
 
-  name    = each.value.name != null ? each.value.name : each.key
+  name    = try(coalesce(each.value.name, each.key))
   comment = each.value.comment
 
   dynamic "cors_config" {
@@ -17,7 +16,7 @@ resource "aws_cloudfront_response_headers_policy" "this" {
     content {
       access_control_allow_credentials = cors_config.value.access_control_allow_credentials
       origin_override                  = cors_config.value.origin_override
-      access_control_max_age_sec       = cors_config.value.access_control_max_age_sec != null ? cors_config.value.access_control_max_age_sec : null
+      access_control_max_age_sec       = cors_config.value.access_control_max_age_sec
 
       access_control_allow_headers {
         items = cors_config.value.access_control_allow_headers.items
@@ -143,7 +142,6 @@ resource "aws_cloudfront_response_headers_policy" "this" {
     }
   }
 }
-
 
 resource "aws_cloudfront_origin_access_identity" "this" {
   for_each = local.create_origin_access_identity ? var.origin_access_identities : {}
