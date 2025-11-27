@@ -1,4 +1,4 @@
-# Complete CloudFront distribution with most of supported features enabled
+# Complete CloudFront Distribution
 
 Configuration in this directory creates CloudFront distribution which demos such capabilities:
 
@@ -8,38 +8,20 @@ Configuration in this directory creates CloudFront distribution which demos such
 - Origin Access Identities (with S3 bucket policy)
 - Origin Access Control (recommended over OAI)
 - Lambda@Edge
-- **CloudFront Functions** (lightweight JavaScript execution at edge locations)
+- CloudFront Functions
 - Response Headers Policies
 - ACM certificate
 - Route53 record
 - VPC Origins
-
-## CloudFront Functions
-
-This example demonstrates CloudFront Functions integration with the module:
-
-**Functions included:**
-
-- `viewer-request-security.js` - Security headers and cache key normalization
-- `viewer-response-headers.js` - Add security response headers
-- `ab-testing.js` - A/B testing with path rewriting
-- `kvstore-redirect.js` - Example with CloudFront KeyValueStore integration (commented)
-
-**Features demonstrated:**
-
-- Module-managed CloudFront Functions creation
-- Function association with cache behaviors
-- Runtime selection (cloudfront-js-2.0)
-- KeyValueStore association pattern
 
 ## Usage
 
 To run this example you need to execute:
 
 ```bash
-$ terraform init
-$ terraform plan
-$ terraform apply
+terraform init
+terraform plan
+terraform apply
 ```
 
 Note that this example may create resources which cost money. Run `terraform destroy` when you don't need these resources.
