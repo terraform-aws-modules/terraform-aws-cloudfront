@@ -217,11 +217,6 @@ resource "aws_cloudfront_distribution" "this" {
   web_acl_id                      = var.web_acl_id
   tags                            = var.tags
 
-  # Ensure CloudFront Functions are created before the distribution
-  depends_on = [
-    aws_cloudfront_function.this
-  ]
-
   dynamic "logging_config" {
     for_each = length(keys(var.logging_config)) == 0 ? [] : [var.logging_config]
 
@@ -372,7 +367,7 @@ resource "aws_cloudfront_distribution" "this" {
 
         content {
           event_type   = f.key
-          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[lookup(f.value, "function_name", "")].arn, null))
+          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[f.value.function_key].arn, null))
         }
       }
 
@@ -488,6 +483,10 @@ resource "aws_cloudfront_distribution" "this" {
       }
     }
   }
+
+  depends_on = [
+    aws_cloudfront_function.this
+  ]
 }
 
 resource "aws_cloudfront_monitoring_subscription" "this" {

@@ -187,14 +187,14 @@ module "cloudfront" {
           function_arn = aws_cloudfront_function.example.arn
         }
 
-        # Option 2: Dynamic reference to module-managed function by name
+        # Option 2: Dynamic reference to module-managed function by key/name
         # Uncomment to use module-managed functions instead:
         # viewer-request = {
-        #   function_name = "viewer-request-security"
+        #   function_key = "viewer-request-security"
         # }
 
         # viewer-response = {
-        #   function_name = "viewer-response-headers"
+        #   function_key = "viewer-response-headers"
         # }
 
         # For this example, using standalone function for both

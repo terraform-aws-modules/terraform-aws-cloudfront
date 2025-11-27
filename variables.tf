@@ -304,13 +304,5 @@ variable "cloudfront_functions" {
     code                         = string
     key_value_store_associations = optional(list(string))
   }))
-  default = {}
-
-  validation {
-    condition = alltrue([
-      for k, v in var.cloudfront_functions :
-      contains(["cloudfront-js-1.0", "cloudfront-js-2.0"], v.runtime)
-    ])
-    error_message = "Runtime must be 'cloudfront-js-1.0' or 'cloudfront-js-2.0'. Provided runtime is invalid."
-  }
+  default = null
 }

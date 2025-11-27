@@ -139,13 +139,13 @@ module "cdn" {
     #   }
     # }
 
-    # Option 2: Dynamic reference to module-managed functions by name
+    # Option 2: Dynamic reference to module-managed functions by key/name
     function_association = {
       viewer-request = {
-        function_name = "viewer-request-function"
+        function_key = "viewer-request-function"
       }
       viewer-response = {
-        function_name = "viewer-response-function"
+        function_key = "viewer-response-function"
       }
     }
   }
@@ -157,48 +157,6 @@ module "cdn" {
 }
 ```
 
-**CloudFront Functions Features:**
-
-- **Lightweight JavaScript execution** at CloudFront edge locations
-- **Sub-millisecond execution** for viewer request/response modifications
-- **Runtime options**: `cloudfront-js-1.0` (10KB limit) or `cloudfront-js-2.0` (30KB limit, default)
-- **Event types**: viewer-request, viewer-response (not origin-request/response)
-- **Key-Value Store integration**: Associate functions with CloudFront KeyValueStore (max 1 per function)
-- **Cost-effective**: Lower cost than Lambda@Edge for simple transformations
-
-**Common use cases:**
-
-- URL redirects and rewrites
-- Request/response header manipulation
-- Access control and authentication
-- A/B testing and feature flags
-- Cache key normalization
-
-**Usage Pattern Note:**
-
-The module supports two flexible patterns for associating CloudFront Functions with cache behaviors:
-
-1. **Direct ARN Reference** (`function_arn`): Pass the ARN directly from external `aws_cloudfront_function` resources
-
-   ```hcl
-   function_association = {
-     viewer-request = {
-       function_arn = aws_cloudfront_function.external.arn
-     }
-   }
-   ```
-
-2. **Dynamic Name Reference** (`function_name`): Reference module-managed functions by their map key
-   ```hcl
-   function_association = {
-     viewer-request = {
-       function_name = "viewer-request-function"  # Key from cloudfront_functions map
-     }
-   }
-   ```
-
-The module automatically resolves function ARNs using Terraform's `try()` function, checking for `function_arn` first, then falling back to `function_name` lookup in module-created functions. This eliminates circular dependency issues while maintaining flexibility.
-
 ## Examples
 
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, VPC Origins, ACM Certificate, Route53 Records.
@@ -208,7 +166,7 @@ The module automatically resolves function ARNs using Terraform's `try()` functi
 - `Error: updating CloudFront Distribution (ETXXXXXXXXXXXX): InvalidArgument: The parameter ForwardedValues cannot be used when a cache policy is associated to the cache behavior.`
   - When defining a behavior in `ordered_cache_behavior` and `default_cache_behavior` with a cache policy, you must specify `use_forwarded_values = false`.
 
-```
+```hcl
 ordered_cache_behavior = [{
   path_pattern           = "/my/path"
   target_origin_id       = "my-origin"
@@ -261,7 +219,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution. | `list(string)` | `null` | no |
-| <a name="input_cloudfront_functions"></a> [cloudfront\_functions](#input\_cloudfront\_functions) | Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified. | <pre>map(object({<br/>    name                         = optional(string)<br/>    runtime                      = optional(string, "cloudfront-js-2.0")<br/>    comment                      = optional(string)<br/>    publish                      = optional(bool)<br/>    code                         = string<br/>    key_value_store_associations = optional(list(string))<br/>  }))</pre> | `{}` | no |
+| <a name="input_cloudfront_functions"></a> [cloudfront\_functions](#input\_cloudfront\_functions) | Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified. | <pre>map(object({<br/>    name                         = optional(string)<br/>    runtime                      = optional(string, "cloudfront-js-2.0")<br/>    comment                      = optional(string)<br/>    publish                      = optional(bool)<br/>    code                         = string<br/>    key_value_store_associations = optional(list(string))<br/>  }))</pre> | `null` | no |
 | <a name="input_comment"></a> [comment](#input\_comment) | Any comments you want to include about the distribution. | `string` | `null` | no |
 | <a name="input_continuous_deployment_policy_id"></a> [continuous\_deployment\_policy\_id](#input\_continuous\_deployment\_policy\_id) | Identifier of a continuous deployment policy. This argument should only be set on a production distribution. | `string` | `null` | no |
 | <a name="input_create_cloudfront_function"></a> [create\_cloudfront\_function](#input\_create\_cloudfront\_function) | Controls if CloudFront Functions should be created | `bool` | `false` | no |
