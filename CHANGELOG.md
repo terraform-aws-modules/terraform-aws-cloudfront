@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.1.0...v5.2.0) (2025-11-27)
+
+### Features
+
+* Cloudfront function support ([#175](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/175)) ([812763b](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/812763b5e547595cd3717e7ce8c94e0099f06552))
+
 ## [5.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.0.1...v5.1.0) (2025-11-27)
 
 ### Features
