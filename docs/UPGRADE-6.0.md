@@ -17,6 +17,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 ### Modified
 
 - Variable definitions now contain detailed `object` types in place of the previously used any type.
+- `is_ipv6_enabled` now defaults to `true` if not specified.
 
 ### Variable and output changes
 
@@ -24,14 +25,19 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
     - `create_origin_access_identity`
     - `origin_access_identities`
+    - `create_origin_access_control`
+    - `create_vpc_origin`
+    - `vpc_origin_timeouts` - use `timeouts` block within `vpc_origin` variable instead
+    - `create_response_headers_policy`
+    - `create_cloudfront_function`
 
 2. Renamed variables:
 
-    -
+    - `create_distribution` -> `create`
 
 3. Added variables:
 
-    -
+    - `anycast_ip_list_id`
 
 4. Removed outputs:
 

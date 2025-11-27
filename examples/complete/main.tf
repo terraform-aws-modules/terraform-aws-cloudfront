@@ -38,7 +38,6 @@ module "cloudfront" {
   # This rate is charged only once per month, per metric (up to 8 metrics per distribution).
   create_monitoring_subscription = true
 
-  create_origin_access_control = true
   origin_access_control = {
     s3_oac = {
       description      = "CloudFront access to S3"
@@ -48,7 +47,6 @@ module "cloudfront" {
     }
   }
 
-  create_vpc_origin = true
   vpc_origin = {
     ec2_vpc_origin = {
       name                   = random_pet.this.id
@@ -60,18 +58,13 @@ module "cloudfront" {
         items    = ["TLSv1.2"]
         quantity = 1
       }
+
+      timeouts = {
+        create = "20m"
+        update = "20m"
+        delete = "20m"
+      }
     }
-  }
-
-  vpc_origin_timeouts = {
-    create = "20m"
-    update = "20m"
-    delete = "20m"
-  }
-
-  logging_config = {
-    bucket = module.log_bucket.s3_bucket_bucket_domain_name
-    prefix = "cloudfront"
   }
 
   origin = {
@@ -84,16 +77,10 @@ module "cloudfront" {
         origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
       }
 
-      custom_header = [
-        {
-          name  = "X-Forwarded-Scheme"
-          value = "https"
-        },
-        {
-          name  = "X-Frame-Options"
-          value = "SAMEORIGIN"
-        }
-      ]
+      custom_header = {
+        "X-Forwarded-Scheme" = "https"
+        "X-Frame-Options"    = "SAMEORIGIN"
+      }
 
       origin_shield = {
         enabled              = true
@@ -125,10 +112,14 @@ module "cloudfront" {
   }
 
   origin_group = {
-    group_one = {
-      failover_status_codes      = [403, 404, 500, 502]
-      primary_member_origin_id   = "appsync"
-      secondary_member_origin_id = "s3_one"
+    group-one = {
+      failover_criteria = {
+        status_codes = [403, 404, 500, 502]
+      }
+      member = [
+        { origin_id = "appsync" },
+        { origin_id = "s3_one" }
+      ]
     }
   }
 
@@ -218,7 +209,6 @@ module "cloudfront" {
       allowed_methods = ["GET", "HEAD", "OPTIONS"]
       cached_methods  = ["GET", "HEAD"]
     }
-
   ]
 
   viewer_certificate = {
@@ -236,13 +226,14 @@ module "cloudfront" {
     response_page_path = "/errors/403.html"
   }]
 
-  geo_restriction = {
-    restriction_type = "whitelist"
-    locations        = ["NO", "UA", "US", "GB"]
+  restrictions = {
+    geo_restriction = {
+      restriction_type = "whitelist"
+      locations        = ["NO", "UA", "US", "GB"]
+    }
   }
 
   # CloudFront Functions - module managed
-  create_cloudfront_function = true
   cloudfront_functions = {
     viewer-request-security = {
       runtime = "cloudfront-js-2.0"
@@ -274,7 +265,6 @@ module "cloudfront" {
     # }
   }
 
-  create_response_headers_policy = true
   response_headers_policies = {
     cors_policy = {
       name    = "CORSPolicy"
