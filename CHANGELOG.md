@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.2.0...v6.0.0) (2025-11-29)
+
+### ⚠ BREAKING CHANGES
+
+* Upgrade MSV of AWS provider to `6.20`, remove support for origin access identities (#177)
+
+### Features
+
+* Upgrade MSV of AWS provider to `6.20`, remove support for origin access identities ([#177](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/177)) ([5896259](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/5896259f75eba82d3b2465e7530b3ab23f0cd181))
+
 ## [5.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.1.0...v5.2.0) (2025-11-27)
 
 ### Features
