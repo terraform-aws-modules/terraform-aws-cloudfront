@@ -1,11 +1,366 @@
-locals {
-  create_origin_access_identity = var.create_origin_access_identity && length(keys(var.origin_access_identities)) > 0
-  create_origin_access_control  = var.create_origin_access_control && length(keys(var.origin_access_control)) > 0
-  create_vpc_origin             = var.create_vpc_origin && length(keys(var.vpc_origin)) > 0
+################################################################################
+# Distribution
+################################################################################
+
+resource "aws_cloudfront_distribution" "this" {
+  count = var.create ? 1 : 0
+
+  aliases                         = var.aliases
+  anycast_ip_list_id              = var.anycast_ip_list_id
+  comment                         = var.comment
+  continuous_deployment_policy_id = var.continuous_deployment_policy_id
+
+  dynamic "custom_error_response" {
+    for_each = var.custom_error_response != null ? var.custom_error_response : []
+
+    content {
+      error_caching_min_ttl = custom_error_response.value.error_caching_min_ttl
+      error_code            = custom_error_response.value.error_code
+      response_code         = custom_error_response.value.response_code
+      response_page_path    = custom_error_response.value.response_page_path
+    }
+  }
+
+  dynamic "default_cache_behavior" {
+    for_each = [var.default_cache_behavior]
+
+    content {
+      allowed_methods           = default_cache_behavior.value.allowed_methods
+      cache_policy_id           = try(coalesce(default_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[default_cache_behavior.value.cache_policy_name].id, null)), null)
+      cached_methods            = default_cache_behavior.value.cached_methods
+      compress                  = default_cache_behavior.value.compress
+      default_ttl               = default_cache_behavior.value.default_ttl
+      field_level_encryption_id = default_cache_behavior.value.field_level_encryption_id
+
+      dynamic "forwarded_values" {
+        # If a cache policy is specified, then `forwarded_values` must not be set
+        for_each = default_cache_behavior.value.cache_policy_id == null && default_cache_behavior.value.cache_policy_name == null && default_cache_behavior.value.forwarded_values != null ? [default_cache_behavior.value.forwarded_values] : []
+
+        content {
+          dynamic "cookies" {
+            for_each = [forwarded_values.value.cookies]
+
+            content {
+              forward           = cookies.value.forward
+              whitelisted_names = cookies.value.whitelisted_names
+            }
+          }
+
+          headers                 = forwarded_values.value.headers
+          query_string            = forwarded_values.value.query_string
+          query_string_cache_keys = forwarded_values.value.query_string_cache_keys
+        }
+      }
+
+      dynamic "function_association" {
+        for_each = default_cache_behavior.value.function_association != null ? default_cache_behavior.value.function_association : {}
+
+        content {
+          event_type   = try(coalesce(function_association.value.event_type, function_association.key))
+          function_arn = try(coalesce(function_association.value.function_arn, try(aws_cloudfront_function.this[function_association.value.function_key].arn, null)), null)
+        }
+      }
+
+      dynamic "grpc_config" {
+        for_each = default_cache_behavior.value.grpc_config != null ? [default_cache_behavior.value.grpc_config] : []
+
+        content {
+          enabled = grpc_config.value.enabled
+        }
+      }
+
+      dynamic "lambda_function_association" {
+        for_each = default_cache_behavior.value.lambda_function_association != null ? default_cache_behavior.value.lambda_function_association : {}
+
+        content {
+          event_type   = try(coalesce(lambda_function_association.value.event_type, lambda_function_association.key))
+          include_body = lambda_function_association.value.include_body
+          lambda_arn   = lambda_function_association.value.lambda_arn
+        }
+      }
+
+      max_ttl                    = default_cache_behavior.value.max_ttl
+      min_ttl                    = default_cache_behavior.value.min_ttl
+      origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)), null)
+      realtime_log_config_arn    = default_cache_behavior.value.realtime_log_config_arn
+      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
+      smooth_streaming           = default_cache_behavior.value.smooth_streaming
+      target_origin_id           = default_cache_behavior.value.target_origin_id
+      trusted_key_groups         = default_cache_behavior.value.trusted_key_groups
+      trusted_signers            = default_cache_behavior.value.trusted_signers
+      viewer_protocol_policy     = default_cache_behavior.value.viewer_protocol_policy
+    }
+  }
+
+  default_root_object = var.default_root_object
+  enabled             = var.enabled
+  http_version        = var.http_version
+  is_ipv6_enabled     = var.is_ipv6_enabled
+
+  dynamic "logging_config" {
+    for_each = var.logging_config != null ? [var.logging_config] : []
+
+    content {
+      bucket          = logging_config.value.bucket
+      include_cookies = logging_config.value.include_cookies
+      prefix          = logging_config.value.prefix
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = var.ordered_cache_behavior != null ? var.ordered_cache_behavior : []
+
+    content {
+      allowed_methods           = ordered_cache_behavior.value.allowed_methods
+      cached_methods            = ordered_cache_behavior.value.cached_methods
+      cache_policy_id           = try(coalesce(ordered_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[ordered_cache_behavior.value.cache_policy_name].id, null)), null)
+      compress                  = ordered_cache_behavior.value.compress
+      default_ttl               = ordered_cache_behavior.value.default_ttl
+      field_level_encryption_id = ordered_cache_behavior.value.field_level_encryption_id
+
+      dynamic "forwarded_values" {
+        # If a cache policy is specified, then `forwarded_values` must not be set
+        for_each = ordered_cache_behavior.value.cache_policy_id == null && ordered_cache_behavior.value.cache_policy_name == null && ordered_cache_behavior.value.forwarded_values != null ? [ordered_cache_behavior.value.forwarded_values] : []
+
+        content {
+          dynamic "cookies" {
+            for_each = [forwarded_values.value.cookies]
+
+            content {
+              forward           = cookies.value.forward
+              whitelisted_names = cookies.value.whitelisted_names
+            }
+          }
+
+          headers                 = forwarded_values.value.headers
+          query_string            = forwarded_values.value.query_string
+          query_string_cache_keys = forwarded_values.value.query_string_cache_keys
+        }
+      }
+
+      dynamic "function_association" {
+        for_each = ordered_cache_behavior.value.function_association != null ? ordered_cache_behavior.value.function_association : {}
+
+        content {
+          event_type   = try(coalesce(function_association.value.event_type, function_association.key))
+          function_arn = try(coalesce(function_association.value.function_arn, try(aws_cloudfront_function.this[function_association.value.function_key].arn, null)), null)
+        }
+      }
+
+      dynamic "grpc_config" {
+        for_each = ordered_cache_behavior.value.grpc_config != null ? [ordered_cache_behavior.value.grpc_config] : []
+
+        content {
+          enabled = grpc_config.value.enabled
+        }
+      }
+
+      dynamic "lambda_function_association" {
+        for_each = ordered_cache_behavior.value.lambda_function_association != null ? ordered_cache_behavior.value.lambda_function_association : {}
+
+        content {
+          event_type   = try(coalesce(lambda_function_association.value.event_type, lambda_function_association.key))
+          include_body = lambda_function_association.value.include_body
+          lambda_arn   = lambda_function_association.value.lambda_arn
+        }
+      }
+
+      max_ttl                    = ordered_cache_behavior.value.max_ttl
+      min_ttl                    = ordered_cache_behavior.value.min_ttl
+      origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)), null)
+      path_pattern               = ordered_cache_behavior.value.path_pattern
+      realtime_log_config_arn    = ordered_cache_behavior.value.realtime_log_config_arn
+      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
+      smooth_streaming           = ordered_cache_behavior.value.smooth_streaming
+      target_origin_id           = ordered_cache_behavior.value.target_origin_id
+      trusted_key_groups         = ordered_cache_behavior.value.trusted_key_groups
+      trusted_signers            = ordered_cache_behavior.value.trusted_signers
+      viewer_protocol_policy     = ordered_cache_behavior.value.viewer_protocol_policy
+    }
+  }
+
+  dynamic "origin_group" {
+    for_each = var.origin_group != null ? var.origin_group : {}
+
+    content {
+      dynamic "failover_criteria" {
+        for_each = [origin_group.value.failover_criteria]
+
+        content {
+          status_codes = failover_criteria.value.status_codes
+        }
+      }
+
+      dynamic "member" {
+        for_each = origin_group.value.member
+
+        content {
+          origin_id = member.value.origin_id
+        }
+      }
+
+      origin_id = try(coalesce(origin_group.value.origin_id, origin_group.key))
+    }
+  }
+
+  dynamic "origin" {
+    for_each = var.origin
+
+    content {
+      connection_attempts = origin.value.connection_attempts
+      connection_timeout  = origin.value.connection_timeout
+
+      dynamic "custom_header" {
+        for_each = origin.value.custom_header != null ? origin.value.custom_header : {}
+
+        content {
+          name  = custom_header.key
+          value = custom_header.value
+        }
+      }
+
+      dynamic "custom_origin_config" {
+        for_each = origin.value.custom_origin_config != null ? [origin.value.custom_origin_config] : []
+
+        content {
+          http_port                = custom_origin_config.value.http_port
+          https_port               = custom_origin_config.value.https_port
+          ip_address_type          = custom_origin_config.value.ip_address_type
+          origin_keepalive_timeout = custom_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = custom_origin_config.value.origin_read_timeout
+          origin_protocol_policy   = custom_origin_config.value.origin_protocol_policy
+          origin_ssl_protocols     = custom_origin_config.value.origin_ssl_protocols
+        }
+      }
+
+      domain_name              = origin.value.domain_name
+      origin_access_control_id = try(coalesce(origin.value.origin_access_control_id, try(aws_cloudfront_origin_access_control.this[origin.value.origin_access_control_key].id, null)), null)
+      origin_id                = try(coalesce(origin.value.origin_id, origin.key))
+      origin_path              = origin.value.origin_path
+
+      dynamic "origin_shield" {
+        for_each = origin.value.origin_shield != null ? [origin.value.origin_shield] : []
+
+        content {
+          enabled              = origin_shield.value.enabled
+          origin_shield_region = origin_shield.value.origin_shield_region
+        }
+      }
+
+      response_completion_timeout = origin.value.response_completion_timeout
+
+      dynamic "vpc_origin_config" {
+        for_each = origin.value.vpc_origin_config != null ? [origin.value.vpc_origin_config] : []
+
+        content {
+          origin_keepalive_timeout = vpc_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = vpc_origin_config.value.origin_read_timeout
+          vpc_origin_id            = try(coalesce(vpc_origin_config.value.vpc_origin_id, try(aws_cloudfront_vpc_origin.this[vpc_origin_config.value.vpc_origin_key].id, null)), null)
+        }
+      }
+    }
+  }
+
+  price_class = var.price_class
+
+  dynamic "restrictions" {
+    for_each = [var.restrictions]
+
+    content {
+      dynamic "geo_restriction" {
+        for_each = [restrictions.value.geo_restriction]
+
+        content {
+          restriction_type = geo_restriction.value.restriction_type
+          locations        = geo_restriction.value.locations
+        }
+      }
+    }
+  }
+
+  retain_on_delete = var.retain_on_delete
+  staging          = var.staging
+
+  dynamic "viewer_certificate" {
+    for_each = [var.viewer_certificate]
+
+    content {
+      acm_certificate_arn            = viewer_certificate.value.acm_certificate_arn
+      cloudfront_default_certificate = viewer_certificate.value.cloudfront_default_certificate
+      iam_certificate_id             = viewer_certificate.value.iam_certificate_id
+      minimum_protocol_version       = viewer_certificate.value.minimum_protocol_version
+      ssl_support_method             = viewer_certificate.value.ssl_support_method
+    }
+  }
+
+  wait_for_deployment = var.wait_for_deployment
+  web_acl_id          = var.web_acl_id
+  tags                = var.tags
+
+  depends_on = [
+    aws_cloudfront_function.this
+  ]
 }
 
+################################################################################
+# Origin Access Control
+################################################################################
+
+resource "aws_cloudfront_origin_access_control" "this" {
+  for_each = var.origin_access_control != null ? var.origin_access_control : {}
+
+  description                       = try(coalesce(each.value.description, "Origin Access Control for ${try(coalesce(each.value.name, each.key))}"))
+  name                              = try(coalesce(each.value.name, each.key))
+  origin_access_control_origin_type = each.value.origin_type
+  signing_behavior                  = each.value.signing_behavior
+  signing_protocol                  = each.value.signing_protocol
+}
+
+################################################################################
+# VPC Origin
+################################################################################
+
+resource "aws_cloudfront_vpc_origin" "this" {
+  for_each = var.vpc_origin != null ? var.vpc_origin : {}
+
+  vpc_origin_endpoint_config {
+    arn                    = each.value.arn
+    http_port              = each.value.http_port
+    https_port             = each.value.https_port
+    name                   = try(coalesce(each.value.name, each.key))
+    origin_protocol_policy = each.value.origin_protocol_policy
+    dynamic "origin_ssl_protocols" {
+      for_each = each.value.origin_ssl_protocols != null ? [each.value.origin_ssl_protocols] : []
+
+      content {
+        items    = origin_ssl_protocols.value.items
+        quantity = origin_ssl_protocols.value.quantity
+      }
+    }
+  }
+
+  dynamic "timeouts" {
+    for_each = each.value.timeouts != null ? [each.value.timeouts] : []
+
+    content {
+      create = timeouts.value.create
+      update = timeouts.value.update
+      delete = timeouts.value.delete
+    }
+  }
+
+  tags = merge(
+    var.tags,
+    each.value.tags,
+  )
+}
+
+################################################################################
+# Response Headers Policy
+################################################################################
+
 resource "aws_cloudfront_response_headers_policy" "this" {
-  for_each = var.create_response_headers_policy && var.response_headers_policies != null ? var.response_headers_policies : {}
+  for_each = var.response_headers_policies != null ? var.response_headers_policies : {}
 
   name    = try(coalesce(each.value.name, each.key))
   comment = each.value.comment
@@ -143,8 +498,12 @@ resource "aws_cloudfront_response_headers_policy" "this" {
   }
 }
 
+################################################################################
+# Function(s)
+################################################################################
+
 resource "aws_cloudfront_function" "this" {
-  for_each = var.create_cloudfront_function && var.cloudfront_functions != null ? var.cloudfront_functions : {}
+  for_each = var.cloudfront_functions != null ? var.cloudfront_functions : {}
 
   code                         = each.value.code
   comment                      = each.value.comment
@@ -154,343 +513,12 @@ resource "aws_cloudfront_function" "this" {
   runtime                      = each.value.runtime
 }
 
-resource "aws_cloudfront_origin_access_identity" "this" {
-  for_each = local.create_origin_access_identity ? var.origin_access_identities : {}
-
-  comment = each.value
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_cloudfront_origin_access_control" "this" {
-  for_each = local.create_origin_access_control ? var.origin_access_control : {}
-
-  name = try(each.value.name, null) != null ? each.value.name : each.key
-
-  description                       = each.value["description"]
-  origin_access_control_origin_type = each.value["origin_type"]
-  signing_behavior                  = each.value["signing_behavior"]
-  signing_protocol                  = each.value["signing_protocol"]
-}
-
-resource "aws_cloudfront_vpc_origin" "this" {
-  for_each = local.create_vpc_origin ? var.vpc_origin : {}
-
-  vpc_origin_endpoint_config {
-    name                   = each.value["name"]
-    arn                    = each.value["arn"]
-    http_port              = each.value["http_port"]
-    https_port             = each.value["https_port"]
-    origin_protocol_policy = each.value["origin_protocol_policy"]
-
-    origin_ssl_protocols {
-      items    = each.value.origin_ssl_protocols.items
-      quantity = each.value.origin_ssl_protocols.quantity
-    }
-  }
-
-  timeouts {
-    create = try(var.vpc_origin_timeouts.create, null)
-    update = try(var.vpc_origin_timeouts.update, null)
-    delete = try(var.vpc_origin_timeouts.delete, null)
-  }
-
-  tags = var.tags
-}
-
-resource "aws_cloudfront_distribution" "this" {
-  count = var.create_distribution ? 1 : 0
-
-  aliases                         = var.aliases
-  comment                         = var.comment
-  continuous_deployment_policy_id = var.continuous_deployment_policy_id
-  default_root_object             = var.default_root_object
-  enabled                         = var.enabled
-  http_version                    = var.http_version
-  is_ipv6_enabled                 = var.is_ipv6_enabled
-  price_class                     = var.price_class
-  retain_on_delete                = var.retain_on_delete
-  staging                         = var.staging
-  wait_for_deployment             = var.wait_for_deployment
-  web_acl_id                      = var.web_acl_id
-  tags                            = var.tags
-
-  dynamic "logging_config" {
-    for_each = length(keys(var.logging_config)) == 0 ? [] : [var.logging_config]
-
-    content {
-      bucket          = logging_config.value["bucket"]
-      prefix          = lookup(logging_config.value, "prefix", null)
-      include_cookies = lookup(logging_config.value, "include_cookies", null)
-    }
-  }
-
-  dynamic "origin" {
-    for_each = var.origin
-
-    content {
-      domain_name              = origin.value.domain_name
-      origin_id                = lookup(origin.value, "origin_id", origin.key)
-      origin_path              = lookup(origin.value, "origin_path", "")
-      connection_attempts      = lookup(origin.value, "connection_attempts", null)
-      connection_timeout       = lookup(origin.value, "connection_timeout", null)
-      origin_access_control_id = lookup(origin.value, "origin_access_control_id", lookup(lookup(aws_cloudfront_origin_access_control.this, lookup(origin.value, "origin_access_control", ""), {}), "id", null))
-
-      dynamic "s3_origin_config" {
-        for_each = length(keys(lookup(origin.value, "s3_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "s3_origin_config", {})]
-
-        content {
-          origin_access_identity = lookup(s3_origin_config.value, "cloudfront_access_identity_path", lookup(lookup(aws_cloudfront_origin_access_identity.this, lookup(s3_origin_config.value, "origin_access_identity", ""), {}), "cloudfront_access_identity_path", null))
-        }
-      }
-
-      dynamic "custom_origin_config" {
-        for_each = length(lookup(origin.value, "custom_origin_config", "")) == 0 ? [] : [lookup(origin.value, "custom_origin_config", "")]
-
-        content {
-          http_port                = custom_origin_config.value.http_port
-          https_port               = custom_origin_config.value.https_port
-          origin_protocol_policy   = custom_origin_config.value.origin_protocol_policy
-          origin_ssl_protocols     = custom_origin_config.value.origin_ssl_protocols
-          origin_keepalive_timeout = lookup(custom_origin_config.value, "origin_keepalive_timeout", null)
-          origin_read_timeout      = lookup(custom_origin_config.value, "origin_read_timeout", null)
-        }
-      }
-
-      dynamic "custom_header" {
-        for_each = lookup(origin.value, "custom_header", [])
-
-        content {
-          name  = custom_header.value.name
-          value = custom_header.value.value
-        }
-      }
-
-      dynamic "origin_shield" {
-        for_each = length(keys(lookup(origin.value, "origin_shield", {}))) == 0 ? [] : [lookup(origin.value, "origin_shield", {})]
-
-        content {
-          enabled              = origin_shield.value.enabled
-          origin_shield_region = origin_shield.value.origin_shield_region
-        }
-      }
-
-      dynamic "vpc_origin_config" {
-        for_each = length(keys(lookup(origin.value, "vpc_origin_config", {}))) == 0 ? [] : [lookup(origin.value, "vpc_origin_config", {})]
-
-        content {
-          vpc_origin_id            = lookup(vpc_origin_config.value, "vpc_origin_id", lookup(lookup(aws_cloudfront_vpc_origin.this, lookup(vpc_origin_config.value, "vpc_origin", ""), {}), "id", null))
-          origin_keepalive_timeout = lookup(vpc_origin_config.value, "origin_keepalive_timeout", null)
-          origin_read_timeout      = lookup(vpc_origin_config.value, "origin_read_timeout", null)
-        }
-      }
-    }
-  }
-
-  dynamic "origin_group" {
-    for_each = var.origin_group
-
-    content {
-      origin_id = lookup(origin_group.value, "origin_id", origin_group.key)
-
-      failover_criteria {
-        status_codes = origin_group.value["failover_status_codes"]
-      }
-
-      member {
-        origin_id = origin_group.value["primary_member_origin_id"]
-      }
-
-      member {
-        origin_id = origin_group.value["secondary_member_origin_id"]
-      }
-    }
-  }
-
-  dynamic "default_cache_behavior" {
-    for_each = [var.default_cache_behavior]
-    iterator = i
-
-    content {
-      target_origin_id       = i.value["target_origin_id"]
-      viewer_protocol_policy = i.value["viewer_protocol_policy"]
-
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
-      compress                  = lookup(i.value, "compress", null)
-      field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
-      smooth_streaming          = lookup(i.value, "smooth_streaming", null)
-      trusted_signers           = lookup(i.value, "trusted_signers", null)
-      trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
-
-      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
-      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
-      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
-
-      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
-
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
-
-      dynamic "forwarded_values" {
-        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
-
-        content {
-          query_string            = lookup(i.value, "query_string", false)
-          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-          headers                 = lookup(i.value, "headers", [])
-
-          cookies {
-            forward           = lookup(i.value, "cookies_forward", "none")
-            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
-          }
-        }
-      }
-
-      dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
-        iterator = l
-
-        content {
-          event_type   = l.key
-          lambda_arn   = l.value.lambda_arn
-          include_body = lookup(l.value, "include_body", null)
-        }
-      }
-
-      dynamic "function_association" {
-        for_each = lookup(i.value, "function_association", [])
-        iterator = f
-
-        content {
-          event_type   = f.key
-          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[f.value.function_key].arn, null))
-        }
-      }
-
-      dynamic "grpc_config" {
-        for_each = try([i.value.grpc_config], [])
-        content {
-          enabled = grpc_config.value.enabled
-        }
-      }
-    }
-  }
-
-  dynamic "ordered_cache_behavior" {
-    for_each = var.ordered_cache_behavior
-    iterator = i
-
-    content {
-      path_pattern           = i.value["path_pattern"]
-      target_origin_id       = i.value["target_origin_id"]
-      viewer_protocol_policy = i.value["viewer_protocol_policy"]
-
-      allowed_methods           = lookup(i.value, "allowed_methods", ["GET", "HEAD", "OPTIONS"])
-      cached_methods            = lookup(i.value, "cached_methods", ["GET", "HEAD"])
-      compress                  = lookup(i.value, "compress", null)
-      field_level_encryption_id = lookup(i.value, "field_level_encryption_id", null)
-      smooth_streaming          = lookup(i.value, "smooth_streaming", null)
-      trusted_signers           = lookup(i.value, "trusted_signers", null)
-      trusted_key_groups        = lookup(i.value, "trusted_key_groups", null)
-
-      cache_policy_id            = try(i.value.cache_policy_id, data.aws_cloudfront_cache_policy.this[i.value.cache_policy_name].id, null)
-      origin_request_policy_id   = try(i.value.origin_request_policy_id, data.aws_cloudfront_origin_request_policy.this[i.value.origin_request_policy_name].id, null)
-      response_headers_policy_id = try(i.value.response_headers_policy_id, data.aws_cloudfront_response_headers_policy.this[i.value.response_headers_policy_name].id, null)
-
-      realtime_log_config_arn = lookup(i.value, "realtime_log_config_arn", null)
-
-      min_ttl     = lookup(i.value, "min_ttl", null)
-      default_ttl = lookup(i.value, "default_ttl", null)
-      max_ttl     = lookup(i.value, "max_ttl", null)
-
-      dynamic "forwarded_values" {
-        for_each = lookup(i.value, "use_forwarded_values", true) ? [true] : []
-
-        content {
-          query_string            = lookup(i.value, "query_string", false)
-          query_string_cache_keys = lookup(i.value, "query_string_cache_keys", [])
-          headers                 = lookup(i.value, "headers", [])
-
-          cookies {
-            forward           = lookup(i.value, "cookies_forward", "none")
-            whitelisted_names = lookup(i.value, "cookies_whitelisted_names", null)
-          }
-        }
-      }
-
-      dynamic "lambda_function_association" {
-        for_each = lookup(i.value, "lambda_function_association", [])
-        iterator = l
-
-        content {
-          event_type   = l.key
-          lambda_arn   = l.value.lambda_arn
-          include_body = lookup(l.value, "include_body", null)
-        }
-      }
-
-      dynamic "function_association" {
-        for_each = lookup(i.value, "function_association", [])
-        iterator = f
-
-        content {
-          event_type   = f.key
-          function_arn = lookup(f.value, "function_arn", try(aws_cloudfront_function.this[f.value.function_key].arn, null))
-        }
-      }
-
-      dynamic "grpc_config" {
-        for_each = try([i.value.grpc_config], [])
-        content {
-          enabled = grpc_config.value.enabled
-        }
-      }
-    }
-  }
-
-  viewer_certificate {
-    acm_certificate_arn            = lookup(var.viewer_certificate, "acm_certificate_arn", null)
-    cloudfront_default_certificate = lookup(var.viewer_certificate, "cloudfront_default_certificate", null)
-    iam_certificate_id             = lookup(var.viewer_certificate, "iam_certificate_id", null)
-
-    minimum_protocol_version = lookup(var.viewer_certificate, "minimum_protocol_version", "TLSv1")
-    ssl_support_method       = lookup(var.viewer_certificate, "ssl_support_method", null)
-  }
-
-  dynamic "custom_error_response" {
-    for_each = length(flatten([var.custom_error_response])[0]) > 0 ? flatten([var.custom_error_response]) : []
-
-    content {
-      error_code = custom_error_response.value["error_code"]
-
-      response_code         = lookup(custom_error_response.value, "response_code", null)
-      response_page_path    = lookup(custom_error_response.value, "response_page_path", null)
-      error_caching_min_ttl = lookup(custom_error_response.value, "error_caching_min_ttl", null)
-    }
-  }
-
-  restrictions {
-    dynamic "geo_restriction" {
-      for_each = [var.geo_restriction]
-
-      content {
-        restriction_type = lookup(geo_restriction.value, "restriction_type", "none")
-        locations        = lookup(geo_restriction.value, "locations", [])
-      }
-    }
-  }
-
-  depends_on = [
-    aws_cloudfront_function.this
-  ]
-}
+################################################################################
+# Monitoring Subscription
+################################################################################
 
 resource "aws_cloudfront_monitoring_subscription" "this" {
-  count = var.create_distribution && var.create_monitoring_subscription ? 1 : 0
+  count = var.create && var.create_monitoring_subscription ? 1 : 0
 
   distribution_id = aws_cloudfront_distribution.this[0].id
 
@@ -501,20 +529,29 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
   }
 }
 
+################################################################################
+# Data source reverse lookup by name
+# These are used to refer to resources by name instead of ID
+################################################################################
+
+locals {
+  cache_behaviors = concat([var.default_cache_behavior], var.ordered_cache_behavior)
+}
+
 data "aws_cloudfront_cache_policy" "this" {
-  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.cache_policy_name if can(v.cache_policy_name)])
+  for_each = toset([for v in local.cache_behaviors : v.cache_policy_name if v.cache_policy_name != null])
 
   name = each.key
 }
 
 data "aws_cloudfront_origin_request_policy" "this" {
-  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.origin_request_policy_name if can(v.origin_request_policy_name)])
+  for_each = toset([for v in local.cache_behaviors : v.origin_request_policy_name if v.origin_request_policy_name != null])
 
   name = each.key
 }
 
 data "aws_cloudfront_response_headers_policy" "this" {
-  for_each = toset([for v in concat([var.default_cache_behavior], var.ordered_cache_behavior) : v.response_headers_policy_name if can(v.response_headers_policy_name)])
+  for_each = toset([for v in local.cache_behaviors : v.response_headers_policy_name if v.response_headers_policy_name != null])
 
   name = each.key
 }
