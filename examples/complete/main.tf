@@ -169,6 +169,10 @@ module "cloudfront" {
         viewer-request = {
           function_arn = aws_cloudfront_function.example.arn
         }
+        # Or ARN reference to standalone function created with the module
+        viewer-response = {
+          function_arn = module.standalone_cloudfront_functions.cloudfront_functions.example.arn
+        }
 
         # Option 2: Dynamic reference to module-managed function by key/name
         # Uncomment to use module-managed functions instead:
@@ -179,11 +183,6 @@ module "cloudfront" {
         # viewer-response = {
         #   function_key = "viewer-response-headers"
         # }
-
-        # For this example, using standalone function for both
-        viewer-response = {
-          function_arn = aws_cloudfront_function.example.arn
-        }
       }
     },
     {
@@ -335,6 +334,24 @@ module "cloudfront" {
   }
 
   tags = local.tags
+}
+
+# Create CloudFront function using the module
+module "standalone_cloudfront_functions" {
+  source = "../../"
+
+  # Don't create main resources, only functions
+  create = false
+
+  cloudfront_functions = {
+    example = {
+      name    = "shared-${local.name}"
+      runtime = "cloudfront-js-1.0"
+      code    = file("./functions/example-function.js")
+    }
+  }
+
+  origin_access_control = {}
 }
 
 module "records" {
