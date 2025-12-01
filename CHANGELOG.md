@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.0.0...v6.0.1) (2025-12-01)
+
+### Bug Fixes
+
+* Avoid adding a `null` value to `concat()` function for cache behaviors local variable ([#179](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/179)) ([dd9a7a6](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/dd9a7a6051db365e437cd2eb8b25b77348427cdd))
+
 ## [6.0.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v5.2.0...v6.0.0) (2025-11-29)
 
 ### ⚠ BREAKING CHANGES
