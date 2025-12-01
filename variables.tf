@@ -101,7 +101,7 @@ variable "default_cache_behavior" {
     trusted_signers              = optional(list(string))
     viewer_protocol_policy       = optional(string, "https-only")
   })
-  nullable = false
+  default = null
 }
 
 variable "default_root_object" {

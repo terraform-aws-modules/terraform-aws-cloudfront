@@ -11,7 +11,7 @@ module "wrapper" {
   create                          = try(each.value.create, var.defaults.create, true)
   create_monitoring_subscription  = try(each.value.create_monitoring_subscription, var.defaults.create_monitoring_subscription, false)
   custom_error_response           = try(each.value.custom_error_response, var.defaults.custom_error_response, null)
-  default_cache_behavior          = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior)
+  default_cache_behavior          = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior, null)
   default_root_object             = try(each.value.default_root_object, var.defaults.default_root_object, null)
   enabled                         = try(each.value.enabled, var.defaults.enabled, true)
   http_version                    = try(each.value.http_version, var.defaults.http_version, "http2")

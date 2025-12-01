@@ -535,7 +535,10 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
 ################################################################################
 
 locals {
-  cache_behaviors = concat([var.default_cache_behavior], var.ordered_cache_behavior)
+  cache_behaviors = concat(
+    var.default_cache_behavior != null ? [var.default_cache_behavior] : [],
+    var.ordered_cache_behavior != null ? var.ordered_cache_behavior : []
+  )
 }
 
 data "aws_cloudfront_cache_policy" "this" {
