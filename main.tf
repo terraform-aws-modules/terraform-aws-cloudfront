@@ -108,7 +108,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = var.ordered_cache_behavior != null ? var.ordered_cache_behavior : []
+    for_each = length(var.ordered_cache_behavior) > 0 ? var.ordered_cache_behavior : []
 
     content {
       allowed_methods           = ordered_cache_behavior.value.allowed_methods
@@ -535,7 +535,7 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
 ################################################################################
 
 locals {
-  cache_behaviors = var.ordered_cache_behavior != null ? concat([var.default_cache_behavior], var.ordered_cache_behavior) : [var.default_cache_behavior]
+  cache_behaviors = concat([var.default_cache_behavior], var.ordered_cache_behavior)
 }
 
 data "aws_cloudfront_cache_policy" "this" {

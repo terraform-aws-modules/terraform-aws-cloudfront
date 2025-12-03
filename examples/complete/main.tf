@@ -11,9 +11,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  # domain_name = "terraform-aws-modules.modules.tf"
-  domain_name = "sharedservices.clowd.haus"
-  subdomain   = "cdn"
+  subdomain = "cdn"
 
   name = "ex-${basename(path.cwd)}"
 
@@ -34,7 +32,7 @@ locals {
 module "cloudfront" {
   source = "../../"
 
-  aliases = ["${local.subdomain}.${local.domain_name}"]
+  aliases = ["${local.subdomain}.${var.domain}"]
 
   comment         = "My awesome CloudFront"
   enabled         = true
@@ -79,7 +77,7 @@ module "cloudfront" {
 
   origin = {
     appsync = {
-      domain_name = "appsync.${local.domain_name}"
+      domain_name = "appsync.${var.domain}"
       custom_origin_config = {
         http_port              = 80
         https_port             = 443
@@ -389,16 +387,16 @@ resource "aws_cloudfront_function" "example" {
 }
 
 data "aws_route53_zone" "this" {
-  name = local.domain_name
+  name = var.domain
 }
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> 4.0"
 
-  domain_name               = local.domain_name
+  domain_name               = var.domain
   zone_id                   = data.aws_route53_zone.this.id
-  subject_alternative_names = ["${local.subdomain}.${local.domain_name}"]
+  subject_alternative_names = ["${local.subdomain}.${var.domain}"]
 
   tags = local.tags
 }

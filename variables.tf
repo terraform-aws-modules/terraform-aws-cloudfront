@@ -191,7 +191,8 @@ variable "ordered_cache_behavior" {
     trusted_signers              = optional(list(string))
     viewer_protocol_policy       = string
   }))
-  default = null
+  default  = []
+  nullable = false
 }
 
 variable "origin_group" {

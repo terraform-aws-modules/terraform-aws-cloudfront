@@ -17,7 +17,7 @@ module "wrapper" {
   http_version                    = try(each.value.http_version, var.defaults.http_version, "http2")
   is_ipv6_enabled                 = try(each.value.is_ipv6_enabled, var.defaults.is_ipv6_enabled, true)
   logging_config                  = try(each.value.logging_config, var.defaults.logging_config, null)
-  ordered_cache_behavior          = try(each.value.ordered_cache_behavior, var.defaults.ordered_cache_behavior, null)
+  ordered_cache_behavior          = try(each.value.ordered_cache_behavior, var.defaults.ordered_cache_behavior, [])
   origin                          = try(each.value.origin, var.defaults.origin, {})
   origin_access_control = try(each.value.origin_access_control, var.defaults.origin_access_control, {
     s3 = {
