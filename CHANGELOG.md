@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.0.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.0.1...v6.0.2) (2025-12-03)
+
+### Bug Fixes
+
+* Change default value for `ordered_cache_behavior` to empty list to avoid type checking acrobatics and type mis-matches ([#183](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/183)) ([5427273](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/54272736d43f6a946e0af07eda9475a4587bc588))
+
 ## [6.0.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.0.0...v6.0.1) (2025-12-01)
 
 ### Bug Fixes
