@@ -57,7 +57,9 @@ Note that this example may create resources which cost money. Run `terraform des
 
 ## Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_domain"></a> [domain](#input\_domain) | The domain name to use when deploying the CloudFront distribution | `string` | `"terraform-aws-modules.modules.tf"` | no |
 
 ## Outputs
 
