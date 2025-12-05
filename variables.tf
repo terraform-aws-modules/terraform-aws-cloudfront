@@ -461,3 +461,50 @@ variable "realtime_metrics_subscription_status" {
   type        = string
   default     = "Enabled"
 }
+
+################################################################################
+# Standard Logging (replaces legacy logging_config)
+################################################################################
+
+variable "std_logging_region" {
+  description = "Region for standard logging resources. Required for CloudFront (must be us-east-1 for the source)"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "std_logging_source_name" {
+  description = "Name for the CloudWatch Log Delivery Source. Defaults to 'cloudfront-<distribution_id>'"
+  type        = string
+  default     = null
+}
+
+variable "std_logging_destination_arn" {
+  description = "ARN of an existing CloudWatch Log Delivery Destination to use. If set, std_logging_destination is ignored"
+  type        = string
+  default     = null
+}
+
+variable "std_logging_destination" {
+  description = "Configuration for creating a new standard logging destination. Ignored if std_logging_destination_arn is set"
+  type = object({
+    name            = string
+    output_format   = optional(string, "json")
+    destination_arn = string
+    tags            = optional(map(string), {})
+  })
+  default = null
+}
+
+variable "std_logging_delivery" {
+  description = "Configuration for the standard logging delivery"
+  type = object({
+    field_delimiter = optional(string)
+    record_fields   = optional(list(string))
+    s3_delivery_configuration = optional(object({
+      enable_hive_compatible_path = optional(bool)
+      suffix_path                 = optional(string)
+    }))
+    tags = optional(map(string), {})
+  })
+  default = null
+}
