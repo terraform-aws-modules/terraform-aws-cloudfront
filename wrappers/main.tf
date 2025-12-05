@@ -35,11 +35,16 @@ module "wrapper" {
       restriction_type = "none"
     }
   })
-  retain_on_delete    = try(each.value.retain_on_delete, var.defaults.retain_on_delete, null)
-  staging             = try(each.value.staging, var.defaults.staging, null)
-  tags                = try(each.value.tags, var.defaults.tags, {})
-  viewer_certificate  = try(each.value.viewer_certificate, var.defaults.viewer_certificate, {})
-  vpc_origin          = try(each.value.vpc_origin, var.defaults.vpc_origin, null)
-  wait_for_deployment = try(each.value.wait_for_deployment, var.defaults.wait_for_deployment, null)
-  web_acl_id          = try(each.value.web_acl_id, var.defaults.web_acl_id, null)
+  retain_on_delete            = try(each.value.retain_on_delete, var.defaults.retain_on_delete, null)
+  staging                     = try(each.value.staging, var.defaults.staging, null)
+  std_logging_delivery        = try(each.value.std_logging_delivery, var.defaults.std_logging_delivery, null)
+  std_logging_destination     = try(each.value.std_logging_destination, var.defaults.std_logging_destination, null)
+  std_logging_destination_arn = try(each.value.std_logging_destination_arn, var.defaults.std_logging_destination_arn, null)
+  std_logging_region          = try(each.value.std_logging_region, var.defaults.std_logging_region, "us-east-1")
+  std_logging_source_name     = try(each.value.std_logging_source_name, var.defaults.std_logging_source_name, null)
+  tags                        = try(each.value.tags, var.defaults.tags, {})
+  viewer_certificate          = try(each.value.viewer_certificate, var.defaults.viewer_certificate, {})
+  vpc_origin                  = try(each.value.vpc_origin, var.defaults.vpc_origin, null)
+  wait_for_deployment         = try(each.value.wait_for_deployment, var.defaults.wait_for_deployment, null)
+  web_acl_id                  = try(each.value.web_acl_id, var.defaults.web_acl_id, null)
 }
