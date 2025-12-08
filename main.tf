@@ -553,14 +553,19 @@ resource "aws_cloudwatch_log_delivery_destination" "this" {
 
   region = var.std_logging_region
 
-  name          = var.std_logging_destination.name
-  output_format = var.std_logging_destination.output_format
+  name                      = var.std_logging_destination.name
+  output_format             = var.std_logging_destination.output_format
+  delivery_destination_type = var.std_logging_destination.delivery_destination_type
 
-  delivery_destination_configuration {
-    destination_resource_arn = var.std_logging_destination.destination_arn
+  dynamic "delivery_destination_configuration" {
+    for_each = var.std_logging_destination.destination_arn != null ? [1] : []
+
+    content {
+      destination_resource_arn = var.std_logging_destination.destination_arn
+    }
   }
 
-  tags = var.std_logging_destination.tags
+  tags = var.tags
 }
 
 locals {
@@ -588,7 +593,7 @@ resource "aws_cloudwatch_log_delivery" "this" {
     }
   }
 
-  tags = try(var.std_logging_delivery.tags, {})
+  tags = var.tags
 }
 
 ################################################################################
