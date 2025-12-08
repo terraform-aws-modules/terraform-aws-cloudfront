@@ -487,10 +487,10 @@ variable "std_logging_destination_arn" {
 variable "std_logging_destination" {
   description = "Configuration for creating a new standard logging destination. Ignored if std_logging_destination_arn is set"
   type = object({
-    name            = string
-    output_format   = optional(string, "json")
-    destination_arn = string
-    tags            = optional(map(string), {})
+    name                      = string
+    output_format             = optional(string, "json") # json, plain, w3c, raw, parquet
+    destination_arn           = optional(string)         # Required for S3, CloudWatch Logs, Firehose. Not required for X-Ray
+    delivery_destination_type = optional(string)         # S3, CWL, FH, XRAY. Auto-detected from destination_arn if not set
   })
   default = null
 }
@@ -504,7 +504,6 @@ variable "std_logging_delivery" {
       enable_hive_compatible_path = optional(bool)
       suffix_path                 = optional(string)
     }))
-    tags = optional(map(string), {})
   })
   default = null
 }
