@@ -23,6 +23,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 - `vpc_origin.origin_ssl_protocols.items` now defaults to `["TLSv1.2"]`
 - `vpc_origin_timeouts` is now embedded under `vpc_origin`
 - `viewer_certificate.minimum_protocol_version` now defaults to `"TLSv1.2_2025"`
+- `create_origin_access_control` - now the default is to create an origin access control called `s3`. Note: if creating multiple distributions either set `origin_access_control` to different name to avoid clashes or set to `{}` to not create them.
 - See the the `Before vs After` examples below for more details on variable type definition changes
 
 ### Variable and output changes
@@ -31,7 +32,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
     - `create_origin_access_identity`
     - `origin_access_identities`
-    - `create_origin_access_control` - now the default is to create an origin access control called `s3`. Note: if creating multiple distributions either set `origin_access_control` to different name to avoid clashes or set to `{}` to not create them.
+    - `create_origin_access_control`
     - `create_vpc_origin`
     - `vpc_origin_timeouts` - use `timeouts` block within `vpc_origin` variable instead
     - `create_response_headers_policy`
