@@ -23,6 +23,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 - `vpc_origin.origin_ssl_protocols.items` now defaults to `["TLSv1.2"]`
 - `vpc_origin_timeouts` is now embedded under `vpc_origin`
 - `viewer_certificate.minimum_protocol_version` now defaults to `"TLSv1.2_2025"`
+- `create_origin_access_control` has been removed; the module now creates an origin access control called `s3` by default. If creating multiple distributions either set `origin_access_control` to different name to avoid name clashes or set to `{}` to disable their creation entirely.
 - See the the `Before vs After` examples below for more details on variable type definition changes
 
 ### Variable and output changes
