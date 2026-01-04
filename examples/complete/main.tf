@@ -157,8 +157,8 @@ module "cloudfront" {
       cache_policy_name            = "Managed-CachingOptimized"
       origin_request_policy_name   = "Managed-UserAgentRefererHeaders"
       response_headers_policy_name = "Managed-SimpleCORS"
-      # using a response header policy you're dynamically creating below
-      # response_header_policy: "cors_policy"
+      # To use a response headers policy created by this module, use response_headers_policy_key:
+      # response_headers_policy_key = "cors_policy"
 
       function_association = {
         # Valid keys: viewer-request, viewer-response

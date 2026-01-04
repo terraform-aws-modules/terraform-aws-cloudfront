@@ -83,7 +83,7 @@ resource "aws_cloudfront_distribution" "this" {
       min_ttl                    = default_cache_behavior.value.min_ttl
       origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)), null)
       realtime_log_config_arn    = default_cache_behavior.value.realtime_log_config_arn
-      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
+      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_key].id, null), try(data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = default_cache_behavior.value.smooth_streaming
       target_origin_id           = default_cache_behavior.value.target_origin_id
       trusted_key_groups         = default_cache_behavior.value.trusted_key_groups
@@ -170,7 +170,7 @@ resource "aws_cloudfront_distribution" "this" {
       origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)), null)
       path_pattern               = ordered_cache_behavior.value.path_pattern
       realtime_log_config_arn    = ordered_cache_behavior.value.realtime_log_config_arn
-      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
+      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_key].id, null), try(data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = ordered_cache_behavior.value.smooth_streaming
       target_origin_id           = ordered_cache_behavior.value.target_origin_id
       trusted_key_groups         = ordered_cache_behavior.value.trusted_key_groups
