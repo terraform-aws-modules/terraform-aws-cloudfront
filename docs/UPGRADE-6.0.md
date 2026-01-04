@@ -7,6 +7,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 - AWS provider `v6.20` is now minimum supported version
 - Support for `aws_cloudfront_origin_access_identity` has been removed in favor of `aws_cloudfront_origin_access_control`
+- **`origin[].origin_access_control` has been renamed to `origin[].origin_access_control_key`** - When referencing an origin access control created by this module within an origin block, you must now use `origin_access_control_key` instead of `origin_access_control`. This change was made to be consistent with other key-based references (e.g., `vpc_origin_key`). **Note:** Using the old attribute name will NOT produce a Terraform error but will silently remove the OAC association from your origin.
 
 ## Additional changes
 
@@ -41,6 +42,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 2. Renamed variables:
 
     - `create_distribution` -> `create`
+    - `origin[].origin_access_control` -> `origin[].origin_access_control_key`
 
 3. Added variables:
 
