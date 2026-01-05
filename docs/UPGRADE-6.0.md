@@ -7,7 +7,6 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 
 - AWS provider `v6.20` is now minimum supported version
 - Support for `aws_cloudfront_origin_access_identity` has been removed in favor of `aws_cloudfront_origin_access_control`
-- **`origin[].origin_access_control` has been renamed to `origin[].origin_access_control_key`** - When referencing an origin access control created by this module within an origin block, you must now use `origin_access_control_key` instead of `origin_access_control`. This change was made to be consistent with other key-based references (e.g., `vpc_origin_key`). **Note:** Using the old attribute name will NOT produce a Terraform error but will silently remove the OAC association from your origin.
 
 ## Additional changes
 
@@ -25,6 +24,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 - `vpc_origin_timeouts` is now embedded under `vpc_origin`
 - `viewer_certificate.minimum_protocol_version` now defaults to `"TLSv1.2_2025"`
 - `create_origin_access_control` has been removed; the module now creates an origin access control called `s3` by default. If creating multiple distributions either set `origin_access_control` to different name to avoid name clashes or set to `{}` to disable their creation entirely.
+- `origin.origin_access_control` has been renamed to `origin.origin_access_control_key`. When referencing an origin access control created by this module within an origin block, you must now use `origin_access_control_key` instead of `origin_access_control`
 - See the the `Before vs After` examples below for more details on variable type definition changes
 
 ### Variable and output changes
@@ -42,7 +42,7 @@ If you find a bug, please open an issue with supporting configuration to reprodu
 2. Renamed variables:
 
     - `create_distribution` -> `create`
-    - `origin[].origin_access_control` -> `origin[].origin_access_control_key`
+    - `origin.origin_access_control` -> `origin.origin_access_control_key`
 
 3. Added variables:
 
