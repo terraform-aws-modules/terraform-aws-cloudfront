@@ -10,6 +10,8 @@ data "aws_availability_zones" "available" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   subdomain = "cdn"
 
@@ -42,9 +44,17 @@ module "cloudfront" {
 
   create_monitoring_subscription = true
 
-  logging_config = {
-    bucket = module.log_bucket.s3_bucket_bucket_domain_name
-    prefix = "cloudfront"
+  # v2 Logging - logs to S3 with CloudWatch Log Delivery
+  # Note: This supersedes the legacy logging_config which used S3 ACLs
+  v2_logging = {
+    name            = "example-v2-logs"
+    destination_arn = "${module.log_bucket.s3_bucket_arn}/cloudfront"
+    output_format   = "parquet"
+
+    s3_delivery_configuration = {
+      enable_hive_compatible_path = true
+      suffix_path                 = "{DistributionId}/{yyyy}/{MM}/{dd}/{HH}"
+    }
   }
 
   origin_access_control = {
@@ -435,9 +445,6 @@ data "aws_iam_policy_document" "s3_policy" {
   }
 }
 
-data "aws_canonical_user_id" "current" {}
-data "aws_cloudfront_log_delivery_canonical_user_id" "cloudfront" {}
-
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 5.0"
@@ -447,25 +454,56 @@ module "log_bucket" {
   # For example only
   force_destroy = true
 
-  control_object_ownership = true
-  object_ownership         = "ObjectWriter"
-
-  grant = [
-    {
-      type       = "CanonicalUser"
-      permission = "FULL_CONTROL"
-      id         = data.aws_canonical_user_id.current.id
-    },
-    {
-      type       = "CanonicalUser"
-      permission = "FULL_CONTROL"
-      id         = data.aws_cloudfront_log_delivery_canonical_user_id.cloudfront.id
-      # Ref. https://github.com/terraform-providers/terraform-provider-aws/issues/12512
-      # Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
-    }
-  ]
+  attach_policy = true
+  policy        = data.aws_iam_policy_document.log_bucket_policy.json
 
   tags = local.tags
+}
+
+data "aws_iam_policy_document" "log_bucket_policy" {
+  statement {
+    sid     = "AWSLogDeliveryWrite"
+    actions = ["s3:PutObject"]
+    resources = [
+      "${module.log_bucket.s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
+
+  statement {
+    sid     = "AWSLogDeliveryAclCheck"
+    actions = ["s3:GetBucketAcl"]
+    resources = [
+      module.log_bucket.s3_bucket_arn
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
 }
 
 ################################################################################

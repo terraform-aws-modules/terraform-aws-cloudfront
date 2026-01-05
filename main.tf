@@ -530,6 +530,63 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
 }
 
 ################################################################################
+# v2 Logging
+# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html
+################################################################################
+
+locals {
+  enable_v2_logging = var.create && var.enable_v2_logging
+}
+
+resource "aws_cloudwatch_log_delivery_source" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  log_type     = "ACCESS_LOGS"
+  name         = "cloudfront-${aws_cloudfront_distribution.this[0].id}"
+  resource_arn = aws_cloudfront_distribution.this[0].arn
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_delivery_destination" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  dynamic "delivery_destination_configuration" {
+    for_each = var.v2_logging.delivery_destination_configuration != null ? [var.v2_logging.delivery_destination_configuration] : []
+
+    content {
+      destination_resource_arn = delivery_destination_configuration.value.destination_resource_arn
+    }
+  }
+
+  delivery_destination_type = var.v2_logging.delivery_destination_type
+  name                      = var.v2_logging.name
+  output_format             = var.v2_logging.output_format
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_delivery" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  delivery_destination_arn = aws_cloudwatch_log_delivery_destination.this[0].arn
+  delivery_source_name     = aws_cloudwatch_log_delivery_source.this[0].name
+  field_delimiter          = var.v2_logging.field_delimiter
+  record_fields            = var.v2_logging.record_fields
+
+  dynamic "s3_delivery_configuration" {
+    for_each = var.v2_logging.s3_delivery_configuration != null ? [var.v2_logging.s3_delivery_configuration] : []
+
+    content {
+      enable_hive_compatible_path = s3_delivery_configuration.value.enable_hive_compatible_path
+      suffix_path                 = s3_delivery_configuration.value.suffix_path
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
 # Data source reverse lookup by name
 # These are used to refer to resources by name instead of ID
 ################################################################################
