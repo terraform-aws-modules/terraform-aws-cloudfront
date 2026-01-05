@@ -530,62 +530,52 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
 }
 
 ################################################################################
-# Standard Logging (replaces legacy logging_config)
+# v2 Logging
+# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html
 ################################################################################
 
 locals {
-  # Standard logging is enabled when either destination_arn or destination config is provided
-  create_std_logging = var.create && (var.std_logging_destination_arn != null || var.std_logging_destination != null)
+  enable_v2_logging = var.create && var.enable_v2_logging
 }
 
 resource "aws_cloudwatch_log_delivery_source" "this" {
-  count = local.create_std_logging ? 1 : 0
+  count = local.enable_v2_logging ? 1 : 0
 
-  region = var.std_logging_region
-
-  name         = coalesce(var.std_logging_source_name, "cloudfront-${aws_cloudfront_distribution.this[0].id}")
   log_type     = "ACCESS_LOGS"
+  name         = "cloudfront-${aws_cloudfront_distribution.this[0].id}"
   resource_arn = aws_cloudfront_distribution.this[0].arn
-}
-
-resource "aws_cloudwatch_log_delivery_destination" "this" {
-  count = local.create_std_logging && var.std_logging_destination_arn == null ? 1 : 0
-
-  region = var.std_logging_region
-
-  name                      = var.std_logging_destination.name
-  output_format             = var.std_logging_destination.output_format
-  delivery_destination_type = var.std_logging_destination.delivery_destination_type
-
-  dynamic "delivery_destination_configuration" {
-    for_each = var.std_logging_destination.destination_arn != null ? [1] : []
-
-    content {
-      destination_resource_arn = var.std_logging_destination.destination_arn
-    }
-  }
 
   tags = var.tags
 }
 
-locals {
-  # Use computed ARN for the actual resource reference
-  std_logging_destination_arn = var.std_logging_destination_arn != null ? var.std_logging_destination_arn : try(aws_cloudwatch_log_delivery_destination.this[0].arn, null)
+resource "aws_cloudwatch_log_delivery_destination" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  dynamic "delivery_destination_configuration" {
+    for_each = var.v2_logging.delivery_destination_configuration != null ? [var.v2_logging.delivery_destination_configuration] : []
+
+    content {
+      destination_resource_arn = delivery_destination_configuration.value.destination_resource_arn
+    }
+  }
+
+  delivery_destination_type = var.v2_logging.delivery_destination_type
+  name                      = var.v2_logging.name
+  output_format             = var.v2_logging.output_format
+
+  tags = var.tags
 }
 
 resource "aws_cloudwatch_log_delivery" "this" {
-  count = local.create_std_logging ? 1 : 0
+  count = local.enable_v2_logging ? 1 : 0
 
-  region = var.std_logging_region
-
+  delivery_destination_arn = aws_cloudwatch_log_delivery_destination.this[0].arn
   delivery_source_name     = aws_cloudwatch_log_delivery_source.this[0].name
-  delivery_destination_arn = local.std_logging_destination_arn
-
-  field_delimiter = try(var.std_logging_delivery.field_delimiter, null)
-  record_fields   = try(var.std_logging_delivery.record_fields, null)
+  field_delimiter          = var.v2_logging.field_delimiter
+  record_fields            = var.v2_logging.record_fields
 
   dynamic "s3_delivery_configuration" {
-    for_each = try(var.std_logging_delivery.s3_delivery_configuration, null) != null ? [var.std_logging_delivery.s3_delivery_configuration] : []
+    for_each = var.v2_logging.s3_delivery_configuration != null ? [var.v2_logging.s3_delivery_configuration] : []
 
     content {
       enable_hive_compatible_path = s3_delivery_configuration.value.enable_hive_compatible_path

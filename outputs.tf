@@ -96,32 +96,3 @@ output "cloudfront_monitoring_subscription_id" {
   description = " The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`."
   value       = try(aws_cloudfront_monitoring_subscription.this[0].id, null)
 }
-
-################################################################################
-# Standard Logging (replaces legacy logging_config)
-################################################################################
-
-output "cloudfront_std_logging_source_arn" {
-  description = "The ARN of the CloudWatch Log Delivery Source for standard logging"
-  value       = try(aws_cloudwatch_log_delivery_source.this[0].arn, null)
-}
-
-output "cloudfront_std_logging_source_name" {
-  description = "The name of the CloudWatch Log Delivery Source for standard logging"
-  value       = try(aws_cloudwatch_log_delivery_source.this[0].name, null)
-}
-
-output "cloudfront_std_logging_destination_arn" {
-  description = "The ARN of the CloudWatch Log Delivery Destination for standard logging"
-  value       = try(aws_cloudwatch_log_delivery_destination.this[0].arn, null)
-}
-
-output "cloudfront_std_logging_delivery_id" {
-  description = "The ID of the CloudWatch Log Delivery for standard logging"
-  value       = try(aws_cloudwatch_log_delivery.this[0].id, null)
-}
-
-output "cloudfront_std_logging_delivery_arn" {
-  description = "The ARN of the CloudWatch Log Delivery for standard logging"
-  value       = try(aws_cloudwatch_log_delivery.this[0].arn, null)
-}

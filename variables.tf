@@ -463,41 +463,27 @@ variable "realtime_metrics_subscription_status" {
 }
 
 ################################################################################
-# Standard Logging (replaces legacy logging_config)
+# v2 Logging
+# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html
 ################################################################################
 
-variable "std_logging_region" {
-  description = "Region for standard logging resources. Required for CloudFront (must be us-east-1 for the source)"
-  type        = string
-  default     = "us-east-1"
+variable "enable_v2_logging" {
+  description = "Whether to enable v2 logging for the CloudFront distribution"
+  type        = bool
+  default     = false
 }
 
-variable "std_logging_source_name" {
-  description = "Name for the CloudWatch Log Delivery Source. Defaults to 'cloudfront-<distribution_id>'"
-  type        = string
-  default     = null
-}
-
-variable "std_logging_destination_arn" {
-  description = "ARN of an existing CloudWatch Log Delivery Destination to use. If set, std_logging_destination is ignored"
-  type        = string
-  default     = null
-}
-
-variable "std_logging_destination" {
-  description = "Configuration for creating a new standard logging destination. Ignored if std_logging_destination_arn is set"
+variable "v2_logging" {
+  description = "Configuration block for v2 logging destination"
   type = object({
+    # Destination
+    delivery_destination_configuration = optional(object({
+      destination_resource_arn = optional(string)
+    }))
+    delivery_destination_type = optional(string)
     name                      = string
-    output_format             = optional(string, "json") # json, plain, w3c, raw, parquet
-    destination_arn           = optional(string)         # Required for S3, CloudWatch Logs, Firehose. Not required for X-Ray
-    delivery_destination_type = optional(string)         # S3, CWL, FH, XRAY. Auto-detected from destination_arn if not set
-  })
-  default = null
-}
-
-variable "std_logging_delivery" {
-  description = "Configuration for the standard logging delivery"
-  type = object({
+    output_format             = optional(string)
+    # Delivery
     field_delimiter = optional(string)
     record_fields   = optional(list(string))
     s3_delivery_configuration = optional(object({

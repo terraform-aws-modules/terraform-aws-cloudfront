@@ -10,6 +10,8 @@ data "aws_availability_zones" "available" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 locals {
   subdomain = "cdn"
 
@@ -42,14 +44,13 @@ module "cloudfront" {
 
   create_monitoring_subscription = true
 
-  # Standard Logging - logs to S3 with CloudWatch Log Delivery
-  # Note: This replaces the legacy logging_config which used S3 ACLs
-  std_logging_destination = {
-    name            = "cloudfront-logs-std"
-    output_format   = "parquet"
+  # v2 Logging - logs to S3 with CloudWatch Log Delivery
+  # Note: This supersedes the legacy logging_config which used S3 ACLs
+  v2_logging = {
+    name            = "example-v2-logs"
     destination_arn = "${module.log_bucket.s3_bucket_arn}/cloudfront"
-  }
-  std_logging_delivery = {
+    output_format   = "parquet"
+
     s3_delivery_configuration = {
       enable_hive_compatible_path = true
       suffix_path                 = "{DistributionId}/{yyyy}/{MM}/{dd}/{HH}"
@@ -444,10 +445,6 @@ data "aws_iam_policy_document" "s3_policy" {
   }
 }
 
-data "aws_caller_identity" "current" {}
-
-# S3 bucket for CloudFront Standard Logging
-# Standard logging uses CloudWatch Log Delivery service and requires a bucket policy
 module "log_bucket" {
   source  = "terraform-aws-modules/s3-bucket/aws"
   version = "~> 5.0"
@@ -457,7 +454,6 @@ module "log_bucket" {
   # For example only
   force_destroy = true
 
-  # Standard logging requires a bucket policy for the log delivery service
   attach_policy = true
   policy        = data.aws_iam_policy_document.log_bucket_policy.json
 
