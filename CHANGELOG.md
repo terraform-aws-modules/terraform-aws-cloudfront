@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.1.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.0.2...v6.1.0) (2026-01-05)
+
+### Features
+
+* Add `response_headers_policy_key` to support utilizing the response headers policy created in the same module configuration ([#191](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/191)) ([5acb9fd](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/5acb9fdad66628b32fee7f166f6b4993a1bcaa36))
+
 ## [6.0.2](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.0.1...v6.0.2) (2025-12-03)
 
 ### Bug Fixes

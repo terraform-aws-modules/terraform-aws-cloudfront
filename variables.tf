@@ -94,6 +94,7 @@ variable "default_cache_behavior" {
     origin_request_policy_name   = optional(string)
     realtime_log_config_arn      = optional(string)
     response_headers_policy_id   = optional(string)
+    response_headers_policy_key  = optional(string)
     response_headers_policy_name = optional(string)
     smooth_streaming             = optional(bool)
     target_origin_id             = string
@@ -184,6 +185,7 @@ variable "ordered_cache_behavior" {
     path_pattern                 = string
     realtime_log_config_arn      = optional(string)
     response_headers_policy_id   = optional(string)
+    response_headers_policy_key  = optional(string)
     response_headers_policy_name = optional(string)
     smooth_streaming             = optional(bool)
     target_origin_id             = string
