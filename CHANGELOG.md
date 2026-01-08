@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.3.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.2.0...v6.3.0) (2026-01-08)
+
+### Features
+
+* Add provider meta user-agent ([#189](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/189)) ([d859a96](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/d859a9641d5236437eedeac877bd5fc3ac2711e6))
+
 ## [6.2.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.1.0...v6.2.0) (2026-01-05)
 
 ### Features
