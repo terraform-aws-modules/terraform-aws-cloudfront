@@ -94,6 +94,7 @@ variable "default_cache_behavior" {
     origin_request_policy_name   = optional(string)
     realtime_log_config_arn      = optional(string)
     response_headers_policy_id   = optional(string)
+    response_headers_policy_key  = optional(string)
     response_headers_policy_name = optional(string)
     smooth_streaming             = optional(bool)
     target_origin_id             = string
@@ -184,6 +185,7 @@ variable "ordered_cache_behavior" {
     path_pattern                 = string
     realtime_log_config_arn      = optional(string)
     response_headers_policy_id   = optional(string)
+    response_headers_policy_key  = optional(string)
     response_headers_policy_name = optional(string)
     smooth_streaming             = optional(bool)
     target_origin_id             = string
@@ -458,4 +460,36 @@ variable "realtime_metrics_subscription_status" {
   description = "A flag that indicates whether additional CloudWatch metrics are enabled for a given CloudFront distribution. Valid values are `Enabled` and `Disabled`"
   type        = string
   default     = "Enabled"
+}
+
+################################################################################
+# v2 Logging
+# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html
+################################################################################
+
+variable "enable_v2_logging" {
+  description = "Whether to enable v2 logging for the CloudFront distribution"
+  type        = bool
+  default     = false
+}
+
+variable "v2_logging" {
+  description = "Configuration block for v2 logging destination"
+  type = object({
+    # Destination
+    delivery_destination_configuration = optional(object({
+      destination_resource_arn = optional(string)
+    }))
+    delivery_destination_type = optional(string)
+    name                      = string
+    output_format             = optional(string)
+    # Delivery
+    field_delimiter = optional(string)
+    record_fields   = optional(list(string))
+    s3_delivery_configuration = optional(object({
+      enable_hive_compatible_path = optional(bool)
+      suffix_path                 = optional(string)
+    }))
+  })
+  default = null
 }

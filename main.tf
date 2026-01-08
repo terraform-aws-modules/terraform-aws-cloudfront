@@ -83,7 +83,7 @@ resource "aws_cloudfront_distribution" "this" {
       min_ttl                    = default_cache_behavior.value.min_ttl
       origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)), null)
       realtime_log_config_arn    = default_cache_behavior.value.realtime_log_config_arn
-      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
+      response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_key].id, data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = default_cache_behavior.value.smooth_streaming
       target_origin_id           = default_cache_behavior.value.target_origin_id
       trusted_key_groups         = default_cache_behavior.value.trusted_key_groups
@@ -170,7 +170,7 @@ resource "aws_cloudfront_distribution" "this" {
       origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)), null)
       path_pattern               = ordered_cache_behavior.value.path_pattern
       realtime_log_config_arn    = ordered_cache_behavior.value.realtime_log_config_arn
-      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
+      response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_key].id, data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = ordered_cache_behavior.value.smooth_streaming
       target_origin_id           = ordered_cache_behavior.value.target_origin_id
       trusted_key_groups         = ordered_cache_behavior.value.trusted_key_groups
@@ -527,6 +527,63 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
       realtime_metrics_subscription_status = var.realtime_metrics_subscription_status
     }
   }
+}
+
+################################################################################
+# v2 Logging
+# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html
+################################################################################
+
+locals {
+  enable_v2_logging = var.create && var.enable_v2_logging
+}
+
+resource "aws_cloudwatch_log_delivery_source" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  log_type     = "ACCESS_LOGS"
+  name         = "cloudfront-${aws_cloudfront_distribution.this[0].id}"
+  resource_arn = aws_cloudfront_distribution.this[0].arn
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_delivery_destination" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  dynamic "delivery_destination_configuration" {
+    for_each = var.v2_logging.delivery_destination_configuration != null ? [var.v2_logging.delivery_destination_configuration] : []
+
+    content {
+      destination_resource_arn = delivery_destination_configuration.value.destination_resource_arn
+    }
+  }
+
+  delivery_destination_type = var.v2_logging.delivery_destination_type
+  name                      = var.v2_logging.name
+  output_format             = var.v2_logging.output_format
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_delivery" "this" {
+  count = local.enable_v2_logging ? 1 : 0
+
+  delivery_destination_arn = aws_cloudwatch_log_delivery_destination.this[0].arn
+  delivery_source_name     = aws_cloudwatch_log_delivery_source.this[0].name
+  field_delimiter          = var.v2_logging.field_delimiter
+  record_fields            = var.v2_logging.record_fields
+
+  dynamic "s3_delivery_configuration" {
+    for_each = var.v2_logging.s3_delivery_configuration != null ? [var.v2_logging.s3_delivery_configuration] : []
+
+    content {
+      enable_hive_compatible_path = s3_delivery_configuration.value.enable_hive_compatible_path
+      suffix_path                 = s3_delivery_configuration.value.suffix_path
+    }
+  }
+
+  tags = var.tags
 }
 
 ################################################################################
