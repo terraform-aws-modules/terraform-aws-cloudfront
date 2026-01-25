@@ -149,6 +149,7 @@ module "cdn" {
 ## Examples
 
 - [Complete](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/complete) - Complete example which creates AWS CloudFront distribution and integrates it with other [terraform-aws-modules](https://github.com/terraform-aws-modules) to create additional resources: S3 buckets, Lambda Functions, CloudFront Functions, VPC Origins, ACM Certificate, Route53 Records.
+- [mTLS](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/tree/master/examples/mtls) - mTLS example which creates AWS CloudFront distribution with viewer mTLS support.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

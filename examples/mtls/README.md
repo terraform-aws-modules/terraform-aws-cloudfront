@@ -1,5 +1,7 @@
 # mTLS with CloudFront Distribution
 
+Configuration in this directory creates CloudFront distribution with viewer mTLS support.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

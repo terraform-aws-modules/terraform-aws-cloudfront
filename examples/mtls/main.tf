@@ -25,6 +25,8 @@ module "cloudfront" {
   comment             = "CloudFront distribution with mTLS"
   default_root_object = "index.html"
 
+  aliases = ["${local.subdomain}.${var.domain}"]
+
   viewer_certificate = {
     acm_certificate_arn = module.acm.acm_certificate_arn
     ssl_support_method  = "sni-only"
