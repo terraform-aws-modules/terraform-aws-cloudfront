@@ -161,14 +161,6 @@ resource "aws_s3_object" "ca_certificates" {
   content_type = "application/x-pem-file"
 }
 
-#####################################################################
-# Random ID for unique bucket name
-###########################################################
-
-resource "random_id" "bucket_suffix" {
-  byte_length = 4
-}
-
 ################################################################################
 # Trust Store
 ################################################################################
@@ -229,14 +221,6 @@ resource "aws_s3_object" "this" {
   source       = "${path.module}/index.html"
   etag         = filemd5("${path.module}/index.html")
   content_type = "text/html"
-}
-
-#####################################################################
-# Random ID for unique bucket name
-#####################################################################
-
-resource "random_id" "example_suffix" {
-  byte_length = 4
 }
 
 ################################################################################
