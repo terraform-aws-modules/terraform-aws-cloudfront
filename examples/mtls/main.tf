@@ -78,6 +78,7 @@ module "cloudfront" {
   #   comment = "Example connection function for mTLS distribution"
   #   runtime = "cloudfront-js-2.0"
   # }
+  # connection_function_publish = true
 }
 
 ################################################################################
@@ -230,7 +231,7 @@ resource "aws_s3_object" "this" {
 
 #####################################################################
 # Random ID for unique bucket name
-###########################################################
+#####################################################################
 
 resource "random_id" "example_suffix" {
   byte_length = 4

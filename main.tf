@@ -11,10 +11,10 @@ resource "aws_cloudfront_distribution" "this" {
   continuous_deployment_policy_id = var.continuous_deployment_policy_id
 
   dynamic "connection_function_association" {
-    for_each = var.connection_function_association != null ? [var.connection_function_association] : []
+    for_each = var.connection_function_association_id != null || var.create_connection_function ? [true] : []
 
     content {
-      id = try(coalesce(connection_function_association.value.id, try(aws_cloudfront_connection_function.this[0].arn, null)), null)
+      id = coalesce(var.connection_function_association_id, try(aws_cloudfront_connection_function.this[0].id, null))
     }
   }
 
@@ -324,7 +324,8 @@ resource "aws_cloudfront_distribution" "this" {
   tags                = var.tags
 
   depends_on = [
-    aws_cloudfront_function.this
+    aws_cloudfront_function.this,
+    aws_cloudfront_connection_function.this
   ]
 }
 
@@ -579,7 +580,7 @@ resource "aws_cloudfront_connection_function" "this" {
 
   name = var.connection_function_name
 
-  publish = var.connection_function_policy
+  publish = var.connection_function_publish
   tags    = var.tags
 }
 

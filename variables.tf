@@ -32,12 +32,10 @@ variable "comment" {
   default     = null
 }
 
-variable "connection_function_association" {
-  description = "A connection function association configuration block for the distribution"
-  type = object({
-    id = string
-  })
-  default = null
+variable "connection_function_association_id" {
+  description = "Identifier of the connection function to associate with the distribution"
+  type        = string
+  default     = null
 }
 
 variable "continuous_deployment_policy_id" {
@@ -517,9 +515,9 @@ variable "connection_function_name" {
   default     = null
 }
 
-variable "connection_function_policy" {
-  description = "IAM policy document as JSON to attach to the CloudFront connection function"
-  type        = string
+variable "connection_function_publish" {
+  description = "Whether to publish the function to the LIVE stage after creation or update. Defaults to false"
+  type        = bool
   default     = null
 }
 
