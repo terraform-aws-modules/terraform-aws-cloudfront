@@ -248,6 +248,11 @@ No modules.
 | <a name="output_cloudfront_origin_access_controls"></a> [cloudfront\_origin\_access\_controls](#output\_cloudfront\_origin\_access\_controls) | The origin access controls created |
 | <a name="output_cloudfront_response_headers_policies"></a> [cloudfront\_response\_headers\_policies](#output\_cloudfront\_response\_headers\_policies) | The response headers policies created |
 | <a name="output_cloudfront_vpc_origins"></a> [cloudfront\_vpc\_origins](#output\_cloudfront\_vpc\_origins) | The IDS of the VPC origin created |
+| <a name="output_connection_function_arn"></a> [connection\_function\_arn](#output\_connection\_function\_arn) | ARN of the connection function |
+| <a name="output_connection_function_etag"></a> [connection\_function\_etag](#output\_connection\_function\_etag) | ETag of the connection function |
+| <a name="output_connection_function_id"></a> [connection\_function\_id](#output\_connection\_function\_id) | ID of the connection function |
+| <a name="output_connection_function_live_stage_etag"></a> [connection\_function\_live\_stage\_etag](#output\_connection\_function\_live\_stage\_etag) | ETag of the function's LIVE stage. Will be empty if the function has not been published |
+| <a name="output_connection_function_status"></a> [connection\_function\_status](#output\_connection\_function\_status) | Status of the connection function |
 <!-- END_TF_DOCS -->
 
 ## Authors

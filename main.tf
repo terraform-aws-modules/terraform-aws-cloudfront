@@ -14,7 +14,7 @@ resource "aws_cloudfront_distribution" "this" {
     for_each = var.connection_function_association != null ? [var.connection_function_association] : []
 
     content {
-      id = connection_function_association.value.id
+      id = try(coalesce(connection_function_association.value.id, try(aws_cloudfront_connection_function.this[0].arn, null)), null)
     }
   }
 

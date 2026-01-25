@@ -1,4 +1,5 @@
 locals {
+  subdomain = "cdn"
 
   name = "ex-${basename(path.cwd)}"
 
@@ -25,12 +26,12 @@ module "cloudfront" {
   default_root_object = "index.html"
 
   viewer_certificate = {
-    cloudfront_default_certificate = true
-    minimum_protocol_version       = "TLSv1.2_2025"
+    acm_certificate_arn = module.acm.acm_certificate_arn
+    ssl_support_method  = "sni-only"
   }
 
   viewer_mtls_config = {
-    mode = "STRICT"
+    mode = "required"
     trust_store_config = {
       trust_store_id                 = module.trust_store.id
       advertise_trust_store_ca_names = true
@@ -39,18 +40,11 @@ module "cloudfront" {
   }
 
   default_cache_behavior = {
-    target_origin_id       = "s3-origin"
+    target_origin_id       = "s3"
     viewer_protocol_policy = "redirect-to-https"
-    cache_policy_id        = "658327ea-23c6-4f73-b894-6975cd402e3b" # Managed-CachingOptimized
+    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
 
-    response_headers_policy_id = "67f7725c-3e4c-4952-8ab4-3d18e51f9e4a" # Managed-SecurityHeadersPolicy
-
-    function_association = {
-      viewer-request = {
-        event_type   = "viewer-request"
-        function_arn = aws_cloudfront_function.example.arn
-      }
-    }
+    response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
   }
 
   origin_access_control = {
@@ -74,6 +68,16 @@ module "cloudfront" {
       restriction_type = "none"
     }
   }
+
+  # Connection Function Configuration
+  # The default service quota is zero so a quota limit increase request is required to make use of them
+  # create_connection_function = true
+  # connection_function_name   = "example-connection-function"
+  # connection_function_code   = file("${path.module}/functions/connection.js")
+  # connection_function_config = {
+  #   comment = "Example connection function for mTLS distribution"
+  #   runtime = "cloudfront-js-2.0"
+  # }
 }
 
 ################################################################################
@@ -171,10 +175,11 @@ module "trust_store" {
 
   name = "example-mtls-trust-store"
 
-  ca_cert_bucket  = module.ca_certificates.s3_bucket_id
-  ca_cert_key     = aws_s3_object.ca_certificates.key
-  ca_cert_region  = "us-east-1"
-  ca_cert_version = aws_s3_object.ca_certificates.version_id
+  ca_cert_bucket = module.ca_certificates.s3_bucket_id
+  ca_cert_key    = aws_s3_object.ca_certificates.key
+  ca_cert_region = "us-east-1"
+
+  tags = local.tags
 }
 
 ################################################################################
@@ -232,12 +237,38 @@ resource "random_id" "example_suffix" {
 }
 
 ################################################################################
-# CloudFront Function
+# ACM
 ################################################################################
 
-resource "aws_cloudfront_function" "example" {
-  name    = "example-viewer-request"
-  runtime = "cloudfront-js-2.0"
-  code    = file("${path.module}/functions/viewer-request.js")
-  publish = true
+data "aws_route53_zone" "this" {
+  name = var.domain
+}
+
+module "acm" {
+  source  = "terraform-aws-modules/acm/aws"
+  version = "~> 4.0"
+
+  domain_name               = var.domain
+  zone_id                   = data.aws_route53_zone.this.id
+  subject_alternative_names = ["${local.subdomain}.${var.domain}"]
+
+  tags = local.tags
+}
+
+module "records" {
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 5.0"
+
+  zone_id = data.aws_route53_zone.this.zone_id
+
+  records = [
+    {
+      name = local.subdomain
+      type = "A"
+      alias = {
+        name    = module.cloudfront.cloudfront_distribution_domain_name
+        zone_id = module.cloudfront.cloudfront_distribution_hosted_zone_id
+      }
+    },
+  ]
 }

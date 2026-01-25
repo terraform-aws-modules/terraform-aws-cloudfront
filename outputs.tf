@@ -96,3 +96,32 @@ output "cloudfront_monitoring_subscription_id" {
   description = " The ID of the CloudFront monitoring subscription, which corresponds to the `distribution_id`."
   value       = try(aws_cloudfront_monitoring_subscription.this[0].id, null)
 }
+
+################################################################################
+# Connection Function
+################################################################################
+
+output "connection_function_arn" {
+  description = "ARN of the connection function"
+  value       = try(aws_cloudfront_connection_function.this[0].connection_function_arn, null)
+}
+
+output "connection_function_etag" {
+  description = "ETag of the connection function"
+  value       = try(aws_cloudfront_connection_function.this[0].etag, null)
+}
+
+output "connection_function_id" {
+  description = "ID of the connection function"
+  value       = try(aws_cloudfront_connection_function.this[0].id, null)
+}
+
+output "connection_function_live_stage_etag" {
+  description = "ETag of the function's LIVE stage. Will be empty if the function has not been published"
+  value       = try(aws_cloudfront_connection_function.this[0].live_stage_etag, null)
+}
+
+output "connection_function_status" {
+  description = "Status of the connection function"
+  value       = try(aws_cloudfront_connection_function.this[0].status, null)
+}

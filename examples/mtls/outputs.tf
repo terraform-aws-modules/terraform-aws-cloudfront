@@ -28,6 +28,31 @@ output "trust_store_number_of_ca_certificates" {
   value       = module.trust_store.number_of_ca_certificates
 }
 
+output "connection_function_arn" {
+  description = "ARN of the connection function"
+  value       = module.cloudfront.connection_function_arn
+}
+
+output "connection_function_etag" {
+  description = "ETag of the connection function"
+  value       = module.cloudfront.connection_function_etag
+}
+
+output "connection_function_id" {
+  description = "ID of the connection function"
+  value       = module.cloudfront.connection_function_id
+}
+
+output "connection_function_live_stage_etag" {
+  description = "ETag of the function's LIVE stage. Will be empty if the function has not been published"
+  value       = module.cloudfront.connection_function_live_stage_etag
+}
+
+output "connection_function_status" {
+  description = "Status of the connection function"
+  value       = module.cloudfront.connection_function_status
+}
+
 output "ca_certificate_pem" {
   description = "The CA certificate in PEM format"
   value       = tls_self_signed_cert.ca.cert_pem
