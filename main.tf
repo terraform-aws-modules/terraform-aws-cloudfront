@@ -10,6 +10,14 @@ resource "aws_cloudfront_distribution" "this" {
   comment                         = var.comment
   continuous_deployment_policy_id = var.continuous_deployment_policy_id
 
+  dynamic "connection_function_association" {
+    for_each = var.connection_function_association_id != null || var.create_connection_function ? [true] : []
+
+    content {
+      id = coalesce(var.connection_function_association_id, try(aws_cloudfront_connection_function.this[0].id, null))
+    }
+  }
+
   dynamic "custom_error_response" {
     for_each = var.custom_error_response != null ? var.custom_error_response : []
 
@@ -293,12 +301,31 @@ resource "aws_cloudfront_distribution" "this" {
     }
   }
 
+  dynamic "viewer_mtls_config" {
+    for_each = var.viewer_mtls_config != null ? [var.viewer_mtls_config] : []
+
+    content {
+      mode = viewer_mtls_config.value.mode
+
+      dynamic "trust_store_config" {
+        for_each = viewer_mtls_config.value.trust_store_config != null ? [viewer_mtls_config.value.trust_store_config] : []
+
+        content {
+          trust_store_id                 = trust_store_config.value.trust_store_id
+          advertise_trust_store_ca_names = trust_store_config.value.advertise_trust_store_ca_names
+          ignore_certificate_expiry      = trust_store_config.value.ignore_certificate_expiry
+        }
+      }
+    }
+  }
+
   wait_for_deployment = var.wait_for_deployment
   web_acl_id          = var.web_acl_id
   tags                = var.tags
 
   depends_on = [
-    aws_cloudfront_function.this
+    aws_cloudfront_function.this,
+    aws_cloudfront_connection_function.this
   ]
 }
 
@@ -527,6 +554,34 @@ resource "aws_cloudfront_monitoring_subscription" "this" {
       realtime_metrics_subscription_status = var.realtime_metrics_subscription_status
     }
   }
+}
+
+################################################################################
+# Connection Function
+################################################################################
+
+resource "aws_cloudfront_connection_function" "this" {
+  count = var.create && var.create_connection_function ? 1 : 0
+
+  connection_function_code = var.connection_function_code
+
+  connection_function_config {
+    comment = var.connection_function_config.comment
+    runtime = var.connection_function_config.runtime
+
+    dynamic "key_value_store_association" {
+      for_each = var.connection_function_config.key_value_store_association != null ? [var.connection_function_config.key_value_store_association] : []
+
+      content {
+        key_value_store_arn = key_value_store_association.value.key_value_store_arn
+      }
+    }
+  }
+
+  name = var.connection_function_name
+
+  publish = var.connection_function_publish
+  tags    = var.tags
 }
 
 ################################################################################

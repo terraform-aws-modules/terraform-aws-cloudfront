@@ -32,6 +32,12 @@ variable "comment" {
   default     = null
 }
 
+variable "connection_function_association_id" {
+  description = "Identifier of the connection function to associate with the distribution"
+  type        = string
+  default     = null
+}
+
 variable "continuous_deployment_policy_id" {
   description = "Identifier of a continuous deployment policy. This argument should only be set on a production distribution"
   type        = string
@@ -294,6 +300,19 @@ variable "viewer_certificate" {
   nullable = false
 }
 
+variable "viewer_mtls_config" {
+  description = "The viewer mTLS configuration for this distribution"
+  type = object({
+    mode = optional(string)
+    trust_store_config = optional(object({
+      trust_store_id                 = string
+      advertise_trust_store_ca_names = optional(bool)
+      ignore_certificate_expiry      = optional(bool)
+    }))
+  })
+  default = null
+}
+
 variable "wait_for_deployment" {
   description = "If enabled, the resource will wait for the distribution status to change from InProgress to Deployed. Setting this to false will skip the process"
   type        = bool
@@ -460,6 +479,46 @@ variable "realtime_metrics_subscription_status" {
   description = "A flag that indicates whether additional CloudWatch metrics are enabled for a given CloudFront distribution. Valid values are `Enabled` and `Disabled`"
   type        = string
   default     = "Enabled"
+}
+
+################################################################################
+# Connection Function
+################################################################################
+
+variable "create_connection_function" {
+  description = "Controls whether to create a CloudFront connection function"
+  type        = bool
+  default     = false
+}
+
+variable "connection_function_code" {
+  description = "The code of the CloudFront connection function"
+  type        = string
+  default     = null
+}
+
+variable "connection_function_config" {
+  description = "Configuration block for the CloudFront connection function"
+  type = object({
+    comment = string
+    runtime = string
+    key_value_store_association = optional(object({
+      key_value_store_arn = string
+    }))
+  })
+  default = null
+}
+
+variable "connection_function_name" {
+  description = "The name of the CloudFront connection function"
+  type        = string
+  default     = null
+}
+
+variable "connection_function_publish" {
+  description = "Whether to publish the function to the LIVE stage after creation or update. Defaults to false"
+  type        = bool
+  default     = null
 }
 
 ################################################################################
