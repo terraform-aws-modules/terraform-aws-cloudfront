@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.4.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.3.0...v6.4.0) (2026-02-03)
+
+### Features
+
+* Viewer mTLS Support ([#194](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/194)) ([3b1303f](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/3b1303fce516bc76897d46af1e5af91ba285bc9e))
+
 ## [6.3.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.2.0...v6.3.0) (2026-01-08)
 
 ### Features
