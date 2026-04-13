@@ -46,10 +46,14 @@ module "cloudfront" {
 
   # v2 Logging - logs to S3 with CloudWatch Log Delivery
   # Note: This supersedes the legacy logging_config which used S3 ACLs
+  enable_v2_logging = true
   v2_logging = {
-    name            = "example-v2-logs"
-    destination_arn = "${module.log_bucket.s3_bucket_arn}/cloudfront"
-    output_format   = "parquet"
+    name = "example-v2-logs"
+    delivery_destination_configuration = {
+      destination_resource_arn = "${module.log_bucket.s3_bucket_arn}/cloudfront"
+    }
+    delivery_destination_type = "S3"
+    output_format             = "parquet"
 
     s3_delivery_configuration = {
       enable_hive_compatible_path = true
