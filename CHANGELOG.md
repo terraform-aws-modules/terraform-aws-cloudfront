@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.4.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.4.0...v6.4.1) (2026-04-13)
+
+### Bug Fixes
+
+* Correct v2_logging example configuration ([#198](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/198)) ([3db0f62](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/3db0f6285f29fbce65d12b9d851b403d1dede6ff))
+
 ## [6.4.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.3.0...v6.4.0) (2026-02-03)
 
 ### Features
