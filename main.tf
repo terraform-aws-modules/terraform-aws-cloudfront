@@ -264,6 +264,7 @@ resource "aws_cloudfront_distribution" "this" {
           origin_keepalive_timeout = vpc_origin_config.value.origin_keepalive_timeout
           origin_read_timeout      = vpc_origin_config.value.origin_read_timeout
           vpc_origin_id            = try(coalesce(vpc_origin_config.value.vpc_origin_id, try(aws_cloudfront_vpc_origin.this[vpc_origin_config.value.vpc_origin_key].id, null)), null)
+          owner_account_id         = vpc_origin_config.value.owner_account_id
         }
       }
     }

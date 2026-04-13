@@ -121,6 +121,7 @@ module "cloudfront" {
       vpc_origin_config = {
         vpc_origin_key = "ec2" # key in `vpc_origin`
         # vpc_origin_id  = "vo_Cg6A14otX0DB1yyDQ6Nond" # external VPC Origin resource
+        # owner_account_id  = "012345678901" # cross-account VPC origin owner
       }
     }
   }

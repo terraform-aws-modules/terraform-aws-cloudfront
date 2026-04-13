@@ -247,6 +247,7 @@ variable "origin" {
       origin_read_timeout      = optional(number)
       vpc_origin_id            = optional(string)
       vpc_origin_key           = optional(string)
+      owner_account_id         = optional(string)
     }))
   }))
   default  = {}

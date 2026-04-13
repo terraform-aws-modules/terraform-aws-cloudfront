@@ -155,14 +155,14 @@ module "cdn" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.28 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.28 |
 
 ## Modules
@@ -172,7 +172,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudfront_connection_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_connection_function) | resource |
 | [aws_cloudfront_distribution.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
 | [aws_cloudfront_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function) | resource |
@@ -190,7 +190,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution | `list(string)` | `null` | no |
 | <a name="input_anycast_ip_list_id"></a> [anycast\_ip\_list\_id](#input\_anycast\_ip\_list\_id) | ID of the Anycast static IP list that is associated with the distribution | `string` | `null` | no |
 | <a name="input_cloudfront_functions"></a> [cloudfront\_functions](#input\_cloudfront\_functions) | Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified | <pre>map(object({<br/>    name                         = optional(string)<br/>    runtime                      = optional(string, "cloudfront-js-2.0")<br/>    comment                      = optional(string)<br/>    publish                      = optional(bool)<br/>    code                         = string<br/>    key_value_store_associations = optional(list(string))<br/>  }))</pre> | `null` | no |
@@ -213,7 +213,7 @@ No modules.
 | <a name="input_is_ipv6_enabled"></a> [is\_ipv6\_enabled](#input\_is\_ipv6\_enabled) | Whether the IPv6 is enabled for the distribution | `bool` | `true` | no |
 | <a name="input_logging_config"></a> [logging\_config](#input\_logging\_config) | The logging configuration that controls how logs are written to your distribution (maximum one) | <pre>object({<br/>    bucket          = optional(string)<br/>    include_cookies = optional(bool)<br/>    prefix          = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_ordered_cache_behavior"></a> [ordered\_cache\_behavior](#input\_ordered\_cache\_behavior) | An ordered list of cache behaviors resource for this distribution. List from top to bottom in order of precedence. The topmost cache behavior will have precedence 0 | <pre>list(object({<br/>    allowed_methods           = optional(list(string), ["GET", "HEAD", "OPTIONS"])<br/>    cached_methods            = optional(list(string), ["GET", "HEAD"])<br/>    cache_policy_id           = optional(string)<br/>    cache_policy_name         = optional(string)<br/>    compress                  = optional(bool, true)<br/>    default_ttl               = optional(number)<br/>    field_level_encryption_id = optional(string)<br/>    forwarded_values = optional(object({<br/>      cookies = object({<br/>        forward           = optional(string, "none")<br/>        whitelisted_names = optional(list(string))<br/>      })<br/>      headers                 = optional(list(string))<br/>      query_string            = optional(bool, false)<br/>      query_string_cache_keys = optional(list(string))<br/>      }),<br/>      {<br/>        cookies = {<br/>          forward = "none"<br/>        }<br/>        query_string = false<br/>      }<br/>    )<br/>    function_association = optional(map(object({<br/>      event_type   = optional(string)<br/>      function_arn = optional(string)<br/>      function_key = optional(string)<br/>    })))<br/>    grpc_config = optional(object({<br/>      enabled = optional(bool)<br/>    }))<br/>    lambda_function_association = optional(map(object({<br/>      event_type   = optional(string)<br/>      include_body = optional(bool)<br/>      lambda_arn   = string<br/>    })))<br/>    max_ttl                      = optional(number)<br/>    min_ttl                      = optional(number)<br/>    origin_request_policy_id     = optional(string)<br/>    origin_request_policy_name   = optional(string)<br/>    path_pattern                 = string<br/>    realtime_log_config_arn      = optional(string)<br/>    response_headers_policy_id   = optional(string)<br/>    response_headers_policy_key  = optional(string)<br/>    response_headers_policy_name = optional(string)<br/>    smooth_streaming             = optional(bool)<br/>    target_origin_id             = string<br/>    trusted_key_groups           = optional(list(string))<br/>    trusted_signers              = optional(list(string))<br/>    viewer_protocol_policy       = string<br/>  }))</pre> | `[]` | no |
-| <a name="input_origin"></a> [origin](#input\_origin) | One or more origins for this distribution (multiples allowed) | <pre>map(object({<br/>    connection_attempts = optional(number)<br/>    connection_timeout  = optional(number)<br/>    custom_header       = optional(map(string))<br/>    custom_origin_config = optional(object({<br/>      http_port                = number<br/>      https_port               = number<br/>      ip_address_type          = optional(string)<br/>      origin_keepalive_timeout = optional(number)<br/>      origin_read_timeout      = optional(number)<br/>      origin_protocol_policy   = string<br/>      origin_ssl_protocols     = optional(list(string), ["TLSv1.2"])<br/>    }))<br/>    domain_name               = string<br/>    origin_access_control_key = optional(string)<br/>    origin_access_control_id  = optional(string)<br/>    origin_id                 = optional(string)<br/>    origin_path               = optional(string)<br/>    origin_shield = optional(object({<br/>      enabled              = bool<br/>      origin_shield_region = optional(string)<br/>    }))<br/>    response_completion_timeout = optional(number)<br/>    vpc_origin_config = optional(object({<br/>      origin_keepalive_timeout = optional(number)<br/>      origin_read_timeout      = optional(number)<br/>      vpc_origin_id            = optional(string)<br/>      vpc_origin_key           = optional(string)<br/>    }))<br/>  }))</pre> | `{}` | no |
+| <a name="input_origin"></a> [origin](#input\_origin) | One or more origins for this distribution (multiples allowed) | <pre>map(object({<br/>    connection_attempts = optional(number)<br/>    connection_timeout  = optional(number)<br/>    custom_header       = optional(map(string))<br/>    custom_origin_config = optional(object({<br/>      http_port                = number<br/>      https_port               = number<br/>      ip_address_type          = optional(string)<br/>      origin_keepalive_timeout = optional(number)<br/>      origin_read_timeout      = optional(number)<br/>      origin_protocol_policy   = string<br/>      origin_ssl_protocols     = optional(list(string), ["TLSv1.2"])<br/>    }))<br/>    domain_name               = string<br/>    origin_access_control_key = optional(string)<br/>    origin_access_control_id  = optional(string)<br/>    origin_id                 = optional(string)<br/>    origin_path               = optional(string)<br/>    origin_shield = optional(object({<br/>      enabled              = bool<br/>      origin_shield_region = optional(string)<br/>    }))<br/>    response_completion_timeout = optional(number)<br/>    vpc_origin_config = optional(object({<br/>      origin_keepalive_timeout = optional(number)<br/>      origin_read_timeout      = optional(number)<br/>      vpc_origin_id            = optional(string)<br/>      vpc_origin_key           = optional(string)<br/>      owner_account_id         = optional(string)<br/>    }))<br/>  }))</pre> | `{}` | no |
 | <a name="input_origin_access_control"></a> [origin\_access\_control](#input\_origin\_access\_control) | Map of CloudFront origin access control | <pre>map(object({<br/>    description      = optional(string)<br/>    name             = optional(string)<br/>    origin_type      = string<br/>    signing_behavior = string<br/>    signing_protocol = string<br/>  }))</pre> | <pre>{<br/>  "s3": {<br/>    "origin_type": "s3",<br/>    "signing_behavior": "always",<br/>    "signing_protocol": "sigv4"<br/>  }<br/>}</pre> | no |
 | <a name="input_origin_group"></a> [origin\_group](#input\_origin\_group) | One or more origin\_group for this distribution (multiples allowed) | <pre>map(object({<br/>    failover_criteria = object({<br/>      status_codes = list(number)<br/>    })<br/>    member = list(object({<br/>      origin_id = string<br/>    }))<br/>    origin_id = optional(string)<br/>  }))</pre> | `null` | no |
 | <a name="input_price_class"></a> [price\_class](#input\_price\_class) | The price class for this distribution. One of `PriceClass_All`, `PriceClass_200`, `PriceClass_100` | `string` | `null` | no |
@@ -233,7 +233,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | The ARN (Amazon Resource Name) for the distribution. |
 | <a name="output_cloudfront_distribution_caller_reference"></a> [cloudfront\_distribution\_caller\_reference](#output\_cloudfront\_distribution\_caller\_reference) | Internal value used by CloudFront to allow future updates to the distribution configuration. |
 | <a name="output_cloudfront_distribution_domain_name"></a> [cloudfront\_distribution\_domain\_name](#output\_cloudfront\_distribution\_domain\_name) | The domain name corresponding to the distribution. |
