@@ -651,19 +651,19 @@ locals {
 }
 
 data "aws_cloudfront_cache_policy" "this" {
-  for_each = toset([for v in local.cache_behaviors : v.cache_policy_name if v.cache_policy_name != null])
+  for_each = var.enable_policy_name_data_sources ? toset([for v in local.cache_behaviors : v.cache_policy_name if v.cache_policy_name != null]) : toset([])
 
   name = each.key
 }
 
 data "aws_cloudfront_origin_request_policy" "this" {
-  for_each = toset([for v in local.cache_behaviors : v.origin_request_policy_name if v.origin_request_policy_name != null])
+  for_each = var.enable_policy_name_data_sources ? toset([for v in local.cache_behaviors : v.origin_request_policy_name if v.origin_request_policy_name != null]) : toset([])
 
   name = each.key
 }
 
 data "aws_cloudfront_response_headers_policy" "this" {
-  for_each = toset([for v in local.cache_behaviors : v.response_headers_policy_name if v.response_headers_policy_name != null])
+  for_each = var.enable_policy_name_data_sources ? toset([for v in local.cache_behaviors : v.response_headers_policy_name if v.response_headers_policy_name != null]) : toset([])
 
   name = each.key
 }

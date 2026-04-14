@@ -10,6 +10,25 @@ variable "tags" {
   default     = {}
 }
 
+variable "enable_policy_name_data_sources" {
+  description = <<-EOT
+    Controls whether data source lookups for CloudFront policies by name are created.
+    When set to `false`, the `data.aws_cloudfront_cache_policy`, `data.aws_cloudfront_origin_request_policy`,
+    and `data.aws_cloudfront_response_headers_policy` data sources will not be created.
+
+    Set to `false` when all cache behaviors reference policies exclusively by ID (not by name) and the
+    module is used alongside resources whose attributes are only known after apply (e.g. newly created
+    `aws_cloudfront_function` resources attached via `function_association`). In that case Terraform
+    cannot evaluate the `for_each` over `local.cache_behaviors` at plan time and will error with
+    "Invalid for_each argument ... values derived from resource attributes that cannot be determined until apply".
+
+    When `false`, any `*_policy_name` fields on behaviors are silently ignored; use `*_policy_id` instead.
+    Defaults to `true` for backward compatibility.
+  EOT
+  type        = bool
+  default     = true
+}
+
 ################################################################################
 # Distribution
 ################################################################################
