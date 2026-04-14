@@ -155,14 +155,14 @@ module "cdn" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.28 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.28 |
 
 ## Modules
@@ -172,7 +172,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudfront_connection_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_connection_function) | resource |
 | [aws_cloudfront_distribution.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
 | [aws_cloudfront_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function) | resource |
@@ -190,7 +190,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution | `list(string)` | `null` | no |
 | <a name="input_anycast_ip_list_id"></a> [anycast\_ip\_list\_id](#input\_anycast\_ip\_list\_id) | ID of the Anycast static IP list that is associated with the distribution | `string` | `null` | no |
 | <a name="input_cloudfront_functions"></a> [cloudfront\_functions](#input\_cloudfront\_functions) | Map of CloudFront Function configurations. Key is used as default function name if 'name' not specified | <pre>map(object({<br/>    name                         = optional(string)<br/>    runtime                      = optional(string, "cloudfront-js-2.0")<br/>    comment                      = optional(string)<br/>    publish                      = optional(bool)<br/>    code                         = string<br/>    key_value_store_associations = optional(list(string))<br/>  }))</pre> | `null` | no |
@@ -207,6 +207,7 @@ No modules.
 | <a name="input_custom_error_response"></a> [custom\_error\_response](#input\_custom\_error\_response) | One or more custom error response elements | <pre>list(object({<br/>    error_caching_min_ttl = optional(number)<br/>    error_code            = number<br/>    response_code         = optional(number)<br/>    response_page_path    = optional(string)<br/>  }))</pre> | `null` | no |
 | <a name="input_default_cache_behavior"></a> [default\_cache\_behavior](#input\_default\_cache\_behavior) | The default cache behavior for this distribution | <pre>object({<br/>    allowed_methods           = optional(list(string), ["GET", "HEAD", "OPTIONS"])<br/>    cache_policy_id           = optional(string)<br/>    cache_policy_name         = optional(string)<br/>    cached_methods            = optional(list(string), ["GET", "HEAD"])<br/>    compress                  = optional(bool, true)<br/>    default_ttl               = optional(number)<br/>    field_level_encryption_id = optional(string)<br/>    forwarded_values = optional(object({<br/>      cookies = object({<br/>        forward           = optional(string, "none")<br/>        whitelisted_names = optional(list(string))<br/>      })<br/>      headers                 = optional(list(string))<br/>      query_string            = optional(bool, false)<br/>      query_string_cache_keys = optional(list(string))<br/>      }),<br/>      {<br/>        cookies = {<br/>          forward = "none"<br/>        }<br/>        query_string = false<br/>      }<br/>    )<br/>    function_association = optional(map(object({<br/>      event_type   = optional(string)<br/>      function_arn = optional(string)<br/>      function_key = optional(string)<br/>    })))<br/>    grpc_config = optional(object({<br/>      enabled = optional(bool)<br/>    }))<br/>    lambda_function_association = optional(map(object({<br/>      event_type   = optional(string)<br/>      include_body = optional(bool)<br/>      lambda_arn   = string<br/>    })))<br/>    max_ttl                      = optional(number)<br/>    min_ttl                      = optional(number)<br/>    origin_request_policy_id     = optional(string)<br/>    origin_request_policy_name   = optional(string)<br/>    realtime_log_config_arn      = optional(string)<br/>    response_headers_policy_id   = optional(string)<br/>    response_headers_policy_key  = optional(string)<br/>    response_headers_policy_name = optional(string)<br/>    smooth_streaming             = optional(bool)<br/>    target_origin_id             = string<br/>    trusted_key_groups           = optional(list(string))<br/>    trusted_signers              = optional(list(string))<br/>    viewer_protocol_policy       = optional(string, "https-only")<br/>  })</pre> | n/a | yes |
 | <a name="input_default_root_object"></a> [default\_root\_object](#input\_default\_root\_object) | The object that you want CloudFront to return (for example, index.html) when an end user requests the root URL | `string` | `null` | no |
+| <a name="input_enable_policy_name_data_sources"></a> [enable\_policy\_name\_data\_sources](#input\_enable\_policy\_name\_data\_sources) | Controls whether data source lookups for CloudFront policies by name are created.<br/>When set to `false`, the `data.aws_cloudfront_cache_policy`, `data.aws_cloudfront_origin_request_policy`,<br/>and `data.aws_cloudfront_response_headers_policy` data sources will not be created.<br/><br/>Set to `false` when all cache behaviors reference policies exclusively by ID (not by name) and the<br/>module is used alongside resources whose attributes are only known after apply (e.g. newly created<br/>`aws_cloudfront_function` resources attached via `function_association`). In that case Terraform<br/>cannot evaluate the `for_each` over `local.cache_behaviors` at plan time and will error with<br/>"Invalid for\_each argument ... values derived from resource attributes that cannot be determined until apply".<br/><br/>When `false`, any `*_policy_name` fields on behaviors are silently ignored; use `*_policy_id` instead.<br/>Defaults to `true` for backward compatibility. | `bool` | `true` | no |
 | <a name="input_enable_v2_logging"></a> [enable\_v2\_logging](#input\_enable\_v2\_logging) | Whether to enable v2 logging for the CloudFront distribution | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Whether the distribution is enabled to accept end user requests for content | `bool` | `true` | no |
 | <a name="input_http_version"></a> [http\_version](#input\_http\_version) | The maximum HTTP version to support on the distribution. Allowed values are http1.1, http2, http2and3, and http3. The default is http2 | `string` | `"http2"` | no |
@@ -233,7 +234,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | The ARN (Amazon Resource Name) for the distribution. |
 | <a name="output_cloudfront_distribution_caller_reference"></a> [cloudfront\_distribution\_caller\_reference](#output\_cloudfront\_distribution\_caller\_reference) | Internal value used by CloudFront to allow future updates to the distribution configuration. |
 | <a name="output_cloudfront_distribution_domain_name"></a> [cloudfront\_distribution\_domain\_name](#output\_cloudfront\_distribution\_domain\_name) | The domain name corresponding to the distribution. |

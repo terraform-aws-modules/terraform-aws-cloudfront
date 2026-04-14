@@ -19,6 +19,7 @@ module "wrapper" {
   custom_error_response              = try(each.value.custom_error_response, var.defaults.custom_error_response, null)
   default_cache_behavior             = try(each.value.default_cache_behavior, var.defaults.default_cache_behavior)
   default_root_object                = try(each.value.default_root_object, var.defaults.default_root_object, null)
+  enable_policy_name_data_sources    = try(each.value.enable_policy_name_data_sources, var.defaults.enable_policy_name_data_sources, true)
   enable_v2_logging                  = try(each.value.enable_v2_logging, var.defaults.enable_v2_logging, false)
   enabled                            = try(each.value.enabled, var.defaults.enabled, true)
   http_version                       = try(each.value.http_version, var.defaults.http_version, "http2")
