@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.5.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.4.1...v6.5.0) (2026-04-22)
+
+### Features
+
+* Add support for cross-account vpc origins ([#200](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/200)) ([314e784](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/314e784a840c3d1dbd7d2d3ab4418eb82dd8d692))
+
 ## [6.4.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.4.0...v6.4.1) (2026-04-13)
 
 ### Bug Fixes
