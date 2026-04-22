@@ -6,7 +6,7 @@ Configuration in this directory creates CloudFront distribution with viewer mTLS
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.28 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | >= 4.0 |
@@ -14,14 +14,14 @@ Configuration in this directory creates CloudFront distribution with viewer mTLS
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.28 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | >= 4.0 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_acm"></a> [acm](#module\_acm) | terraform-aws-modules/acm/aws | ~> 4.0 |
 | <a name="module_ca_certificates"></a> [ca\_certificates](#module\_ca\_certificates) | terraform-aws-modules/s3-bucket/aws | ~> 5.0 |
 | <a name="module_cloudfront"></a> [cloudfront](#module\_cloudfront) | ../../ | n/a |
@@ -32,7 +32,7 @@ Configuration in this directory creates CloudFront distribution with viewer mTLS
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_s3_object.ca_certificates](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
 | [aws_s3_object.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
 | [tls_cert_request.client](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
@@ -46,13 +46,13 @@ Configuration in this directory creates CloudFront distribution with viewer mTLS
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_domain"></a> [domain](#input\_domain) | The domain name to use when deploying the CloudFront distribution | `string` | `"terraform-aws-modules.modules.tf"` | no |
 
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_ca_certificate_pem"></a> [ca\_certificate\_pem](#output\_ca\_certificate\_pem) | The CA certificate in PEM format |
 | <a name="output_client_certificate_pem"></a> [client\_certificate\_pem](#output\_client\_certificate\_pem) | The client certificate in PEM format |
 | <a name="output_client_private_key_pem"></a> [client\_private\_key\_pem](#output\_client\_private\_key\_pem) | The client private key in PEM format |
