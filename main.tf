@@ -601,6 +601,8 @@ resource "aws_cloudwatch_log_delivery_source" "this" {
   name         = "cloudfront-${aws_cloudfront_distribution.this[0].id}"
   resource_arn = aws_cloudfront_distribution.this[0].arn
 
+  region = "us-east-1"
+
   tags = var.tags
 }
 
@@ -618,6 +620,8 @@ resource "aws_cloudwatch_log_delivery_destination" "this" {
   delivery_destination_type = var.v2_logging.delivery_destination_type
   name                      = var.v2_logging.name
   output_format             = var.v2_logging.output_format
+
+  region = "us-east-1"
 
   tags = var.tags
 }
@@ -638,6 +642,8 @@ resource "aws_cloudwatch_log_delivery" "this" {
       suffix_path                 = s3_delivery_configuration.value.suffix_path
     }
   }
+
+  region = "us-east-1"
 
   tags = var.tags
 }
