@@ -601,6 +601,8 @@ resource "aws_cloudwatch_log_delivery_source" "this" {
   name         = "cloudfront-${aws_cloudfront_distribution.this[0].id}"
   resource_arn = aws_cloudfront_distribution.this[0].arn
 
+  # CloudFront standard logging API calls must always target us-east-1
+  # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html#enable-access-logging-api
   region = "us-east-1"
 
   tags = var.tags
@@ -621,6 +623,8 @@ resource "aws_cloudwatch_log_delivery_destination" "this" {
   name                      = var.v2_logging.name
   output_format             = var.v2_logging.output_format
 
+  # CloudFront standard logging API calls must always target us-east-1
+  # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html#enable-access-logging-api
   region = "us-east-1"
 
   tags = var.tags
@@ -643,6 +647,8 @@ resource "aws_cloudwatch_log_delivery" "this" {
     }
   }
 
+  # CloudFront standard logging API calls must always target us-east-1
+  # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html#enable-access-logging-api
   region = "us-east-1"
 
   tags = var.tags
