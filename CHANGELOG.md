@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.5.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.5.0...v6.5.1) (2026-04-27)
+
+### Bug Fixes
+
+* Logging v2 CloudWatch resources only support `us-east-1` ([#203](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/203)) ([62ad47c](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/62ad47ce0390c77a1fbe0add6c6484f1acdb2b68))
+
 ## [6.5.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.4.1...v6.5.0) (2026-04-22)
 
 ### Features
