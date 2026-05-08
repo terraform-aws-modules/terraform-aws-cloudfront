@@ -60,6 +60,7 @@ variable "default_cache_behavior" {
   type = object({
     allowed_methods           = optional(list(string), ["GET", "HEAD", "OPTIONS"])
     cache_policy_id           = optional(string)
+    cache_policy_key          = optional(string)
     cache_policy_name         = optional(string)
     cached_methods            = optional(list(string), ["GET", "HEAD"])
     compress                  = optional(bool, true)
@@ -97,6 +98,7 @@ variable "default_cache_behavior" {
     max_ttl                      = optional(number)
     min_ttl                      = optional(number)
     origin_request_policy_id     = optional(string)
+    origin_request_policy_key    = optional(string)
     origin_request_policy_name   = optional(string)
     realtime_log_config_arn      = optional(string)
     response_headers_policy_id   = optional(string)
@@ -151,6 +153,7 @@ variable "ordered_cache_behavior" {
     allowed_methods           = optional(list(string), ["GET", "HEAD", "OPTIONS"])
     cached_methods            = optional(list(string), ["GET", "HEAD"])
     cache_policy_id           = optional(string)
+    cache_policy_key          = optional(string)
     cache_policy_name         = optional(string)
     compress                  = optional(bool, true)
     default_ttl               = optional(number)
@@ -187,6 +190,7 @@ variable "ordered_cache_behavior" {
     max_ttl                      = optional(number)
     min_ttl                      = optional(number)
     origin_request_policy_id     = optional(string)
+    origin_request_policy_key    = optional(string)
     origin_request_policy_name   = optional(string)
     path_pattern                 = string
     realtime_log_config_arn      = optional(string)
@@ -370,6 +374,75 @@ variable "vpc_origin" {
       delete = optional(string)
     }))
     tags = optional(map(string), {})
+  }))
+  default = null
+}
+
+################################################################################
+# Cache Policy
+################################################################################
+
+variable "cache_policies" {
+  description = "Map of CloudFront cache policies"
+  type = map(object({
+    name        = optional(string)
+    comment     = optional(string)
+    default_ttl = optional(number)
+    max_ttl     = optional(number)
+    min_ttl     = number
+    parameters_in_cache_key_and_forwarded_to_origin = object({
+      enable_accept_encoding_brotli = optional(bool)
+      enable_accept_encoding_gzip   = optional(bool)
+      cookies_config = object({
+        cookie_behavior = string
+        cookies = optional(object({
+          items = list(string)
+        }))
+      })
+      headers_config = object({
+        header_behavior = string
+        headers = optional(object({
+          items = list(string)
+        }))
+      })
+      query_strings_config = object({
+        query_string_behavior = string
+        query_strings = optional(object({
+          items = list(string)
+        }))
+      })
+    })
+  }))
+  default = null
+}
+
+################################################################################
+# Origin Request Policy
+################################################################################
+
+variable "origin_request_policies" {
+  description = "Map of CloudFront origin request policies"
+  type = map(object({
+    name    = optional(string)
+    comment = optional(string)
+    cookies_config = object({
+      cookie_behavior = string
+      cookies = optional(object({
+        items = list(string)
+      }))
+    })
+    headers_config = object({
+      header_behavior = string
+      headers = optional(object({
+        items = list(string)
+      }))
+    })
+    query_strings_config = object({
+      query_string_behavior = string
+      query_strings = optional(object({
+        items = list(string)
+      }))
+    })
   }))
   default = null
 }

@@ -71,6 +71,24 @@ output "cloudfront_vpc_origins" {
 }
 
 ################################################################################
+# Cache Policy
+################################################################################
+
+output "cloudfront_cache_policies" {
+  description = "The cache policies created"
+  value       = aws_cloudfront_cache_policy.this
+}
+
+################################################################################
+# Origin Request Policy
+################################################################################
+
+output "cloudfront_origin_request_policies" {
+  description = "The origin request policies created"
+  value       = aws_cloudfront_origin_request_policy.this
+}
+
+################################################################################
 # Response Headers Policy
 ################################################################################
 

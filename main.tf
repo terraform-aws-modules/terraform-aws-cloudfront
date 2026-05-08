@@ -34,7 +34,7 @@ resource "aws_cloudfront_distribution" "this" {
 
     content {
       allowed_methods           = default_cache_behavior.value.allowed_methods
-      cache_policy_id           = try(coalesce(default_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[default_cache_behavior.value.cache_policy_name].id, null)), null)
+      cache_policy_id           = try(coalesce(default_cache_behavior.value.cache_policy_id, try(aws_cloudfront_cache_policy.this[default_cache_behavior.value.cache_policy_key].id, data.aws_cloudfront_cache_policy.this[default_cache_behavior.value.cache_policy_name].id, null)), null)
       cached_methods            = default_cache_behavior.value.cached_methods
       compress                  = default_cache_behavior.value.compress
       default_ttl               = default_cache_behavior.value.default_ttl
@@ -89,7 +89,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       max_ttl                    = default_cache_behavior.value.max_ttl
       min_ttl                    = default_cache_behavior.value.min_ttl
-      origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)), null)
+      origin_request_policy_id   = try(coalesce(default_cache_behavior.value.origin_request_policy_id, try(aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_key].id, data.aws_cloudfront_origin_request_policy.this[default_cache_behavior.value.origin_request_policy_name].id, null)), null)
       realtime_log_config_arn    = default_cache_behavior.value.realtime_log_config_arn
       response_headers_policy_id = try(coalesce(default_cache_behavior.value.response_headers_policy_id, try(aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_key].id, data.aws_cloudfront_response_headers_policy.this[default_cache_behavior.value.response_headers_policy_name].id, null)), null)
       smooth_streaming           = default_cache_behavior.value.smooth_streaming
@@ -121,7 +121,7 @@ resource "aws_cloudfront_distribution" "this" {
     content {
       allowed_methods           = ordered_cache_behavior.value.allowed_methods
       cached_methods            = ordered_cache_behavior.value.cached_methods
-      cache_policy_id           = try(coalesce(ordered_cache_behavior.value.cache_policy_id, try(data.aws_cloudfront_cache_policy.this[ordered_cache_behavior.value.cache_policy_name].id, null)), null)
+      cache_policy_id           = try(coalesce(ordered_cache_behavior.value.cache_policy_id, try(aws_cloudfront_cache_policy.this[ordered_cache_behavior.value.cache_policy_key].id, data.aws_cloudfront_cache_policy.this[ordered_cache_behavior.value.cache_policy_name].id, null)), null)
       compress                  = ordered_cache_behavior.value.compress
       default_ttl               = ordered_cache_behavior.value.default_ttl
       field_level_encryption_id = ordered_cache_behavior.value.field_level_encryption_id
@@ -175,7 +175,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       max_ttl                    = ordered_cache_behavior.value.max_ttl
       min_ttl                    = ordered_cache_behavior.value.min_ttl
-      origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)), null)
+      origin_request_policy_id   = try(coalesce(ordered_cache_behavior.value.origin_request_policy_id, try(aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_key].id, data.aws_cloudfront_origin_request_policy.this[ordered_cache_behavior.value.origin_request_policy_name].id, null)), null)
       path_pattern               = ordered_cache_behavior.value.path_pattern
       realtime_log_config_arn    = ordered_cache_behavior.value.realtime_log_config_arn
       response_headers_policy_id = try(coalesce(ordered_cache_behavior.value.response_headers_policy_id, try(aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_key].id, data.aws_cloudfront_response_headers_policy.this[ordered_cache_behavior.value.response_headers_policy_name].id, null)), null)
@@ -522,6 +522,108 @@ resource "aws_cloudfront_response_headers_policy" "this" {
     content {
       enabled       = server_timing_headers_config.value.enabled
       sampling_rate = server_timing_headers_config.value.sampling_rate
+    }
+  }
+}
+
+################################################################################
+# Cache Policy
+################################################################################
+
+resource "aws_cloudfront_cache_policy" "this" {
+  for_each = var.cache_policies != null ? var.cache_policies : {}
+
+  name        = try(coalesce(each.value.name, each.key))
+  comment     = each.value.comment
+  default_ttl = each.value.default_ttl
+  max_ttl     = each.value.max_ttl
+  min_ttl     = each.value.min_ttl
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    enable_accept_encoding_brotli = each.value.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_brotli
+    enable_accept_encoding_gzip   = each.value.parameters_in_cache_key_and_forwarded_to_origin.enable_accept_encoding_gzip
+
+    cookies_config {
+      cookie_behavior = each.value.parameters_in_cache_key_and_forwarded_to_origin.cookies_config.cookie_behavior
+
+      dynamic "cookies" {
+        for_each = each.value.parameters_in_cache_key_and_forwarded_to_origin.cookies_config.cookies != null ? [each.value.parameters_in_cache_key_and_forwarded_to_origin.cookies_config.cookies] : []
+
+        content {
+          items = cookies.value.items
+        }
+      }
+    }
+
+    headers_config {
+      header_behavior = each.value.parameters_in_cache_key_and_forwarded_to_origin.headers_config.header_behavior
+
+      dynamic "headers" {
+        for_each = each.value.parameters_in_cache_key_and_forwarded_to_origin.headers_config.headers != null ? [each.value.parameters_in_cache_key_and_forwarded_to_origin.headers_config.headers] : []
+
+        content {
+          items = headers.value.items
+        }
+      }
+    }
+
+    query_strings_config {
+      query_string_behavior = each.value.parameters_in_cache_key_and_forwarded_to_origin.query_strings_config.query_string_behavior
+
+      dynamic "query_strings" {
+        for_each = each.value.parameters_in_cache_key_and_forwarded_to_origin.query_strings_config.query_strings != null ? [each.value.parameters_in_cache_key_and_forwarded_to_origin.query_strings_config.query_strings] : []
+
+        content {
+          items = query_strings.value.items
+        }
+      }
+    }
+  }
+}
+
+################################################################################
+# Origin Request Policy
+################################################################################
+
+resource "aws_cloudfront_origin_request_policy" "this" {
+  for_each = var.origin_request_policies != null ? var.origin_request_policies : {}
+
+  name    = try(coalesce(each.value.name, each.key))
+  comment = each.value.comment
+
+  cookies_config {
+    cookie_behavior = each.value.cookies_config.cookie_behavior
+
+    dynamic "cookies" {
+      for_each = each.value.cookies_config.cookies != null ? [each.value.cookies_config.cookies] : []
+
+      content {
+        items = cookies.value.items
+      }
+    }
+  }
+
+  headers_config {
+    header_behavior = each.value.headers_config.header_behavior
+
+    dynamic "headers" {
+      for_each = each.value.headers_config.headers != null ? [each.value.headers_config.headers] : []
+
+      content {
+        items = headers.value.items
+      }
+    }
+  }
+
+  query_strings_config {
+    query_string_behavior = each.value.query_strings_config.query_string_behavior
+
+    dynamic "query_strings" {
+      for_each = each.value.query_strings_config.query_strings != null ? [each.value.query_strings_config.query_strings] : []
+
+      content {
+        items = query_strings.value.items
+      }
     }
   }
 }

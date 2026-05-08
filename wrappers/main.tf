@@ -5,6 +5,7 @@ module "wrapper" {
 
   aliases                            = try(each.value.aliases, var.defaults.aliases, null)
   anycast_ip_list_id                 = try(each.value.anycast_ip_list_id, var.defaults.anycast_ip_list_id, null)
+  cache_policies                     = try(each.value.cache_policies, var.defaults.cache_policies, null)
   cloudfront_functions               = try(each.value.cloudfront_functions, var.defaults.cloudfront_functions, null)
   comment                            = try(each.value.comment, var.defaults.comment, null)
   connection_function_association_id = try(each.value.connection_function_association_id, var.defaults.connection_function_association_id, null)
@@ -34,6 +35,7 @@ module "wrapper" {
     }
   })
   origin_group                         = try(each.value.origin_group, var.defaults.origin_group, null)
+  origin_request_policies              = try(each.value.origin_request_policies, var.defaults.origin_request_policies, null)
   price_class                          = try(each.value.price_class, var.defaults.price_class, null)
   realtime_metrics_subscription_status = try(each.value.realtime_metrics_subscription_status, var.defaults.realtime_metrics_subscription_status, "Enabled")
   response_headers_policies            = try(each.value.response_headers_policies, var.defaults.response_headers_policies, null)
