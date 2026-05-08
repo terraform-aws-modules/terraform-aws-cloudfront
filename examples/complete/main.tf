@@ -218,6 +218,18 @@ module "cloudfront" {
 
       allowed_methods = ["GET", "HEAD", "OPTIONS"]
       cached_methods  = ["GET", "HEAD"]
+    },
+    {
+      path_pattern           = "/module-policies/*"
+      target_origin_id       = "s3"
+      viewer_protocol_policy = "redirect-to-https"
+
+      allowed_methods = ["GET", "HEAD", "OPTIONS"]
+      cached_methods  = ["GET", "HEAD"]
+
+      # Reference cache and origin request policies created by this module via map keys
+      cache_policy_key          = "example"
+      origin_request_policy_key = "example"
     }
   ]
 

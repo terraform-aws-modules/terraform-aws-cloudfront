@@ -42,7 +42,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       dynamic "forwarded_values" {
         # If a cache policy is specified, then `forwarded_values` must not be set
-        for_each = default_cache_behavior.value.cache_policy_id == null && default_cache_behavior.value.cache_policy_name == null && default_cache_behavior.value.forwarded_values != null ? [default_cache_behavior.value.forwarded_values] : []
+        for_each = default_cache_behavior.value.cache_policy_id == null && default_cache_behavior.value.cache_policy_key == null && default_cache_behavior.value.cache_policy_name == null && default_cache_behavior.value.forwarded_values != null ? [default_cache_behavior.value.forwarded_values] : []
 
         content {
           dynamic "cookies" {
@@ -128,7 +128,7 @@ resource "aws_cloudfront_distribution" "this" {
 
       dynamic "forwarded_values" {
         # If a cache policy is specified, then `forwarded_values` must not be set
-        for_each = ordered_cache_behavior.value.cache_policy_id == null && ordered_cache_behavior.value.cache_policy_name == null && ordered_cache_behavior.value.forwarded_values != null ? [ordered_cache_behavior.value.forwarded_values] : []
+        for_each = ordered_cache_behavior.value.cache_policy_id == null && ordered_cache_behavior.value.cache_policy_key == null && ordered_cache_behavior.value.cache_policy_name == null && ordered_cache_behavior.value.forwarded_values != null ? [ordered_cache_behavior.value.forwarded_values] : []
 
         content {
           dynamic "cookies" {
