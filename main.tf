@@ -5,8 +5,17 @@
 resource "aws_cloudfront_distribution" "this" {
   count = var.create ? 1 : 0
 
-  aliases                         = var.aliases
-  anycast_ip_list_id              = var.anycast_ip_list_id
+  aliases            = var.aliases
+  anycast_ip_list_id = var.anycast_ip_list_id
+
+  dynamic "cache_tag_config" {
+    for_each = var.cache_tag_config != null ? [var.cache_tag_config] : []
+
+    content {
+      header_name = cache_tag_config.value.header_name
+    }
+  }
+
   comment                         = var.comment
   continuous_deployment_policy_id = var.continuous_deployment_policy_id
 

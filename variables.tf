@@ -26,6 +26,14 @@ variable "anycast_ip_list_id" {
   default     = null
 }
 
+variable "cache_tag_config" {
+  description = "Cache tag configuration block for cache tag extraction from origin responses (maximum one). See the [AWS documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/invalidation-by-tags.html) for more information about cache tags"
+  type = object({
+    header_name = string
+  })
+  default = null
+}
+
 variable "comment" {
   description = "Any comments you want to include about the distribution"
   type        = string

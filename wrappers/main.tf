@@ -6,6 +6,7 @@ module "wrapper" {
   aliases                            = try(each.value.aliases, var.defaults.aliases, null)
   anycast_ip_list_id                 = try(each.value.anycast_ip_list_id, var.defaults.anycast_ip_list_id, null)
   cache_policies                     = try(each.value.cache_policies, var.defaults.cache_policies, null)
+  cache_tag_config                   = try(each.value.cache_tag_config, var.defaults.cache_tag_config, null)
   cloudfront_functions               = try(each.value.cloudfront_functions, var.defaults.cloudfront_functions, null)
   comment                            = try(each.value.comment, var.defaults.comment, null)
   connection_function_association_id = try(each.value.connection_function_association_id, var.defaults.connection_function_association_id, null)
