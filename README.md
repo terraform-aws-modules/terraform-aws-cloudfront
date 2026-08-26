@@ -155,14 +155,14 @@ module "cdn" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.46 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.46 |
 
 ## Modules
@@ -172,7 +172,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [aws_cloudfront_cache_policy.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_cache_policy) | resource |
 | [aws_cloudfront_connection_function.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_connection_function) | resource |
 | [aws_cloudfront_distribution.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) | resource |
@@ -192,7 +192,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aliases"></a> [aliases](#input\_aliases) | Extra CNAMEs (alternate domain names), if any, for this distribution | `list(string)` | `null` | no |
 | <a name="input_anycast_ip_list_id"></a> [anycast\_ip\_list\_id](#input\_anycast\_ip\_list\_id) | ID of the Anycast static IP list that is associated with the distribution | `string` | `null` | no |
 | <a name="input_cache_policies"></a> [cache\_policies](#input\_cache\_policies) | Map of CloudFront cache policies | <pre>map(object({<br/>    name        = optional(string)<br/>    comment     = optional(string)<br/>    default_ttl = optional(number)<br/>    max_ttl     = optional(number)<br/>    min_ttl     = number<br/>    parameters_in_cache_key_and_forwarded_to_origin = object({<br/>      enable_accept_encoding_brotli = optional(bool)<br/>      enable_accept_encoding_gzip   = optional(bool)<br/>      cookies_config = object({<br/>        cookie_behavior = string<br/>        cookies = optional(object({<br/>          items = list(string)<br/>        }))<br/>      })<br/>      headers_config = object({<br/>        header_behavior = string<br/>        headers = optional(object({<br/>          items = list(string)<br/>        }))<br/>      })<br/>      query_strings_config = object({<br/>        query_string_behavior = string<br/>        query_strings = optional(object({<br/>          items = list(string)<br/>        }))<br/>      })<br/>    })<br/>  }))</pre> | `null` | no |
@@ -238,7 +238,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cloudfront_cache_policies"></a> [cloudfront\_cache\_policies](#output\_cloudfront\_cache\_policies) | The cache policies created |
 | <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | The ARN (Amazon Resource Name) for the distribution. |
 | <a name="output_cloudfront_distribution_caller_reference"></a> [cloudfront\_distribution\_caller\_reference](#output\_cloudfront\_distribution\_caller\_reference) | Internal value used by CloudFront to allow future updates to the distribution configuration. |
