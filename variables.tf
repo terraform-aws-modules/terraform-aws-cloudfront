@@ -243,6 +243,9 @@ variable "origin" {
       origin_read_timeout      = optional(number)
       origin_protocol_policy   = string
       origin_ssl_protocols     = optional(list(string), ["TLSv1.2"])
+      origin_mtls_config = optional(object({
+        client_certificate_arn = string
+      }))
     }))
     domain_name               = string
     origin_access_control_key = optional(string)
