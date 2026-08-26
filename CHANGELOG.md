@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.7.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.7.0...v6.7.1) (2026-08-26)
+
+### Bug Fixes
+
+* Update GitHub Actions and pre-commit hook versions ([#208](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/208)) ([40051bc](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/40051bc77ecb537ca1a1039edbe09fce6b5d6245))
+
 ## [6.7.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.6.0...v6.7.0) (2026-05-26)
 
 ### Features
