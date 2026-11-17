@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [6.8.0](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.7.1...v6.8.0) (2026-11-17)
+
+### Features
+
+* Add origin_mtls_config support to var.origin.custom_origin_config ([#210](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/issues/210)) ([bb4429c](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/commit/bb4429c75f23f97fc4b8b4a4bdf74d64c3b05d74))
+
 ## [6.7.1](https://github.com/terraform-aws-modules/terraform-aws-cloudfront/compare/v6.7.0...v6.7.1) (2026-08-26)
 
 ### Bug Fixes
