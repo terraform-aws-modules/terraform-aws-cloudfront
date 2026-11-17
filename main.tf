@@ -247,6 +247,13 @@ resource "aws_cloudfront_distribution" "this" {
           origin_read_timeout      = custom_origin_config.value.origin_read_timeout
           origin_protocol_policy   = custom_origin_config.value.origin_protocol_policy
           origin_ssl_protocols     = custom_origin_config.value.origin_ssl_protocols
+          dynamic "origin_mtls_config" {
+            for_each = custom_origin_config.value.origin_mtls_config != null ? [custom_origin_config.value.origin_mtls_config] : []
+
+            content {
+              client_certificate_arn = origin_mtls_config.value.client_certificate_arn
+            }
+          }
         }
       }
 

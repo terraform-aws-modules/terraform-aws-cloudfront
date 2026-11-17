@@ -414,6 +414,17 @@ module "cloudfront" {
   tags = local.tags
 }
 
+module "disabled" {
+  source = "../../"
+
+  create = false
+
+  # Required by the module even when nothing is created
+  default_cache_behavior = {
+    target_origin_id = "disabled"
+  }
+}
+
 module "records" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"

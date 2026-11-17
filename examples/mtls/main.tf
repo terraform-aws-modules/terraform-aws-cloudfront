@@ -63,6 +63,19 @@ module "cloudfront" {
       domain_name               = module.s3.s3_bucket_bucket_regional_domain_name
       origin_access_control_key = "s3" # key in `origin_access_control`
     }
+
+    mtls = {
+      domain_name = "origin.${var.domain}"
+      custom_origin_config = {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "https-only"
+
+        origin_mtls_config = {
+          client_certificate_arn = aws_acm_certificate.client.arn
+        }
+      }
+    }
   }
 
   restrictions = {
@@ -135,7 +148,19 @@ resource "tls_locally_signed_cert" "client" {
   allowed_uses = [
     "key_encipherment",
     "digital_signature",
+    "client_auth",
   ]
+}
+
+# CloudFront presents this certificate to the `mtls` origin. Origin mTLS client certificates
+# must carry the TLS Client Authentication extended key usage and be imported into ACM in us-east-1
+# (checked 2026-11-12): https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/origin-certificate-management-certificate-manager.html
+resource "aws_acm_certificate" "client" {
+  private_key       = tls_private_key.client.private_key_pem
+  certificate_body  = tls_locally_signed_cert.client.cert_pem
+  certificate_chain = tls_self_signed_cert.ca.cert_pem
+
+  tags = local.tags
 }
 
 ################################################################################
